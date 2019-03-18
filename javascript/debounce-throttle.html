@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>函数的防抖和节流</title>
+  </head>
+  <body>
+    <script>
+      // 函数防抖：如果一个事件被频繁触发多次，节流函数可以按照固定频率去执行对应的事件处理方法。当持续触发事件时，debounce会合并事件且不会去触发事件，当一定时间内没有触发再这个事件时，才真正去触发事件
+      // debounce函数用来包裹我们的事件处理方法
+      function debounce(fn, delay) {
+        // 持久化一个定时器
+        let timer = null;
+
+        // 闭包函数可以访问timer
+        return function() {
+          // 通过 this 和 arguments 获得函数的作用域和参数
+          let context = this;
+          let args = arguments;
+          // 如果事件被触发，清除timer并重新开始计时
+          clearTimeout(timer);
+          timer = setTimeout(function() {
+            fn.apply(context, args);
+          }, delay);
+        };
+      }
+
+      function foo() {
+        console.log("You are scrolling!");
+      }
+
+      document.addEventListener("scroll", debounce(foo, 50));
+
+      // 函数节流：如果一个事件被频繁触发多次，并且触发的时间间隔过短，则防抖函数可以使得对应的事件处理函数只执行一次。当持续触发事件时，保证隔间时间触发一次事件。
+      function throttle(fn, threshold) {
+        let last;
+        let timer;
+        threshold || (threshold = 250);
+
+        return function() {
+          let context = this;
+          let args = arguments;
+          // 记录上次触发事件
+          let now = +new Date();
+
+          // 本次事件触发与上一次的时间比较
+          if (last && now < last + threshold) {
+            clearTimeout(timer);
+
+            timer = setTimeout(function() {
+              // 更新最近事件触发的时间
+              last = now;
+              fn.apply(context, args);
+            }, threshold);
+          } else {
+            last = now;
+            fn.apply(context, args);
+          }
+        };
+      }
+    </script>
+  </body>
+</html>
