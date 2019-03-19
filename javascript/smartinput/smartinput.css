@@ -15,8 +15,8 @@
   border: 1px solid #e5e5e5;
   height: 300px;
   overflow-y: auto;
-  /* display: none; */
   border-radius: 3px;
+  display: none;
 }
 
 .smartcontainer ul li {

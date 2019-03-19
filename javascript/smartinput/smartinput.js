@@ -9,9 +9,11 @@ window.onload = function() {
     let code = ev.keyCode;
     switch (code) {
       case 38:
+        ev.preventDefault();
         keyUpDown(38, smartUl);
         break;
       case 40:
+        ev.preventDefault();
         keyUpDown(40, smartUl);
         break;
       case 13:
@@ -21,10 +23,18 @@ window.onload = function() {
         break;
     }
   };
+
+  // 获取焦点, 显示选项面板
+  input.onfocus = function() {
+    smartUl.style.display = "block";
+  };
+
+  // 键盘按下
   function keyUpDown(code, scrollContainer) {
     const isScroll = hasScrolled(scrollContainer, "vertical");
     const itemChildren = scrollContainer.children;
     let len = itemChildren.length;
+    const inputText = scrollContainer.previousElementSibling;
 
     if (Object.is(code, 38)) {
       // index--; 这种方式不友好，需要判断两个极端最大和最小
@@ -38,10 +48,11 @@ window.onload = function() {
       // 设置滚动条的位置
       if (isScroll) {
         // 这确定选中的位置
+        let _index_positon =
+          smartUl.clientHeight / 2 / itemChildren[index].offsetHeight;
         let postion =
-          Math.ceil(
-            smartUl.clientHeight / 2 / itemChildren[index].offsetHeight
-          ) * itemChildren[index].offsetHeight;
+          Math.ceil(_index_positon) * itemChildren[index].offsetHeight;
+
         smartUl.scrollTo(0, itemChildren[index].offsetTop - postion);
       }
 
@@ -63,10 +74,11 @@ window.onload = function() {
       // 设置滚动条的位置
       if (isScroll) {
         // 这确定选中的位置
+        let _index_positon =
+          smartUl.clientHeight / 2 / itemChildren[index].offsetHeight;
         let postion =
-          Math.ceil(
-            smartUl.clientHeight / 2 / itemChildren[index].offsetHeight
-          ) * itemChildren[index].offsetHeight;
+          Math.ceil(_index_positon) * itemChildren[index].offsetHeight;
+
         smartUl.scrollTo(0, itemChildren[index].offsetTop - postion);
       }
 
@@ -79,6 +91,7 @@ window.onload = function() {
     }
     if (Object.is(code, 13)) {
       console.log("enter: ", 13);
+      inputText.value = itemChildren[index].innerText;
     }
   }
 };
@@ -96,11 +109,3 @@ function hasScrolled(el, direction = "vertical") {
     return el.scrollWidth > el.clientWidth;
   }
 }
-// function keyCode(key) {
-//   const ret = {
-//     up: 38,
-//     down: 40,
-//     enter: 13
-//   };
-//   return ret[key] ? ret[key] : "";
-// }
