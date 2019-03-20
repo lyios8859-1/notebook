@@ -1,7 +1,8 @@
 let index = -1;
+let timer = null;
+let list = [];
 window.onload = function() {
   const smartUl = document.querySelector("#smartItem");
-  const smartLi = smartUl.children;
   const input = smartUl.previousElementSibling;
 
   input.onkeydown = function(event) {
@@ -20,6 +21,9 @@ window.onload = function() {
         keyUpDown(13, smartUl);
         break;
       default:
+        // if (!input.value) {
+        //   list = ["abced", "dfakkiid", "dsfas", "dsfasd", "sadf"];
+        // }
         break;
     }
   };
@@ -27,6 +31,16 @@ window.onload = function() {
   // 获取焦点, 显示选项面板
   input.onfocus = function() {
     smartUl.style.display = "block";
+  };
+
+  // 键盘输入
+  input.oninput = function() {
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
+      // /console.log(input.value);
+    }, 200);
   };
 
   // 键盘按下
@@ -50,13 +64,11 @@ window.onload = function() {
         // 这确定选中的位置
         let _index_positon =
           smartUl.clientHeight / 2 / itemChildren[index].offsetHeight;
-        let postion =
-          Math.ceil(_index_positon) * itemChildren[index].offsetHeight;
+        let postion = Math.ceil(_index_positon) * console.log("up: ", index);
+        itemChildren[index].offsetHeight;
 
         smartUl.scrollTo(0, itemChildren[index].offsetTop - postion);
       }
-
-      console.log("up: ", index);
 
       for (let i = 0; i < len; i++) {
         itemChildren[i].style.backgroundColor = null;
@@ -82,15 +94,12 @@ window.onload = function() {
         smartUl.scrollTo(0, itemChildren[index].offsetTop - postion);
       }
 
-      console.log("down: ", index);
-
       for (let i = 0; i < len; i++) {
         itemChildren[i].style.backgroundColor = null;
       }
       itemChildren[index].style.backgroundColor = "#ccc";
     }
     if (Object.is(code, 13)) {
-      console.log("enter: ", 13);
       inputText.value = itemChildren[index].innerText;
     }
   }
