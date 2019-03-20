@@ -64,7 +64,8 @@ window.onload = function() {
         // 这确定选中的位置
         let _index_positon =
           smartUl.clientHeight / 2 / itemChildren[index].offsetHeight;
-        let postion = Math.ceil(_index_positon) * console.log("up: ", index);
+        let postion =
+          Math.ceil(_index_positon) * itemChildren[index].offsetHeight;
         itemChildren[index].offsetHeight;
 
         smartUl.scrollTo(0, itemChildren[index].offsetTop - postion);
