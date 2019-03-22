@@ -107,7 +107,7 @@ git reflog
 2. 在本地工作空间 `notebook` 目录下执行如下命令：
 
 ```shell
-# lyios8859-1 就是注册是的名称
+# lyios8859-1 就是注册时的名称 （ssh和https的方式）
 git remote add origin git@github.com:lyios8859-1/notebook.git   [https://github.com/lyios8859-1/notebook.git]
 ```
 
@@ -136,6 +136,7 @@ and the repository exists.
 ## 克隆远程仓库到本地
 
 ```shell
+# （ssh和https的方式）
 git clone git@github.com:lyios8859-1/notebook.git  [https://github.com/lyios8859-1/notebook.git]
 ```
 
