@@ -1,11 +1,86 @@
-let index = -1;
-let timer = null;
-let list = [];
+let index = -1; // 索引
+let timer = null; // 定时器
+let list = []; // 原始数据
+let filtered = []; // 对输入的过滤
+let searching = false; // 对面板的展开控制
+let preSearching = false;
+let multiple = false; // 是否支持多选
+function key(value) {
+  return /(?:.*,)*(.*)$/.exec(value)[1];
+}
+function listLength() {
+  return filtered.length;
+}
+function init() {
+  // 展开面板
+  searching = true;
+
+  // ajax获取数据
+  list = ["Hello", "Cat", "Tom", "Jery", "Dog", "Worlld"];
+  filtered = list;
+}
+
 window.onload = function() {
   const smartUl = document.querySelector("#smartItem");
   const input = smartUl.previousElementSibling;
+  // 初始化数据
+  init();
 
+  // 获取焦点, 显示选项面板
+  input.onfocus = function() {
+    if (searching) {
+      let html = "";
+      for (let i = 0; i < filtered.length; i++) {
+        html += `<li>${filtered[i]}</li>`;
+      }
+      smartUl.innerHTML = html;
+      smartUl.style.display = "block";
+    }
+  };
+
+  // 键盘输入
+  input.oninput = function() {
+    // 如果输入框为空
+    if (!input.value) {
+      filtered = list;
+      return;
+    }
+    // 使用分号分割多个数据
+    let inputArr = input.value.split(";");
+    // 如果支持多选
+    if (multiple) {
+      // 存储输入的数据不再原始数据中的容器
+      let isinvalidData = []; // 存储合法的数据
+      let noinvalidData = []; // 存储不合法的数据
+      // 删除 ”;“ 分割成的数组中的最后一个空值
+      if (inputArr.length > 1) {
+        inputArr.pop();
+      }
+      inputArr.forEach(item => {
+        // 判断输入的数据是否不存在原始 list 中 //includes() 方法用来判断一个数组是否包含一个指定的值，
+        if (!list.includes(item)) {
+          isinvalidData.push(item);
+        } else {
+          noinvalidData.push(item);
+        }
+      });
+      if (isinvalidData.length) {
+        console.log(`输入的 ${isinvalidData.join(",")} 数据不合法`);
+      } else {
+        console.log(`输入的 ${noinvalidData.join(",")} 数据合法`);
+      }
+    }
+    // 修该某些数据
+    //let other = input;
+  };
+
+  // 联想搜索的主体功能函数，这里使用keydown是为了保证持续性的上下键能够保证执行
   input.onkeydown = function(event) {
+    preSearching = searching;
+    // 非搜索状态进行点击，则呼出面板
+    if (searching) {
+      searching = true;
+    }
     const ev = event || window.event;
     let code = ev.keyCode;
     switch (code) {
@@ -18,29 +93,37 @@ window.onload = function() {
         keyUpDown(40, smartUl);
         break;
       case 13:
+        ev.preventDefault();
         keyUpDown(13, smartUl);
         break;
       default:
-        // if (!input.value) {
-        //   list = ["abced", "dfakkiid", "dsfas", "dsfasd", "sadf"];
-        // }
+        // 延时搜索，降低卡顿, 还解决了最有一次删除不处理全部的问题
+        if (timer) {
+          clearTimeout(timer);
+        }
+
+        timer = setTimeout(() => {
+          // 进行可选项过滤
+          filtered = list.filter(item => {
+            return item.toLowerCase().includes(key(input.value).toLowerCase());
+          });
+          if (filtered.length < 0) {
+            console.log("没有匹配的数据......");
+          } else {
+            // 匹配数据后的操作,展示的面板数据
+            console.log("模糊匹配： ", filtered);
+            let html = "";
+            for (let i = 0; i < filtered.length; i++) {
+              html += `<li>${filtered[i]}</li>`;
+            }
+            smartUl.innerHTML = "";
+            smartUl.innerHTML = html;
+          }
+          // 修正索引
+          index = -1;
+        }, 300);
         break;
     }
-  };
-
-  // 获取焦点, 显示选项面板
-  input.onfocus = function() {
-    smartUl.style.display = "block";
-  };
-
-  // 键盘输入
-  input.oninput = function() {
-    if (timer) {
-      clearTimeout(timer);
-    }
-    timer = setTimeout(() => {
-      // /console.log(input.value);
-    }, 200);
   };
 
   // 键盘按下
@@ -101,6 +184,9 @@ window.onload = function() {
       itemChildren[index].style.backgroundColor = "#ccc";
     }
     if (Object.is(code, 13)) {
+      // if (preSearching && index < listLength()) {
+      //   selectOne();
+      // }
       inputText.value = itemChildren[index].innerText;
     }
   }
