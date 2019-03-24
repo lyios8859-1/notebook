@@ -145,3 +145,184 @@ git clone git@github.com:lyios8859-1/notebook.git  [https://github.com/lyios8859
 ```shell
 git pull origin master （master 可以是其他分支）
 ```
+
+# 分支
+
+- 查看分支
+
+```shell
+git branch
+```
+
+- 创建分支`newBreach`
+
+```shell
+git branch newBreach
+```
+
+- 切换当前需要工作的分支 `newBreach`
+
+```shell
+git checkout newBreach
+```
+
+PS: 这里有一个 `HEAD` 不断的改变会指向不同的分支
+
+- 创建并切换到工作的分支
+
+```shell
+git checkout -b newBreach
+```
+
+- 合并某分支到当前分支
+
+```shell
+git merge newBreach
+```
+
+### 删除分支
+
+- 普通方式删除
+
+```shell
+git branch -d newBreach
+```
+
+- 强制删除
+
+```shell
+git branch -D newBreach
+```
+
+- 查看分支合并的信息
+
+```shell
+git log --graph --pretty=oneline --abbrev-commit
+```
+
+## 藏匿当前未提交的分支
+
+> 如： 当前在修改自己的分支 dev,突然项目经理要求修复一个 bug
+
+解决方法：
+
+1. 藏匿当前 dev 分支的工作状态
+
+```shell
+git stash
+```
+
+2. 新建一个 bug-1(分支名任意) 分支
+
+```shell
+git branch -b bug-1
+```
+
+3. 修复 bug 并提交，合并 bug-1 到 master 分支
+
+```shell
+git commit -m "fix the bug-1"
+git checkout master
+git merge --no-ff -m "merge bug-1" bug-1
+```
+
+4. 删除 bug-1 分支
+
+```shell
+git branch -d bug-1
+```
+
+5. 查看当前 stash
+
+```shell
+git stash list
+```
+
+6. 恢复 dev 分支的工作状态，并删除 stash 内容
+
+```shell
+git stash pop
+```
+
+### 团队协作
+
+- 查看远程库信息
+
+```shell
+git remote
+```
+
+- 查看远程仓库详细信息
+
+```shell
+git remote -v
+```
+
+- 推送分支到远程仓库
+
+```shell
+git remote origin master
+```
+
+- 拉取远程分支到本地
+
+```shell
+git pull origin master
+```
+
+### 标签管理
+
+- 创建一个标签，默认为 `HEAD` 当前分支添加标签
+
+```shell
+git tag v1.0
+```
+
+- 为版本号为 `a6c3ed5` 添加 v2.0 标签
+
+```shell
+git tag v2.0 a6c3ed5
+```
+
+- 为版本号为 `23d23d4e` 添加带有说明的标签，-a 指定标签名,-m 指定说明文字
+
+```shell
+git tag -a v3.0 -m "version 0.2 released" 23d23d4e
+```
+
+- 根据标签查看指定分支
+
+```shell
+git show v0.2
+```
+
+- 查看所有标签
+
+```shell
+git tag
+```
+
+- 删除 v1.0 标签
+
+```shell
+git tag -d v1.0
+```
+
+- 把 v0.9 标签推送到远程
+
+```shell
+git push origin v0.9
+```
+
+- 推送所有尚未推送到远程的本地标签
+
+```shell
+git push origin --tags
+```
+
+- 删除远程标签。先删除本地标签，再删除远程标签
+
+```shell
+git tag -d v0.9
+git push origin :refs/tags/v0.9
+```
