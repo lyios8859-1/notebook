@@ -19,6 +19,10 @@ npm i uglifyjs-webpack-plugin@beta -D
 npm i html-webpack-plugin@1 -D
 ```
 
+# 支持引入方式
+
+> CommonJS，AMD 和 全局引用（\<script\>\</script\>）
+
 # 引用方式
 
 ```javascript

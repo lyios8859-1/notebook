@@ -81,14 +81,15 @@ module.exports = () => {
       path: path.resolve(__dirname, "dist"), // 打包后的文件的存放路径
       publicPath: "/static/js/", // // 指定文件的引用路径（虚拟目录-开发时候使用）
       library: `${library}`, // 指定类库名，主要用于直接引用的方式（如：支持AMD Commonjs script 标签引入）
-      libraryTarget: "umd" // 定义打包方式，同时支持CommonJS，AMD和全局引用（script）
+      libraryTarget: "umd", // 定义打包方式，同时支持CommonJS，AMD和全局引用（script）
+      globalObject: "this" // 兼容nodejs环境和浏览器环境
     },
     plugins: plugins,
     optimization: optimization ? optimization : {},
     devServer: {
       port: proxyPort, // 本地服务器端口号
       hot: true, // 热重载
-      overlay: true, // 如果代码出错，会在浏览器页面弹出“浮动层”。类似于 vue-cli 等脚手架
+      overlay: true, // 如果代码出错，会在浏览器页面弹出“阴影层”。类似于 vue-cli 等脚手架
       open: true // 打开浏览器
     }
   };
