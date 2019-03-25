@@ -1,0 +1,31 @@
+{
+  "name": "webpack-lib",
+  "version": "1.0.0",
+  "description": "使用 Webpack4实现简易的NPM JavaScript 组件开发",
+  "main": "index.js",
+  "scripts": {
+    "start": "NODE_ENV=development webpack-dev-server --quiet & http-server -c-1 -p 8081",
+    "dev": "NODE_ENV=development webpack-dev-server",
+    "build-release": "NODE_ENV=production webpack"
+  },
+  "envVariable": "lyVariable",
+  "keywords": [
+    "library",
+    "ES6"
+  ],
+  "author": "Timly",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.4.0",
+    "@babel/plugin-transform-runtime": "^7.4.0",
+    "@babel/preset-env": "^7.4.2",
+    "babel-loader": "^8.0.5",
+    "clean-webpack-plugin": "^1.0.1",
+    "html-webpack-plugin": "^3.2.0",
+    "uglifyjs-webpack-plugin": "^1.0.0-rc.0",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0",
+    "webpack-dev-server": "^3.2.1"
+  },
+  "dependencies": {}
+}
