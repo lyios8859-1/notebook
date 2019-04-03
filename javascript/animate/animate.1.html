@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="box"></div>
+    <button onclick="startMove()">运动</button>
+    <button onclick="stopMove()">停止</button>
+    <div style="width: 600px;border:1px solid red;height: 1px;"></div>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      .box {
+        position: absolute;
+        top: 26px;
+        left: 0;
+        background: red;
+        width: 100px;
+        height: 100px;
+      }
+    </style>
+    <script>
+      let timer = null;
+      const oDiv = document.querySelector(".box");
+      let iSpeed = 10;
+      function startMove() {
+        // 防止狂点击，生成多个定时器
+        stopMove();
+        timer = setInterval(function() {
+          // 是否停下来
+          if (oDiv.offsetLeft > 600) {
+            stopMove();
+            oDiv.style.left = "600px";
+          } else {
+            oDiv.style.left = oDiv.offsetLeft + iSpeed + "px";
+          }
+        }, 1000 / 60);
+      }
+
+      function stopMove() {
+        timer && clearInterval(timer);
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      .box {
+        position: absolute;
+        top: 26px;
+        left: -200px;
+        background: red;
+        width: 200px;
+        height: 400px;
+      }
+      .box span {
+        position: absolute;
+        top: 160px;
+        left: 200px;
+        background: red;
+      }
+    </style>
+    <div
+      class="box"
+      onmousemove="startMoveRight(10)"
+      onmouseout="startMoveLeft(-10)"
+    >
+      <span>分享到</span>
+    </div>
+    <script>
+      let timer = null;
+      const oDiv = document.querySelector(".box");
+      function startMoveRight(iSpeed) {
+        // 防止狂点击，生成多个定时器
+        stopMove();
+        timer = setInterval(function() {
+          if (oDiv.offsetLeft < 0) {
+            oDiv.style.left = oDiv.offsetLeft + iSpeed + "px";
+          } else if (oDiv.offsetLeft >= 0) {
+            oDiv.style.left = "0px";
+            stopMove();
+          }
+        }, 1000 / 60);
+      }
+
+      function startMoveLeft(iSpeed) {
+        // 防止狂点击，生成多个定时器
+        stopMove();
+        timer = setInterval(function() {
+          if (oDiv.offsetLeft <= 0 && oDiv.offsetLeft > -200) {
+            oDiv.style.left = oDiv.offsetLeft + iSpeed + "px";
+          } else if (oDiv.offsetLeft >= -200) {
+            oDiv.style.left = "-200px";
+            stopMove();
+          }
+        }, 1000 / 60);
+      }
+
+      function stopMove() {
+        timer && clearInterval(timer);
+      }
+    </script>
+  </body>
+</html>
