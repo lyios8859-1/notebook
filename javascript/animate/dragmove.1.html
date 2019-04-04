@@ -58,13 +58,13 @@
       let isPressed = false;
 
       // 元素中心
-      dragDom.x = elsWidth / 2;
-      dragDom.y = elsHeight / 2;
+      x = elsWidth / 2;
+      y = elsHeight / 2;
 
       dragDom.onmousedown = function(ev) {
-        let mousePos = getMousePos(ev);
         // 判断当前鼠标是否在元素内
         mouse = getMousePos(ev);
+
         if (
           (mouse.x > oldLeft || mouse.x > oldLeft + elsWidth) &&
           (mouse.y > oldTop || mouse.y > oldTop + elsHeight)
@@ -72,11 +72,10 @@
           // 按下了鼠标
           isPressed = true;
           // 记录鼠标按下时，鼠标与元素心的距离
-          dx = mouse.x - dragDom.x;
-          dy = mouse.y - dragDom.y;
+          dx = mouse.x - x;
+          dy = mouse.y - y;
 
           // 获得小球拖拽前的位置
-          mouse = getMousePos(ev);
           oldX = mouse.x;
           oldY = mouse.y;
           console.log(`获得小球拖拽前的位置=>oldX: ${oldX}, oldY: ${oldY}`);
@@ -84,15 +83,15 @@
           document.onmousemove = function(ev) {
             if (isPressed) {
               mouse = getMousePos(ev);
-              dragDom.x = mouse.x - dragDom.x;
-              dragDom.y = mouse.y - dragDom.y;
+              x = mouse.x - x;
+              y = mouse.y - y;
               dragDom.style.left = x + "px";
               dragDom.style.top = y + "px";
             }
           };
           document.onmouseup = function(ev) {
-            dragDom.x = mouse.x - dragDom.x;
-            dragDom.y = mouse.y - dragDom.y;
+            x = mouse.x - x;
+            y = mouse.y - y;
             // 标示鼠标弹起事件
             isPressed = false;
             // 把鼠标与元素中心的距离位置恢复初始值
@@ -114,11 +113,11 @@
 
       function startMove() {
         timer = window.requestAnimationFrame(startMove);
-        dragDom.x += vx;
-        dragDom.y += vy;
+        x += vx;
+        y += vy;
 
-        dragDom.style.left = dragDom.x + "px";
-        dragDom.style.top = dragDom.y + "px";
+        dragDom.style.left = x + "px";
+        dragDom.style.top = y + "px";
       }
 
       // 获得当前鼠标位置
@@ -144,136 +143,6 @@
 
         return mouse;
       }
-      /*
-            
-             // 创建画球函数
-      function Ball() {
-        this.x = 0;
-        this.y = 0;
-        this.radius = 20;
-        this.fillStyle = "#f85455";
-        this.draw = function(cxt) {
-          cxt.fillStyle = this.fillStyle;
-          cxt.beginPath();
-          cxt.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, true);
-          cxt.closePath();
-          cxt.fill();
-        };
-      }
-      // 获得当前鼠标位置
-      function getMouse(ev) {
-        var mouse = {
-          x: 0,
-          y: 0
-        };
-        var event = ev || window.event;
-        if (event.pageX || event.pageY) {
-          x = event.x;
-          y = event.y;
-        } else {
-          var scrollLeft =
-            document.documentElement.scrollLeft || document.body.scrollLeft;
-          var scrollTop =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          x = event.clientX + scrollLeft;
-          y = event.clientY + scrollTop;
-        }
-        mouse.x = x;
-        mouse.y = y;
-
-        return mouse;
-      }
-
-      var canvas = document.getElementById("canvas"),
-        context = canvas.getContext("2d"),
-        ball = new Ball(),
-        mouse = { x: 0, y: 0 },
-        isPressed = false,
-        oldX = 0,
-        oldY = 0,
-        currentX = 0,
-        currentY = 0,
-        vx = 0,
-        vy = 0;
-      ball.x = 200;
-      ball.y = 200;
-
-      // 声明鼠标按下时，鼠标与小球圆心的距离
-      var dx = 0,
-        dy = 0;
-
-      // 渲染小球
-      ball.draw(context);
-
-      // 小球拖拽事件
-      canvas.addEventListener("mousedown", mouseDown, false);
-      canvas.addEventListener("mousemove", mouseMove, false);
-      canvas.addEventListener("mouseup", mouseUp, false);
-
-      function mouseDown(ev) {
-        // 判断当前鼠标是否在小球内
-        mouse = getMouse(ev);
-        if (
-          Math.pow(mouse.x - ball.x, 2) + Math.pow(mouse.y - ball.y, 2) <=
-          Math.pow(ball.radius, 2)
-        ) {
-          isPressed = true;
-          // 记录鼠标按下时，鼠标与小球圆心的距离
-          dx = mouse.x - ball.x;
-          dy = mouse.y - ball.y;
-          // 获得小球拖拽前的位置
-          mouse = getMouse(ev);
-          oldX = mouse.x;
-          oldY = mouse.y;
-        }
-      }
-
-      function mouseMove(ev) {
-        if (isPressed) {
-          mouse = getMouse(ev);
-          ball.x = mouse.x - dx;
-          ball.y = mouse.y - dy;
-          context.clearRect(0, 0, canvas.width, canvas.height);
-          ball.draw(context);
-        }
-      }
-
-      function mouseUp(ev) {
-        // 标示鼠标弹起事件
-        isPressed = false;
-        // 把鼠标与圆心的距离位置恢复初始值
-        dx = 0;
-        dy = 0;
-        // 获得小球拖拽后的位置
-        mouse = getMouse(ev);
-        currentX = mouse.x;
-        currentY = mouse.y;
-
-        // 更新速度向量：速度向量 = 新的位置 - 旧的位置
-        vx = (currentX - oldX) * 0.05;
-        vy = (currentY - oldY) * 0.05;
-
-        drawFrame();
-      }
-
-      // 缓动动画
-      function drawFrame() {
-        animRequest = window.requestAnimationFrame(drawFrame, canvas);
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        if (
-          ball.x >= canvas.width - 30 ||
-          ball.x <= 30 ||
-          ball.y >= canvas.height - 30 ||
-          ball.y <= 30
-        ) {
-          window.cancelAnimationFrame(animRequest);
-        }
-        ball.x += vx;
-        ball.y += vy;
-        ball.draw(context);
-      }
-            
-            */
     </script>
   </body>
 </html>
