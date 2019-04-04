@@ -2,291 +2,118 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Document</title>
   </head>
   <body>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      #drag {
-        background: red;
-        width: 100px;
-        height: 100px;
-        /* border-radius: 50%; */
-        position: absolute;
-        top: 12px;
-        left: 10px;
-      }
-    </style>
-    <div id="drag"></div>
-    <!-- <canvas id="canvas" width="1100" height="1000"></canvas> -->
+    <button id="reset">还原</button>
+    <div
+      id="test"
+      style="height: 50px;width: 50px;background:pink;position:absolute;top:40px;left:0;"
+    ></div>
     <script>
-      let dragDom = document.querySelector("#drag");
-      // 获取元素的初始位置
-      let oldLeft = dragDom.offsetLeft;
-      let oldTop = dragDom.offsetTop;
-
-      // 获取元素的宽度和高度
-      let elsWidth = dragDom.offsetWidth;
-      let elsHeight = dragDom.offsetHeight;
-
-      // 鼠标的位置
-      let mouse = { x: 0, y: 0 };
-
-      // 声明鼠标按下时，鼠标与元素中心的距离
-      let dx = 0,
-        dy = 0;
-
-      // 元素拖动前的位置
-      let oldX = 0,
-        oldY = 0;
-
-      // 记录拖动后的位置
-      let currentX = 0,
-        currentY = 0;
-
-      // 速度向量
-      let vx = 0,
-        vy = 0;
-
-      // 是否按下鼠标
-      let isPressed = false;
-
-      // 元素中心
-      dragDom.x = elsWidth;
-      dragDom.y = elsHeight;
-
-      // 小球拖拽事件
-      dragDom.addEventListener("mousedown", mouseDown, false);
-      dragDom.addEventListener("mousemove", mouseMove, false);
-      dragDom.addEventListener("mouseup", mouseUp, false);
-
-      function mouseDown(ev) {
-        let mousePos = getMousePos(ev);
-        // 判断当前鼠标是否在元素内
-        mouse = getMousePos(ev);
-        if (
-          (mouse.x > oldLeft || mouse.x > oldLeft + elsWidth) &&
-          (mouse.y > oldTop || mouse.y > oldTop + elsHeight)
-        ) {
-          // 按下了鼠标
-          isPressed = true;
-          // 记录鼠标按下时，鼠标与元素心的距离
-          dx = mouse.x - dragDom.x;
-          dy = mouse.y - dragDom.y;
-
-          // 获得小球拖拽前的位置
-          mouse = getMousePos(ev);
-          oldX = mouse.x;
-          oldY = mouse.y;
-          console.log(`获得小球拖拽前的位置=>oldX: ${oldX}, oldY: ${oldY}`);
+      function getCSS(obj, style) {
+        if (window.getComputedStyle) {
+          return getComputedStyle(obj)[style];
         }
+        return obj.currentStyle[style];
       }
-
-      function mouseMove(ev) {
-        if (isPressed) {
-          mouse = getMousePos(ev);
-          dragDom.x = mouse.x - dx;
-          dragDom.y = mouse.y - dy;
+      function move(obj, attr, target, step, fn) {
+        //如果没有建立定时器对象，则在obj下建立定时器对象
+        if (!obj.timers) {
+          obj.timers = {};
         }
+        //清除定时器
+        clearInterval(obj.timers[attr]);
+        //声明当前值变量cur
+        var cur;
+        //判断步长step的正负值
+        step = parseInt(getCSS(obj, attr)) < target ? step : -step;
+        //开启定时器
+        obj.timers[attr] = setInterval(function() {
+          //获取样式当前值并赋值给cur
+          cur = parseFloat(getCSS(obj, attr));
+          //若步长设置值使得元素超过目标点时，将步长设置值更改为目标点值 - 当前值
+          if ((cur + step - target) * step > 0) {
+            step = target - cur;
+          }
+          //将合适的步长值赋值给元素的样式
+          obj.style[attr] = cur + step + "px";
+          //当元素到达目标点后，停止定时器
+          if (step == target - cur) {
+            clearInterval(obj.timers[attr]);
+            obj.timers[attr] = 0;
+            fn && fn.call(obj);
+          }
+        }, 30);
       }
+      reset.onclick = function() {
+        history.go();
+      };
 
-      function mouseUp(ev) {
-        // dragDom.removeEventListener(mouseMove);
-        // dragDom.removeEventListener(mouseDown);
-
-        // 标示鼠标弹起事件
-        isPressed = false;
-        // 把鼠标与元素中心的距离位置恢复初始值
-        dx = 0;
-        dy = 0;
-        // 获得小球拖拽后的位置
-        mouse = getMousePos(ev);
-        currentX = mouse.x;
-        currentY = mouse.y;
-
-        // 更新速度向量：速度向量 = 新的位置 - 旧的位置
-        vx = (currentX - oldX) * 0.05;
-        vy = (currentY - oldY) * 0.05;
-        console.log(`vx: ${vx}, vy: ${vy}`);
-        startMove();
-      }
-
-      function startMove() {
-        timer = window.requestAnimationFrame(startMove);
-        // if (
-        //   dragDom.x >= window.innWidth - 30 ||
-        //   dragDom.x <= 30 ||
-        //   dragDom.y >= window.innerHeight - 30 ||
-        //   dragDom.y <= 30
-        // ) {
-        //   window.cancelAnimationFrame(timer);
-        // }
-        dragDom.x += vx;
-        dragDom.y += vy;
-
-        dragDom.style.left = dragDom.x + "px";
-        dragDom.style.top = dragDom.y + "px";
-      }
-
-      // 获得当前鼠标位置
-      function getMousePos(ev) {
-        const mouse = {
-          x: 0,
-          y: 0
+      test.onmousedown = function(e) {
+        e = e || event;
+        //声明投掷步长值
+        var stepX, stepY;
+        //声明上一次mousemove事件的坐标位置
+        var lastX2 = e.clientX;
+        var lastY2 = e.clientY;
+        //获取元素距离定位父级的x轴及y轴距离
+        var x0 = this.offsetLeft;
+        var y0 = this.offsetTop;
+        //获取此时鼠标距离视口左上角的x轴及y轴距离
+        var x1 = e.clientX;
+        var y1 = e.clientY;
+        document.onmousemove = function(e) {
+          e = e || event;
+          //获取此时鼠标距离视口左上角的x轴及y轴距离
+          var x2 = e.clientX;
+          var y2 = e.clientY;
+          stepX = x2 - lastX2;
+          stepY = y2 - lastY2;
+          lastX2 = e.clientX;
+          lastY2 = e.clientY;
+          //计算此时元素应该距离视口左上角的x轴及y轴距离
+          var X = x0 + (x2 - x1);
+          var Y = y0 + (y2 - y1);
+          //将X和Y的值赋给left和top，使元素移动到相应位置
+          test.style.left = X + "px";
+          test.style.top = Y + "px";
         };
-        const event = ev || window.event;
-        if (event.pageX || event.pageY) {
-          x = event.x;
-          y = event.y;
-        } else {
-          let scrollLeft =
-            document.documentElement.scrollLeft || document.body.scrollLeft;
-          let scrollTop =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          x = event.clientX + scrollLeft;
-          y = event.clientY + scrollTop;
-        }
-        mouse.x = x;
-        mouse.y = y;
-
-        return mouse;
-      }
-      /*
-            
-             // 创建画球函数
-      function Ball() {
-        this.x = 0;
-        this.y = 0;
-        this.radius = 20;
-        this.fillStyle = "#f85455";
-        this.draw = function(cxt) {
-          cxt.fillStyle = this.fillStyle;
-          cxt.beginPath();
-          cxt.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, true);
-          cxt.closePath();
-          cxt.fill();
+        document.onmouseup = function(e) {
+          e = e || event;
+          var maxHeight =
+            document.documentElement.clientHeight - test.offsetHeight;
+          var maxWidth =
+            document.documentElement.clientWidth - test.offsetWidth;
+          //以设置的投掷速度来进行匀速运动
+          //向右投掷
+          if (stepX > 0) {
+            move(test, "left", maxWidth, stepX);
+            //向左投掷
+          } else {
+            move(test, "left", 0, stepX);
+          }
+          //向下投掷
+          if (stepY > 0) {
+            move(test, "top", maxHeight, stepY);
+            //向上投掷
+          } else {
+            move(test, "top", 0, stepY);
+          }
+          //当鼠标抬起时，拖拽结束，则将onmousemove赋值为null即可
+          document.onmousemove = null;
+          //释放全局捕获
+          if (test.releaseCapture) {
+            test.releaseCapture();
+          }
         };
-      }
-      // 获得当前鼠标位置
-      function getMouse(ev) {
-        var mouse = {
-          x: 0,
-          y: 0
-        };
-        var event = ev || window.event;
-        if (event.pageX || event.pageY) {
-          x = event.x;
-          y = event.y;
-        } else {
-          var scrollLeft =
-            document.documentElement.scrollLeft || document.body.scrollLeft;
-          var scrollTop =
-            document.documentElement.scrollTop || document.body.scrollTop;
-          x = event.clientX + scrollLeft;
-          y = event.clientY + scrollTop;
+        //阻止默认行为
+        return false;
+        //IE8-浏览器阻止默认行为
+        if (test.setCapture) {
+          test.setCapture();
         }
-        mouse.x = x;
-        mouse.y = y;
-
-        return mouse;
-      }
-
-      var canvas = document.getElementById("canvas"),
-        context = canvas.getContext("2d"),
-        ball = new Ball(),
-        mouse = { x: 0, y: 0 },
-        isPressed = false,
-        oldX = 0,
-        oldY = 0,
-        currentX = 0,
-        currentY = 0,
-        vx = 0,
-        vy = 0;
-      ball.x = 200;
-      ball.y = 200;
-
-      // 声明鼠标按下时，鼠标与小球圆心的距离
-      var dx = 0,
-        dy = 0;
-
-      // 渲染小球
-      ball.draw(context);
-
-      // 小球拖拽事件
-      canvas.addEventListener("mousedown", mouseDown, false);
-      canvas.addEventListener("mousemove", mouseMove, false);
-      canvas.addEventListener("mouseup", mouseUp, false);
-
-      function mouseDown(ev) {
-        // 判断当前鼠标是否在小球内
-        mouse = getMouse(ev);
-        if (
-          Math.pow(mouse.x - ball.x, 2) + Math.pow(mouse.y - ball.y, 2) <=
-          Math.pow(ball.radius, 2)
-        ) {
-          isPressed = true;
-          // 记录鼠标按下时，鼠标与小球圆心的距离
-          dx = mouse.x - ball.x;
-          dy = mouse.y - ball.y;
-          // 获得小球拖拽前的位置
-          mouse = getMouse(ev);
-          oldX = mouse.x;
-          oldY = mouse.y;
-        }
-      }
-
-      function mouseMove(ev) {
-        if (isPressed) {
-          mouse = getMouse(ev);
-          ball.x = mouse.x - dx;
-          ball.y = mouse.y - dy;
-          context.clearRect(0, 0, canvas.width, canvas.height);
-          ball.draw(context);
-        }
-      }
-
-      function mouseUp(ev) {
-        // 标示鼠标弹起事件
-        isPressed = false;
-        // 把鼠标与圆心的距离位置恢复初始值
-        dx = 0;
-        dy = 0;
-        // 获得小球拖拽后的位置
-        mouse = getMouse(ev);
-        currentX = mouse.x;
-        currentY = mouse.y;
-
-        // 更新速度向量：速度向量 = 新的位置 - 旧的位置
-        vx = (currentX - oldX) * 0.05;
-        vy = (currentY - oldY) * 0.05;
-
-        drawFrame();
-      }
-
-      // 缓动动画
-      function drawFrame() {
-        animRequest = window.requestAnimationFrame(drawFrame, canvas);
-        context.clearRect(0, 0, canvas.width, canvas.height);
-        if (
-          ball.x >= canvas.width - 30 ||
-          ball.x <= 30 ||
-          ball.y >= canvas.height - 30 ||
-          ball.y <= 30
-        ) {
-          window.cancelAnimationFrame(animRequest);
-        }
-        ball.x += vx;
-        ball.y += vy;
-        ball.draw(context);
-      }
-            
-            */
+      };
     </script>
   </body>
 </html>
