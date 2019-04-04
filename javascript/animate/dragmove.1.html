@@ -19,8 +19,8 @@
         height: 100px;
         /* border-radius: 50%; */
         position: absolute;
-        top: 12px;
-        left: 10px;
+        top: 0px;
+        left: 0px;
       }
     </style>
     <div id="drag"></div>
@@ -36,7 +36,7 @@
       let elsHeight = dragDom.offsetHeight;
 
       // 鼠标的位置
-      let mouse = { x: 0, y: 0 };
+      //let mouse = { x: 0, y: 0 };
 
       // 声明鼠标按下时，鼠标与元素中心的距离
       let dx = 0,
@@ -58,12 +58,12 @@
       let isPressed = false;
 
       // 元素中心
-      x = elsWidth / 2;
-      y = elsHeight / 2;
+      dragDom.x = elsWidth / 2;
+      dragDom.y = elsHeight / 2;
 
       dragDom.onmousedown = function(ev) {
         // 判断当前鼠标是否在元素内
-        mouse = getMousePos(ev);
+        let mouse = getMousePos(ev);
 
         if (
           (mouse.x > oldLeft || mouse.x > oldLeft + elsWidth) &&
@@ -82,23 +82,19 @@
 
           document.onmousemove = function(ev) {
             if (isPressed) {
-              mouse = getMousePos(ev);
-              x = mouse.x - x;
-              y = mouse.y - y;
-              dragDom.style.left = x + "px";
-              dragDom.style.top = y + "px";
+              let mouse = getMousePos(ev);
+              dragDom.style.left = mouse.x - dragDom.x + "px";
+              dragDom.style.top = mouse.y - dragDom.y + "px";
             }
           };
           document.onmouseup = function(ev) {
-            x = mouse.x - x;
-            y = mouse.y - y;
             // 标示鼠标弹起事件
             isPressed = false;
             // 把鼠标与元素中心的距离位置恢复初始值
             dx = 0;
             dy = 0;
             // 获得小球拖拽后的位置
-            mouse = getMousePos(ev);
+            let mouse = getMousePos(ev);
             currentX = mouse.x;
             currentY = mouse.y;
 
