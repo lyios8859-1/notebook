@@ -17,12 +17,14 @@
         background: red;
         width: 100px;
         height: 100px;
+        /* border-radius: 50%; */
         position: absolute;
         top: 0px;
         left: 0px;
       }
     </style>
     <div id="drag"></div>
+    <!-- <canvas id="canvas" width="1100" height="1000"></canvas> -->
     <script>
       let dragDom = document.querySelector("#drag");
       // 获取元素的初始位置
@@ -34,7 +36,7 @@
       let elsHeight = dragDom.offsetHeight;
 
       // 鼠标的位置
-      let mouse = { x: 0, y: 0 };
+      //let mouse = { x: 0, y: 0 };
 
       // 声明鼠标按下时，鼠标与元素中心的距离
       let dx = 0,
@@ -60,9 +62,9 @@
       dragDom.y = elsHeight / 2;
 
       dragDom.onmousedown = function(ev) {
-        mouse = getMousePos(ev);
-
         // 判断当前鼠标是否在元素内
+        let mouse = getMousePos(ev);
+
         if (
           (mouse.x > oldLeft || mouse.x > oldLeft + elsWidth) &&
           (mouse.y > oldTop || mouse.y > oldTop + elsHeight)
@@ -70,8 +72,8 @@
           // 按下了鼠标
           isPressed = true;
           // 记录鼠标按下时，鼠标与元素心的距离
-          dx = mouse.x - dragDom.x;
-          dy = mouse.y - dragDom.y;
+          dx = mouse.x - x;
+          dy = mouse.y - y;
 
           // 获得小球拖拽前的位置
           oldX = mouse.x;
@@ -80,7 +82,7 @@
 
           document.onmousemove = function(ev) {
             if (isPressed) {
-              mouse = getMousePos(ev);
+              let mouse = getMousePos(ev);
               dragDom.style.left = mouse.x - dragDom.x + "px";
               dragDom.style.top = mouse.y - dragDom.y + "px";
             }
@@ -99,7 +101,6 @@
             // 更新速度向量：速度向量 = 新的位置 - 旧的位置
             vx = (currentX - oldX) * 0.05;
             vy = (currentY - oldY) * 0.05;
-            console.log(vx, vy);
             startMove();
           };
         }
