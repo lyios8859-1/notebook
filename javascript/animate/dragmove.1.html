@@ -36,10 +36,6 @@
       // 鼠标的位置
       let mouse = { x: 0, y: 0 };
 
-      // 声明鼠标按下时，鼠标与元素中心的距离
-      let dx = 0,
-        dy = 0;
-
       // 元素拖动前的位置
       let oldX = 0,
         oldY = 0;
@@ -69,10 +65,6 @@
         ) {
           // 按下了鼠标
           isPressed = true;
-          // 记录鼠标按下时，鼠标与元素心的距离
-          dx = mouse.x - dragDom.x;
-          dy = mouse.y - dragDom.y;
-          console.log(dx, dy);
 
           // 获得小球拖拽前的位置
           oldX = mouse.x;
@@ -84,26 +76,20 @@
               mouse = getMousePos(ev);
               dragDom.style.left = mouse.x - dragDom.x + "px";
               dragDom.style.top = mouse.y - dragDom.y + "px";
-              // dragDom.x = mouse.x - dx;
-              // dragDom.y = mouse.y - dy;
-              console.log(dragDom.x, dragDom.y);
             }
           };
           document.onmouseup = function(ev) {
             // 标示鼠标弹起事件
             isPressed = false;
-            // 把鼠标与元素中心的距离位置恢复初始值
-            dx = 0;
-            dy = 0;
             // 获得小球拖拽后的位置
-            let mouse = getMousePos(ev);
+            mouse = getMousePos(ev);
             currentX = mouse.x;
             currentY = mouse.y;
 
             // 更新速度向量：速度向量 = 新的位置 - 旧的位置
             vx = (currentX - oldX) * 0.05;
             vy = (currentY - oldY) * 0.05;
-            console.log(vx, vy);
+            console.log(`up: ${vx}, ${vy}`);
             startMove();
           };
         }
@@ -111,8 +97,13 @@
 
       function startMove() {
         timer = window.requestAnimationFrame(startMove);
+        if (currentX > 1000) {
+          window.cancelAnimationFrame(timer);
+          return;
+        }
         currentX += vx;
         currentY += vy;
+        console.log(`move: ${currentX}, ${currentY}`);
         dragDom.style.left = currentX + "px";
         dragDom.style.top = currentY + "px";
       }
