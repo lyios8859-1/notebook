@@ -42,37 +42,18 @@ window.onload = function() {
   // 键盘输入
   input.oninput = function() {
     // 如果输入框为空
-    // if (!input.value) {
-    //   filtered = list;
-    //   return;
-    // }
-    /*
+    if (!input.value) {
+      filtered = list;
+      return;
+    }
+
     // 使用分号分割多个数据
     let inputArr = input.value.split(";");
     // 如果支持多选
     if (multiple) {
-      // 存储输入的数据不再原始数据中的容器
-      let isinvalidData = []; // 存储合法的数据
-      let noinvalidData = []; // 存储不合法的数据
-      // 删除 ”;“ 分割成的数组中的最后一个空值
-      if (inputArr.length > 1) {
-        inputArr.pop();
-      }
-      inputArr.forEach(item => {
-        // 判断输入的数据是否不存在原始 list 中 //includes() 方法用来判断一个数组是否包含一个指定的值，
-        if (!list.includes(item)) {
-          isinvalidData.push(item);
-        } else {
-          noinvalidData.push(item);
-        }
-      });
-      if (isinvalidData.length) {
-        console.log(`输入的 ${isinvalidData.join(",")} 数据不合法`);
-      } else {
-        console.log(`输入的 ${noinvalidData.join(",")} 数据合法`);
-      }
+      inputArr.pop();
+      oldValue = inputArr;
     }
-     */
     // 修该某些数据
     //let other = input;
   };
