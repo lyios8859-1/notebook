@@ -4,8 +4,7 @@ let list = []; // 原始数据
 let filtered = []; // 对输入的过滤
 let searching = false; // 对面板的展开控制
 let preSearching = false;
-let multiple = true; // 是否支持多选
-let oldValue = []; // 多选是存储旧值
+let multiple = false; // 是否支持多选
 function key(value) {
   return /(?:.*,)*(.*)$/.exec(value)[1];
 }
@@ -42,11 +41,10 @@ window.onload = function() {
   // 键盘输入
   input.oninput = function() {
     // 如果输入框为空
-    // if (!input.value) {
-    //   filtered = list;
-    //   return;
-    // }
-    /*
+    if (!input.value) {
+      filtered = list;
+      return;
+    }
     // 使用分号分割多个数据
     let inputArr = input.value.split(";");
     // 如果支持多选
@@ -72,7 +70,6 @@ window.onload = function() {
         console.log(`输入的 ${noinvalidData.join(",")} 数据合法`);
       }
     }
-     */
     // 修该某些数据
     //let other = input;
   };
@@ -81,7 +78,7 @@ window.onload = function() {
   input.onkeydown = function(event) {
     preSearching = searching;
     // 非搜索状态进行点击，则呼出面板
-    if (!searching) {
+    if (searching) {
       searching = true;
     }
     const ev = event || window.event;
@@ -125,6 +122,7 @@ window.onload = function() {
           // 修正索引
           index = -1;
         }, 300);
+        break;
     }
   };
 
@@ -186,18 +184,10 @@ window.onload = function() {
       itemChildren[index].style.backgroundColor = "#ccc";
     }
     if (Object.is(code, 13)) {
-      if (preSearching && index < listLength()) {
-        if (!multiple) {
-          // 单选
-          inputText.value = itemChildren[index].innerText + ";";
-          searching = false;
-          console.log("单选");
-        } else {
-          // 多选
-          oldValue.push(itemChildren[index].innerText);
-          inputText.value = oldValue.join(";") + ";";
-        }
-      }
+      // if (preSearching && index < listLength()) {
+      //   selectOne();
+      // }
+      inputText.value = itemChildren[index].innerText;
     }
   }
 };
