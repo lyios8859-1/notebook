@@ -198,6 +198,10 @@ window.onload = function() {
       if (preSearching && index < listLength()) {
         if (multiple) {
           // 多选
+          if (oldValue.includes(itemChildren[index].innerText)) {
+            inputText.value = oldValue.join(";");
+            return;
+          }
           oldValue.push(itemChildren[index].innerText);
           inputText.value = oldValue.join(";");
         } else {
