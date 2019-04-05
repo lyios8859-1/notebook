@@ -72,6 +72,7 @@
           // 记录鼠标按下时，鼠标与元素心的距离
           dx = mouse.x - dragDom.x;
           dy = mouse.y - dragDom.y;
+          console.log(dx, dy);
 
           // 获得小球拖拽前的位置
           oldX = mouse.x;
@@ -83,6 +84,9 @@
               mouse = getMousePos(ev);
               dragDom.style.left = mouse.x - dragDom.x + "px";
               dragDom.style.top = mouse.y - dragDom.y + "px";
+              // dragDom.x = mouse.x - dx;
+              // dragDom.y = mouse.y - dy;
+              console.log(dragDom.x, dragDom.y);
             }
           };
           document.onmouseup = function(ev) {
@@ -107,11 +111,10 @@
 
       function startMove() {
         timer = window.requestAnimationFrame(startMove);
-        x += vx;
-        y += vy;
-
-        dragDom.style.left = x - dragDom.x + "px";
-        dragDom.style.top = y - dragDom.y + "px";
+        currentX += vx;
+        currentY += vy;
+        dragDom.style.left = currentX + "px";
+        dragDom.style.top = currentY + "px";
       }
 
       // 获得当前鼠标位置
@@ -136,6 +139,40 @@
         mouse.y = y;
 
         return mouse;
+      }
+
+      function getScreenWH() {
+        const screenWH = {
+          winWidth: 0,
+          winHeight: 0
+        };
+        //获取窗口宽度
+        if (window.innerWidth) {
+          winWidth = window.innerWidth;
+        } else if (document.body && document.body.clientWidth) {
+          winWidth = document.body.clientWidth;
+        }
+
+        //获取窗口高度
+        if (window.innerHeight) {
+          winHeight = window.innerHeight;
+        } else if (document.body && document.body.clientHeight) {
+          winHeight = document.body.clientHeight;
+        }
+
+        //通过深入Document内部对body进行检测，获取窗口大小
+        if (
+          document.documentElement &&
+          document.documentElement.clientHeight &&
+          document.documentElement.clientWidth
+        ) {
+          winHeight = document.documentElement.clientHeight;
+          winWidth = document.documentElement.clientWidth;
+        }
+
+        screenWH.winWidth = winWidth;
+        screenWH.winHeight = winHeight;
+        return screenWH;
       }
     </script>
   </body>
