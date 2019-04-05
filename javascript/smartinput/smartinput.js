@@ -104,11 +104,20 @@ window.onload = function() {
         if (timer) {
           clearTimeout(timer);
         }
-
+        let _v = "";
+        if (multiple) {
+          // 多选 主要截取最后一个字符处理
+          let inValue = input.value;
+          let _i = inValue.lastIndexOf(";");
+          _v = inValue.substring(_i + 1, inValue.length - 1);
+        } else {
+          // 单选
+          _v = input.value;
+        }
         timer = setTimeout(() => {
           // 进行可选项过滤
           filtered = list.filter(item => {
-            return item.toLowerCase().includes(key(input.value).toLowerCase());
+            return item.toLowerCase().includes(key(_v).toLowerCase());
           });
           if (filtered.length < 0) {
             console.log("没有匹配的数据......");
@@ -187,15 +196,15 @@ window.onload = function() {
     }
     if (Object.is(code, 13)) {
       if (preSearching && index < listLength()) {
-        if (!multiple) {
-          // 单选
-          inputText.value = itemChildren[index].innerText + ";";
-          searching = false;
-          console.log("单选");
-        } else {
+        if (multiple) {
           // 多选
           oldValue.push(itemChildren[index].innerText);
-          inputText.value = oldValue.join(";") + ";";
+          inputText.value = oldValue.join(";");
+        } else {
+          // 单选
+          inputText.value = itemChildren[index].innerText + ";";
+          // 关闭面板
+          searching = false;
         }
       }
     }
