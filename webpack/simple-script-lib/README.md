@@ -1,4 +1,6 @@
-# 搭建简易的开发环境
+# 实现简单的 k 库打包 min 文件开发环境
+
+## 搭建简易的开发环境
 
 > `i` 是 `install` 简写， `-D` 是 `--save-dev` 简写， `-S` 是 `--save` 简写。如果很慢建议使用淘宝镜像：`--registry=https://registry.npm.taobao.org`
 
@@ -19,11 +21,11 @@ npm i uglifyjs-webpack-plugin@beta -D
 npm i html-webpack-plugin@1 -D
 ```
 
-# 支持引入方式
+## 支持引入方式
 
 > CommonJS，AMD 和 全局引用（\<script\>\</script\>）
 
-# 引用方式
+## 引用方式
 
 ```javascript
 <script src="url" />;

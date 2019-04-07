@@ -10,19 +10,19 @@
 
 ## 创建版本库
 
-1. 创建 git 仓库文件夹（工作区）并进入到文件夹（工作区），名为: `notebook`
+1、 创建 git 仓库文件夹（工作区）并进入到文件夹（工作区），名为: `notebook`
 
 ```shell
 mkdir notebook && cd notebook
 ```
 
-2. 初始化仓库 notebook
+2、 初始化仓库 notebook
 
 ```shell
 git init
 ```
 
-3. 工作区添加文件并提交到暂存区
+3、 工作区添加文件并提交到暂存区
 
 ```shell
 # 创建文件并添加一些内容
@@ -35,7 +35,7 @@ git add README.md   （如果是 “.” 表示修改的文件全部添加到赞
 git commit -m "add README.md"
 ```
 
-4. 工作区修改文件
+4、工作区修改文件
 
 ```shell
 # 修改完成文件后，执行 git status 查看仓库状态
@@ -47,7 +47,7 @@ git add README.m）
 git commit -m "modify README.md"
 ```
 
-5. 撤销修改文件（未提交到分支）
+5、撤销修改文件（未提交到分支）
 
 - **当文件在工作区时**，执行撤销命令
 
@@ -69,31 +69,31 @@ git checkout -- README.md
 
 > 在 Git 中， HEAD 表示当前版本库， HEAD^ 表示上一个版本库， HEAD^^ 表示上一个的上一个版本库
 
-1. 查看提交的完整日志
+1、查看提交的完整日志
 
 ```shell
   git log
 ```
 
-2. 查看提交的简要日志
+2、查看提交的简要日志
 
 ```shell
 git log --pretty=noline
 ```
 
-3. 返回到上一个版本库
+3、返回到上一个版本库
 
 ```shell
 git reset --hard HEAD^
 ```
 
-4. 回到指定版本（hard 后面添加版本号 一般 7 位）
+4、回到指定版本（hard 后面添加版本号 一般 7 位）
 
 ```shell
 git reset --hard ae34256
 ```
 
-5. 查看命令历史
+5、查看命令历史
 
 ```shell
 git reflog
@@ -103,15 +103,15 @@ git reflog
 
 这里需要在 github 上注册一下有才可继续接下来的学习......
 
-1. 在注册好的 github 上新建一个名为和本地名称一样的空的仓库`notebook`
-2. 在本地工作空间 `notebook` 目录下执行如下命令：
+1、在注册好的 github 上新建一个名为和本地名称一样的空的仓库`notebook`
+2、在本地工作空间 `notebook` 目录下执行如下命令：
 
 ```shell
 # lyios8859-1 就是注册时的名称 （ssh和https的方式）
 git remote add origin git@github.com:lyios8859-1/notebook.git   [https://github.com/lyios8859-1/notebook.git]
 ```
 
-3.把本地内容推送到 github 远程仓库上(第一次 push 必须带参数 -u 关联远程仓库)
+3、把本地内容推送到 github 远程仓库上(第一次 push 必须带参数 -u 关联远程仓库)
 
 ```shell
 git push -u origin master（master 可以是其他分支）
@@ -146,7 +146,7 @@ git clone git@github.com:lyios8859-1/notebook.git  [https://github.com/lyios8859
 git pull origin master （master 可以是其他分支）
 ```
 
-# 分支
+## 分支
 
 - 查看分支
 
@@ -206,19 +206,19 @@ git log --graph --pretty=oneline --abbrev-commit
 
 解决方法：
 
-1. 藏匿当前 dev 分支的工作状态
+1、藏匿当前 dev 分支的工作状态
 
 ```shell
 git stash
 ```
 
-2. 新建一个 bug-1(分支名任意) 分支
+2、新建一个 bug-1(分支名任意) 分支
 
 ```shell
 git branch -b bug-1
 ```
 
-3. 修复 bug 并提交，合并 bug-1 到 master 分支
+3、修复 bug 并提交，合并 bug-1 到 master 分支
 
 ```shell
 git commit -m "fix the bug-1"
@@ -226,19 +226,19 @@ git checkout master
 git merge --no-ff -m "merge bug-1" bug-1
 ```
 
-4. 删除 bug-1 分支
+4、删除 bug-1 分支
 
 ```shell
 git branch -d bug-1
 ```
 
-5. 查看当前 stash
+5、查看当前 stash
 
 ```shell
 git stash list
 ```
 
-6. 恢复 dev 分支的工作状态，并删除 stash 内容
+6、恢复 dev 分支的工作状态，并删除 stash 内容
 
 ```shell
 git stash pop

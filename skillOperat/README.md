@@ -1,4 +1,6 @@
-# ES6 的实现私有属性
+# javascript 的一些细节知识点理解
+
+## ES6 的实现私有属性
 
 ```javascript
 const [_x, _y] = [Symbol.for("_x"), Symbol.for("_y")];
@@ -23,7 +25,7 @@ console.log(test[_x], test[_y]); // 这种还是可以访问的哦
 console.log(test._x, test._y); // 这种是不可以访问的哦 undefined
 ```
 
-# new 做了什么
+## new 做了什么
 
 ```javascript
 function Test() {}
@@ -49,7 +51,7 @@ if (typeof Test.call(o1) === "object") {
 // o1
 ```
 
-# Object.create 理解
+## Object.create 理解
 
 创建一个没用任何属性的空对象： `Object.create(null)`，它不等同于 new Object(); 也不等同于字面量的形式 `{}`
 
