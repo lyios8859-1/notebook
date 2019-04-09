@@ -720,3 +720,109 @@ login2.hide();
 
 console.log(login1 === login2); // true
 ```
+
+
+## 状态模式
+> 一个对象的内部状态改变时可以在外界修改这个状态对应的行为。
+> 实质是使用一个**对象**或者**数组**来存储一组状态，每一个状态对应一个行为的实现，
+> 实现的时候是根据状态依次去实现的。
+
+**思路**：
+
+首先需要定义一个状态对象或者一个状态数组，内部保存状态变量，然后内部封装好状态的行为实现；
+再使状态对象返回一个接口对象，该接口对象可以修改或者调用内部的状态。
+
+### 使用状态模式减少很多的 if...else 多层嵌套
+
+- ES5实现：
+
+```javascript
+const SatateObj = (function() {
+  // 状态数组
+  let _currentState = [];
+  // 状态的行为对象
+  let states = {
+    speak() {
+      console.log("说话");
+    },
+    run() {
+      console.log("跑步");
+    }
+    // ...
+  };
+
+  const Action = {
+    // 更改当前动作
+    changeState(arr) {
+      _currentState = arr;
+      // 为了链式操作
+      return this;
+    },
+    // 触发行为
+    triggerAction() {
+      console.log("触发行为动作");
+      _currentState.forEach(actions => {
+        states[actions] && states[actions]();
+      });
+      return this;
+    }
+  };
+
+  // 返回接口给外界调用
+  return {
+    change: Action.changeState,
+    trigger: Action.triggerAction
+  }
+})();  
+// 外界调用
+SatateObj.change(["speak"]).trigger();
+```
+
+- ES6实现
+
+```javascript
+class SatateObj {
+  constructor() {
+    // 状态数组
+    this._currentState = [];
+    // 状态的行为对象
+    this.states = {
+      speak() {
+        console.log("说话");
+      },
+      run() {
+        console.log("跑步");
+      }
+      // ...
+    }
+  }
+  // 更改当前动作
+  change(arr) {
+    this._currentState = arr;
+    // 为了链式操作
+    return this;
+  }
+  // 触发行为
+  trigger() {
+    console.log("触发行为动作");
+    this._currentState.forEach(actions => {
+      this.states[actions] && this.states[actions]();
+    });
+    return this;
+  }
+}
+
+// 外界调用
+new SatateObj().change(["speak"]).trigger();
+```
+
+### 状态模式的使用场景
+1、一个对象的行为取决于它的状态，并且它必须在运行时刻根据状态改变它的行为。
+
+2、一个操作中含有大量的分支语句，而且这些分支语句依赖于该对象的状态。状态通常为一个或多个枚举常量的表示。
+
+简而言之，当遇到很多同级if-else或者switch的时候，可以使用状态模式来进行简化。
+
+[状态模式参考](https://segmentfault.com/a/1190000012506631)
+
+## 观察者模式

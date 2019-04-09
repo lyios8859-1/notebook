@@ -7,6 +7,46 @@
     <title>Document</title>
   </head>
   <body>
-    <script></script>
+    <script>
+    const SatateObj = (function() {
+      // 状态数组
+      let _currentState = [];
+      // 状态的行为对象
+      let states = {
+        speak() {
+          console.log("说话");
+        },
+        run() {
+          console.log("跑步");
+        }
+        // ...
+      };
+
+      const Action = {
+        // 更改当前动作
+        changeState(arr) {
+          _currentState = arr;
+          // 为了链式操作
+          return this;
+        },
+        // 触发行为
+        triggerAction() {
+          console.log("触发行为动作");
+          _currentState.forEach(actions => {
+            states[actions] && states[actions]();
+          });
+          return this;
+        }
+      };
+
+      // 返回接口给外界调用
+      return {
+        change: Action.changeState,
+        trigger: Action.triggerAction
+      }
+    })();  
+    // 外界调用
+    SatateObj.change(["speak"]).trigger();
+    </script>
   </body>
 </html>
