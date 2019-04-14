@@ -694,3 +694,182 @@ login2.hide();
 
 console.log(login1 === login2); // true
 ```
+
+
+## 状态模式
+> 一个对象的内部状态改变时可以在外界修改这个状态对应的行为。
+> 实质是使用一个**对象**或者**数组**来存储一组状态，每一个状态对应一个行为的实现，
+> 实现的时候是根据状态依次去实现的。
+
+**思路**：
+
+首先需要定义一个状态对象或者一个状态数组，内部保存状态变量，然后内部封装好状态的行为实现；
+再使状态对象返回一个接口对象，该接口对象可以修改或者调用内部的状态。
+
+### 使用状态模式减少很多的 if...else 多层嵌套
+
+- ES5实现：
+
+```javascript
+const SatateObj = (function() {
+  // 状态数组
+  let _currentState = [];
+  // 状态的行为对象
+  let states = {
+    speak() {
+      console.log("说话");
+    },
+    run() {
+      console.log("跑步");
+    }
+    // ...
+  };
+
+  const Action = {
+    // 更改当前动作
+    changeState(arr) {
+      _currentState = arr;
+      // 为了链式操作
+      return this;
+    },
+    // 触发行为
+    triggerAction() {
+      console.log("触发行为动作");
+      _currentState.forEach(actions => {
+        states[actions] && states[actions]();
+      });
+      return this;
+    }
+  };
+
+  // 返回接口给外界调用
+  return {
+    change: Action.changeState,
+    trigger: Action.triggerAction
+  }
+})();  
+// 外界调用
+SatateObj.change(["speak"]).trigger();
+```
+
+- ES6实现
+
+```javascript
+class SatateObj {
+  constructor() {
+    // 状态数组
+    this._currentState = [];
+    // 状态的行为对象
+    this.states = {
+      speak() {
+        console.log("说话");
+      },
+      run() {
+        console.log("跑步");
+      }
+      // ...
+    }
+  }
+  // 更改当前动作
+  change(arr) {
+    this._currentState = arr;
+    // 为了链式操作
+    return this;
+  }
+  // 触发行为
+  trigger() {
+    console.log("触发行为动作");
+    this._currentState.forEach(actions => {
+      this.states[actions] && this.states[actions]();
+    });
+    return this;
+  }
+}
+
+// 外界调用
+new SatateObj().change(["speak"]).trigger();
+```
+
+### 状态模式的使用场景
+1、一个对象的行为取决于它的状态，并且它必须在运行时刻根据状态改变它的行为。
+
+2、一个操作中含有大量的分支语句，而且这些分支语句依赖于该对象的状态。状态通常为一个或多个枚举常量的表示。
+
+简而言之，当遇到很多同级if-else或者switch的时候，可以使用状态模式来进行简化。
+
+[状态模式参考](https://segmentfault.com/a/1190000012506631)
+
+## 观察者模式（发布者和订阅者）
+> 观察者模式中，并不是一个对象调用另一个对象的方法，而是一个对象订阅另一个对象的特定活动并在状态改变后获得通知。当发生了一个重要
+> 的事件时，发布者将会通知所有订阅者并且可能经常以事件对象的形式传递消息
+
+举个例子：有三个报纸出版社，报社一、报社二、报社三，有两个订报人，分别是:订阅者1，订阅者2。在这里出版社就是被观察者（发布者），订报人就是观察者（订阅者）
+
+```javascript
+// 观察者模式：对程序中某一个对象的进行实时的观察，当该对象状态发生改变的时候 进行通知
+// 被观察者（发布者）
+let Publish = function(name) {
+  this.name = name;
+  this.subscribers = []; // 数组中存储所有的订阅者，数组的元素都是函数类型
+};
+// Publish 的实例对象方法 发布消息
+Publish.prototype.deliver = function(news) {
+  let publish = this; // this 代表报社
+  this.subscribers.forEach(function(item) {
+    // 循环 subscribers 中的所有订报人，为这些人发布内容
+    item(news, publish); // 每个订阅者都收到了新闻（news），还有来自哪家报刊
+  });
+  return this;// 链式调用
+};
+
+// 观察者（订阅者）
+// 订阅者的方法,每一个订阅者都是一个函数,在函数原型上扩展一个方法
+Function.prototype.subscribe = function (publish) {//出版社形参
+  let sub = this;//取得当前订阅者这个人
+  //不能同时订一家出版社同一份报纸,没意义
+  //publish.subscribers//张三，李四，王五，名字可能重复
+  //publish.subscribers数组里面有的人，不能再订阅
+  //我们使用ecma5里面的some方法，循环遍历数组的每一个元素，执行一个函数，如果有相同的名字则返回true，不相同则返回false
+  let alreadExists = publish.subscribers.some(function (item) {
+      return item === sub;
+  });
+  //如果出版社名单没有这个人，则加入其中
+  if(!alreadExists){
+      publish.subscribers.push(sub);
+  }
+  return this;// 链式调用。
+}
+
+// 取消订阅
+//具体的一个订阅者去取消订阅报纸的方法
+Function.prototype.unsubscribe = function(publish){
+  let sub = this;//取得当前订阅者这个人
+  // filter (过滤函数:循环便利数组的每一个元素，执行一个函数如果不匹配，则删除该元素)
+  publish.subscribers = publish.subscribers.filter(function(item){
+      return item !== sub ;
+  });
+  return this;//为了方便，采用链式调用。
+};
+
+
+//实例化发布者对象(报社对象)
+let pub1 = new Publish('报社一');
+let pub2 = new Publish('报社二');
+let pub3 = new Publish('报社三');
+
+//观察者
+let sub1 = function (news,pub) {
+console.log(pub.name + "====sub1===" + news);
+}
+let sub2 = function (news,pub) {
+console.log(pub.name + "====sub2===" + news);
+}
+//执行订阅方法
+sub1.subscribe(pub1).subscribe(pub2).subscribe(pub3);
+sub2.subscribe(pub1).subscribe(pub2).subscribe(pub3);
+pub1.deliver(343434,pub1);
+pub2.deliver(4444444444,pub2);
+pub3.deliver(656,pub3);
+sub1.unsubscribe(pub1); //取消订阅
+pub2.deliver(4444444444,pub2);
+```
