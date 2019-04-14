@@ -587,8 +587,6 @@ PS: 在实际项目中，因为使用 `this.$router.addRoutes` 方法添加的�
 
 **注意**：单例模式在多线程的应用场合下必须小心使用。如果当唯一实例尚未创建时，有两个线程同时调用创建方法，那么它们同时没有检测到唯一实例的存在，从而同时各自创建了一个实例，这样就有两个实例被构造出来，从而违反了单例模式中实例唯一的原则。 解决这个问题的办法是为指示类是否已经实例化的变量提供一个互斥锁(虽然这样会降低效率)。
 
-### 传统的写法（对于 javascript 其实没多大意思: 因为 js 本身是没有类这种概念的）
-
 ```javascript
 let LoginFrom = function() {
   // 登录框默认隐藏
@@ -631,30 +629,6 @@ LoginFrom.getInstance = (function() {
 let login1 = LoginFrom.getInstance();
 login1.show();
 let login2 = LoginFrom.getInstance();
-login2.hide();
-
-console.log(login1 === login2); // true
-```
-
-### 闭包修改传统的写法实现了单例
-
-```javascript
-// 单独的方法，直接使用该方法
-const getInstance = (function() {
-  // 使用闭包为了 instance 污染
-  let instance = null;
-  return function() {
-    if (!instance) {
-      instance = new LoginFrom();
-    }
-    return instance;
-  };
-})();
-
-// test
-let login1 = getInstance();
-login1.show();
-let login2 = getInstance();
 login2.hide();
 
 console.log(login1 === login2); // true
