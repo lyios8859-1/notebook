@@ -1,16 +1,16 @@
 # Vuejs 学习
 
-## 的数据双向绑定原理
+## :+1: Vue 的数据双向绑定原理
 
 核心使用 ES5 的 API `Object.defineProperty()` 对数据的劫持，劫持数据处理后再再返回给使用者。Vue3.x 话说 通过 ES6 的 API `Proxy()` 来处理。
 
 ![vue 数据双向绑定原理](./vue数据双向绑定原理.png "vue 数据双向绑定原理")
 
-## Vue2.x 生命周期
+## :+1: Vue2.x 生命周期
 
 ![Vue2的生命周期](./Vue2的生命周期.png "Vue2的生命周期")
 
-## Vue 组件
+## :+1: Vue 组件
 
 > `Vue.extend(options);` options 是对象；使用基础Vue构造器，创建一个子类，参数是一个包含组件选项的对象，data选项是特例，它必须是函数。
 
