@@ -51,7 +51,10 @@ new Vue({
 </div>;
 ```
 
-> Vue.extends
+
+
+
+**Vue.extends**
 
 ```javascript
 let extendsObj = {
