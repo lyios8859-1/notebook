@@ -12,7 +12,7 @@
 
 ## :+1: Vue 组件
 
-> `Vue.extend(options);` options 是对象；使用基础Vue构造器，创建一个子类，参数是一个包含组件选项的对象，data选项是特例，它必须是函数。
+> `Vue.extend(options);` options 是对象；使用基础 Vue 构造器，创建一个子类，参数是一个包含组件选项的对象，data 选项是特例，它必须是函数。
 
 ```javascript
 let BaseExtendComponent = Vue.extend({
@@ -32,14 +32,14 @@ new BaseExtendComponent().$mount("#lyTest");
 Vue.component(BaseExtendComponent.name, BaseExtendComponent);
 // 页面使用
 <div class="component">
-  <BaseExtendComponent></BaseExtendComponent>
-</div>
+  <BaseExtendComponent />
+</div>;
 
 // 用法三，将组件注册为局部组件
 new Vue({
   el: "#app",
-  data(){
-    return{}
+  data() {
+    return {};
   },
   components: {
     BaseExtendComponent
@@ -47,8 +47,8 @@ new Vue({
 });
 // 页面使用
 <div class="component">
-  <BaseExtendComponent></BaseExtendComponent>
-</div>
+  <BaseExtendComponent />
+</div>;
 ```
 
 > Vue.extends
@@ -56,36 +56,36 @@ new Vue({
 ```javascript
 let extendsObj = {
   updated() {
-    console.log('我是扩展的updated');
+    console.log("我是扩展的updated");
   },
   methods: {
     //这个并没有被执行，如果方法名一样，只执行构造器里面的原生方法，混入跟扩展类似
     add() {
-      console.log('我是扩展出来的方法');
+      console.log("我是扩展出来的方法");
       this.num++;
     }
   }
-}
+};
 
 new Vue({
   el: "#app",
-  data(){
+  data() {
     return {
       num: 1
-    }
+    };
   },
   methods: {
     add() {
-      console.log('我是原生的方法');
+      console.log("我是原生的方法");
       this.num++;
     }
   },
   //全局的最优先，混入的先执行，原生的后执行，下面的后执行
   updated() {
-    console.log('我是原生的update');
+    console.log("我是原生的update");
   },
   //下面扩展放的是对象，而混入放的是数组
   extends: extendsObj,
-  delimiters: ['${','}']
-})
+  delimiters: ["${", "}"]
+});
 ```
