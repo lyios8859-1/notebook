@@ -1,0 +1,21 @@
+{
+  "name": "vue-webpack",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "cross-env NODE_ENV=production webpack --config build/webpack.config.client.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "cross-env": "^5.2.0",
+    "vue-loader": "^15.7.0",
+    "vue-template-compiler": "^2.6.10",
+    "webpack-merge": "^4.2.1"
+  },
+  "dependencies": {
+    "vue": "^2.6.10"
+  }
+}

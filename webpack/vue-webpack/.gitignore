@@ -1,7 +1,5 @@
 *.log
 *.temp
-./webpack/vue-webpack/node_modules/
-
 node_modules
 public
 server-build
