@@ -60,13 +60,14 @@ if (isDev) {
   config = merge(baseConfig, {
     mode: "production",
     entry: {
-      index: path.join(__dirname, "../src/index.js"),
-      vendor: ["vue"] // 提取出库文件， 比如 vue，react，jquery
+      index: path.join(__dirname, "../src/index.js")
     },
     output: {
       filename: "[name].bundle.[hash:8].js",
-      path: path.join(__dirname, "../dist")
-      //publicPath: "http://127.0.0.1:8000/dist/"
+      // 打包的存放路径
+      path: path.join(__dirname, "../dist"),
+      // 打包的静态文件 [index].html 中的文件引用路径（一般服务器的路径）
+      publicPath: "http://127.0.0.1:8000/dist/"
     },
     module: {
       rules: [
