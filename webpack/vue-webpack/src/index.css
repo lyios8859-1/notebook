@@ -2,4 +2,9 @@
   margin: 0;
   padding: 0;
   transform: perspective(53);
+  color: red;
+}
+
+html {
+  font-size: 14px;
 }
