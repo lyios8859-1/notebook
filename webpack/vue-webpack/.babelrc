@@ -1,7 +1,7 @@
 {
   "presets": [
     [
-      "env",
+      "@babel/preset-env",
       {
         "targets": {
           "browsers": [
@@ -16,4 +16,6 @@
       }
     ]
   ]
+  // 暂时没有使用，把ES6 > ES5
+  // "plugins": ["@babel/transform-runtime"]
 }

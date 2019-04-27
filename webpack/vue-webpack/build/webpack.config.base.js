@@ -12,7 +12,7 @@ const config = {
     filename: "[name].bundle.[hash:8].js",
     // 输入的路径（绝对路径）
     path: path.join(__dirname, "../dist"),
-    // 文件的引入的路径
+    // 文件的引入的路径, 必须
     publicPath: "/"
   },
   module: {
@@ -38,8 +38,22 @@ const config = {
           {
             loader: "url-loader",
             options: {
-              limit: 1024,
-              name: "resources/[path][name].[hash:8].[ext]"
+              // 低于这个limit就直接转成base64插入到style里，不然以name的方式命名存放
+              // 单位时bit
+              limit: 2048,
+              name: "resources/images/[path][name].[hash:8].[ext]"
+            }
+          }
+        ]
+      },
+      {
+        // 字体图标啥的，跟图片分处理方式一样
+        test: /\.(woff|woff2|eot|ttf|otf)$/,
+        use: [
+          {
+            loader: "url-loader",
+            options: {
+              name: "resources/font/[path][name].[hash:8].[ext]"
             }
           }
         ]
@@ -50,15 +64,36 @@ const config = {
     new VueLoaderPlugin(),
     // 以当前目录的index.html为模板生成新的index.html，这个插件就是将新生成的文件（js,css）引入
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, "./template.html")
+      template: path.resolve(__dirname, "./template.html"),
+      filename: "index.html",
+      hash: true,
+      minify: {
+        removeAttributeQuotes: true, // 移除属性的引号
+        cache: true, // 表示内容变化的时候生成一个新的文件
+        caseSensitive: false, //是否大小写敏感
+        collapseWhitespace: true //是否去除空格
+      }
     })
   ],
+  optimization: {
+    //优化
+    splitChunks: {
+      cacheGroups: {
+        //缓存组，一个对象。它的作用在于，可以对不同的文件做不同的处理
+        commonjs: {
+          name: "vender", //输出的名字（提出来的第三方库,所有的都打在一个文件中，vue,jauery等等）
+          test: /\.js/, //通过条件找到要提取的文件
+          chunks: "initial" //只对入口文件进行处理
+        }
+      }
+    }
+  },
   resolve: {
     //引入路径是不用写对应的后缀名
     extensions: [".js", ".vue", ".jsx", ".json"],
     //缩写扩展
     alias: {
-      //正在使用的是vue的运行时版本，而此版本中的编译器时不可用的，我们需要把它切换成运行时 + 编译的版本
+      //正在使用的是vue的运行时版本，而此版本中的编译器时不可用的，我们需要把它切换成运行时 + 编译的版本,// 配置别名'vue$'，不然import 'vue'时，webpack找不到
       vue$: "vue/dist/vue.esm.js", // 'vue/dist/vue.common.js' for webpack 1
       //用@直接指引到src目录下，如：'./src/main'可以写成、'@/main'
       "@": path.resolve(__dirname, "./src")

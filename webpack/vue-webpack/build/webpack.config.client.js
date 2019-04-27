@@ -35,7 +35,8 @@ let devServer = {
   overlay: true, // 如果代码出错，会在浏览器页面弹出“阴影层”。类似于 vue-cli 等脚手架
   open: true, // 打开浏览器
   hot: true,
-  inline: false // 使用 iframe 显示相关的错误开发信息在页面
+  overlay: true // 如果代码出错，会在浏览器页面弹出“阴影层”。类似于 vue-cli 等脚手架
+  // inline: false // 使用 iframe 显示相关的错误开发信息在页面
 };
 
 let config = Object.create(null);
@@ -66,7 +67,10 @@ if (isDev) {
     },
     devServer: devServer,
     plugins: [
+      // 启用模块热替换(HMR)
       new webpack.HotModuleReplacementPlugin(),
+      // 当开启 HMR 的时候使用该插件会显示模块的相对路径，建议用于开发环境。
+      new webpack.NamedModulesPlugin(),
       new webpack.NoEmitOnErrorsPlugin()
     ]
   });
@@ -82,11 +86,11 @@ if (isDev) {
       index: path.join(__dirname, "../src/index.js")
     },
     output: {
-      filename: "[name].bundle.[hash:8].js",
+      filename: "resources/js/[name].bundle.[hash:8].js",
       // 打包的存放路径
       path: path.join(__dirname, "../dist"),
       // 打包的静态文件 [index].html 中的文件引用路径（一般服务器的路径）
-      publicPath: "http://127.0.0.1:8000/dist/"
+      publicPath: "http://127.0.0.1:8080/"
     },
     module: {
       rules: [
@@ -112,8 +116,8 @@ if (isDev) {
     },
     plugins: [
       new MiniCssExtractPlugin({
-        filename: "[name].[chunkhash:8].css",
-        chunkFilename: "[id].css"
+        filename: "resources/css/[name].[chunkhash:8].css",
+        chunkFilename: "resources/css/[id].css"
       }),
       // 删除 output 中以前的的文件生成新的 dist 目录下所有文件， 2.0之后不用指定删除的文件路径参数了
       new CleanWebpackPlugin()

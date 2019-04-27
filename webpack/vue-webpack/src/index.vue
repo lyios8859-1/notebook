@@ -1,5 +1,5 @@
 <template>
-  <div class="app">中午而你</div>
+  <div class="app">是的方式打</div>
 </template>
 
 <script>

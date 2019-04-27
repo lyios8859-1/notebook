@@ -28,10 +28,30 @@ npm install -D babel-loader @babel/core babel-preset-env
 npm install -D vue-loader vue-template-compiler
 ```
 
-### CSS 编译的支持
+### 处理 CSS 样式
+
+> - stylus-loader: 将 stylus 转 css
+> - css-loader: 将 css 转为 CommonJS 规范的 js 字符串
+> - style-loader: 将 js 字符串转为 style node 插入到 html 中
+> - postcss-loader: PostCSS 是一个允许使用 JS 插件转换样式的工具，我们用 postcss 的插件就要配置它，autoprefixer 就是 postcss 项目里的一个插件
+> - autoprefixer: 添加了 vendor 浏览器前缀，它使用 Can I Use 上面的数据。
 
 ```shell
-npm install -D style-loader css-loader stylus-loader
+npm install -D style-loader css-loader stylus-loader postcss-loader
 ```
 
-PS: 注意引入顺序
+PS: 注意引入顺序, postcss-loader 处理需要在根目录新建个 postcss.config.js 文件来配置 autoprefixer。
+
+### file-loader 与 url-loader
+
+- `file-loader`: webpack 最终会将各个模块打包成一个文件，因此我们样式中的 url 路径是相对入口 html 页面的，而不是相对于原始 css 文件所在的路径的。这就会导致图片引入失败。这个问题是用 `file-loader` 解决的，`file-loader` 可以解析项目中的 url 引入（不仅限于 css），根据我们的配置，将图片拷贝到相应的路径，再根据我们的配置，修改打包后文件引用路径，使之指向正确的文件
+- `url-loader`： 如果图片较多，会发很多 http 请求，会降低页面性能。这个问题可以通过 `url-loader` 解决。`url-loader` 会将引入的图片编码，生成 dataURl。相当于把图片数据翻译成一串字符。再把这串字符打包到文件中，最终只需要引入这个文件就能访问图片了。当然，如果图片较大，编码会消耗性能。因此 `url-loader` 提供了一个 `limit` 参数，小于 `limit` 字节的文件会被转为 DataURl，大于 `limit` 的还会使用 `file-loader` 进行 copy。
+- 总的来说：`url-loader` 封装了 `file-loader`。`url-loader` 赖于 `file-loader`，即使用 `url-loader` 时，也要安装 `file-loader`
+
+## 将第三方库单独打包
+
+> 比如 Vue、Vue-Router、React 等等
+
+```shell
+npm i autodll-webpack-plugin -D
+```
