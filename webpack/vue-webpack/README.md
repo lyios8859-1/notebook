@@ -1,6 +1,7 @@
 # Vue + Webpack4.x 开发配置
 
 - 知识点一：
+
 > __dirname: 获取当前文件所在路径，等同于path.dirname(__filename)
   
 ```javascript
@@ -9,6 +10,7 @@
 ```
 
 - 知识点二：
+
 > path.resolve([..paths]): 把一个路径或路径片段的序列解析为一个绝对路径
 
 1、给定的路径的序列是从右往左被处理的，后面每个 path 被依次解析，直到构造完成一个绝对路径
@@ -24,7 +26,7 @@ path.resolve('/foo/bar', '/tmp/file/'); // 返回: '/tmp/file'
 
 // 如果当前工作目录为 /home/Timly/node，
 // 则返回 '/home/Timly/node/node6.9/static_files/gif/image.gif'
-path.resolve('node6.9', 'static_files/png/', '../gif/image.gif'); 
+path.resolve('node6.9', 'static_files/png/', '../gif/image.gif');
 ```
 
 ## webpack 的基本插件和开发服务的启动插件
@@ -74,11 +76,3 @@ PS: 注意引入顺序, postcss-loader 处理需要在根目录新建个 postcss
 - `file-loader`: webpack 最终会将各个模块打包成一个文件，因此我们样式中的 url 路径是相对入口 html 页面的，而不是相对于原始 css 文件所在的路径的。这就会导致图片引入失败。这个问题是用 `file-loader` 解决的，`file-loader` 可以解析项目中的 url 引入（不仅限于 css），根据我们的配置，将图片拷贝到相应的路径，再根据我们的配置，修改打包后文件引用路径，使之指向正确的文件
 - `url-loader`： 如果图片较多，会发很多 http 请求，会降低页面性能。这个问题可以通过 `url-loader` 解决。`url-loader` 会将引入的图片编码，生成 dataURl。相当于把图片数据翻译成一串字符。再把这串字符打包到文件中，最终只需要引入这个文件就能访问图片了。当然，如果图片较大，编码会消耗性能。因此 `url-loader` 提供了一个 `limit` 参数，小于 `limit` 字节的文件会被转为 DataURl，大于 `limit` 的还会使用 `file-loader` 进行 copy。
 - 总的来说：`url-loader` 封装了 `file-loader`。`url-loader` 赖于 `file-loader`，即使用 `url-loader` 时，也要安装 `file-loader`
-
-## 将第三方库单独打包
-
-> 比如 Vue、Vue-Router、React 等等
-
-```shell
-npm i autodll-webpack-plugin -D
-```
