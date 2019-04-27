@@ -1,5 +1,32 @@
 # Vue + Webpack4.x 开发配置
 
+- 知识点一：
+> __dirname: 获取当前文件所在路径，等同于path.dirname(__filename)
+  
+```javascript
+  console.log(__dirname); // print: /Users/Timly
+  console.log(path.dirname(__filename)); // print: /Users/Timly
+```
+
+- 知识点二：
+> path.resolve([..paths]): 把一个路径或路径片段的序列解析为一个绝对路径
+
+1、给定的路径的序列是从右往左被处理的，后面每个 path 被依次解析，直到构造完成一个绝对路径
+2、如果处理完全部给定的 path 片段后还未生成一个绝对路径，则当前工作目录会被用上
+3、生成的路径是规范化后的，且末尾的斜杠会被删除，除非路径被解析为根目录
+4、长度为零的 path 片段会被忽略
+5、如果没有传入 path 片段，则 `path.resolve()` 会返回当前工作目录的绝对路径
+
+```javascript
+path.resolve('/foo/bar', './baz'); // 返回: '/foo/bar/baz'
+
+path.resolve('/foo/bar', '/tmp/file/'); // 返回: '/tmp/file'
+
+// 如果当前工作目录为 /home/Timly/node，
+// 则返回 '/home/Timly/node/node6.9/static_files/gif/image.gif'
+path.resolve('node6.9', 'static_files/png/', '../gif/image.gif'); 
+```
+
 ## webpack 的基本插件和开发服务的启动插件
 
 ```shell
