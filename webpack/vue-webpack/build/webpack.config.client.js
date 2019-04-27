@@ -116,7 +116,7 @@ if (isDev) {
     },
     plugins: [
       new MiniCssExtractPlugin({
-        filename: "resources/css/[name].[chunkhash:8].css",
+        filename: "resources/css/[name].bundle.[chunkhash:8].css",
         chunkFilename: "resources/css/[id].css"
       }),
       // 删除 output 中以前的的文件生成新的 dist 目录下所有文件， 2.0之后不用指定删除的文件路径参数了
