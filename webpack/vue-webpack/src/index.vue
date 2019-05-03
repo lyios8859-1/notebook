@@ -6,7 +6,6 @@
 </template>
 
 <script>
-import dd from "./index.jsx";
 export default {
   name: "App",
   data() {

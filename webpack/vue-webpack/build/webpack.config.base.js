@@ -6,7 +6,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 // 多线程处理
 const HappyPack = require("happypack");
 const os = require("os");
-const happyThreadPool = HappyPack.ThreadPool({ size: os.cpus().length });
+const happyThreadPool = HappyPack.ThreadPool({ size: os.cpus().length - 2 }); // 个人不需要完全利用 CPU 全部线程，所以减去2个线程
 
 const config = {
   // 指定入口文件，可以多个，这里的对象属性提供给打包输出的 [name] 使用是一样的
@@ -91,7 +91,7 @@ const config = {
         }
       ],
       //共享进程池
-      threadPool: happyThreadPool - 2, // 个人不需要完全使用 cpu 进程
+      threadPool: happyThreadPool,
       //允许 HappyPack 输出日志
       verbose: true
     })
