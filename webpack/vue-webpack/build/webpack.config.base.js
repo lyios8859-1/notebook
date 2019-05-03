@@ -17,7 +17,7 @@ const config = {
     filename: "[name].bundle.[hash:8].js",
     // 输入的路径（绝对路径）
     path: path.join(__dirname, "../dist"),
-    // 文件的引入的路径, 必须
+    // 文件的引入的路径, 必须, 比如 script 中的 src。link 中的 href，一般是服务器的路径
     publicPath: "/"
   },
   module: {
