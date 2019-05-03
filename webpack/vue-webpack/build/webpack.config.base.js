@@ -3,6 +3,11 @@ const path = require("path");
 const { VueLoaderPlugin } = require("vue-loader");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
+// 多线程处理
+const HappyPack = require("happypack");
+const os = require("os");
+const happyThreadPool = HappyPack.ThreadPool({ size: os.cpus().length });
+
 const config = {
   // 指定入口文件，可以多个，这里的对象属性提供给打包输出的 [name] 使用是一样的
   entry: {
@@ -19,12 +24,14 @@ const config = {
     rules: [
       {
         test: /\.js$/,
-        loader: "babel-loader",
-        exclude: /node_modules/
+        //loader: "babel-loader",
+        exclude: /node_modules/,
+        use: ["happypack/loader?id=js"]
       },
       {
         test: /\.jsx$/,
-        loader: "babel-loader"
+        //loader: "babel-loader",
+        use: ["happypack/loader?id=js"]
       },
       {
         test: /\.vue$/,
@@ -73,6 +80,20 @@ const config = {
         caseSensitive: false, //是否大小写敏感
         collapseWhitespace: true //是否去除空格
       }
+    }),
+    new HappyPack({
+      //用id来标识 happypack处理那里类文件
+      id: "js",
+      //如何处理  用法和loader 的配置一样
+      loaders: [
+        {
+          loader: "babel-loader?cacheDirectory=true"
+        }
+      ],
+      //共享进程池
+      threadPool: happyThreadPool - 2, // 个人不需要完全使用 cpu 进程
+      //允许 HappyPack 输出日志
+      verbose: true
     })
   ],
   optimization: {

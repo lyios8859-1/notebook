@@ -4,6 +4,8 @@ const merge = require("webpack-merge");
 const baseConfig = require("./webpack.config.base.js");
 const isDev = process.env.NODE_ENV === "development";
 
+const HappyPack = require("happypack");
+
 let devServer = {
   // devserver启动服务的根路径
   contentBase: path.join(__dirname, "../dist"),
