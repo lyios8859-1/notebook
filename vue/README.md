@@ -366,7 +366,6 @@ Compile.prototype.isTextNode = function(node) {
 将解析器 Compile 与监听器 Observer 和订阅者 Watcher 关联
 
 ```javascript
-// 修改属性的调用方式 myVue.data.test => myVue.test
 function MyVue(options) {
   const _this = this;
   _this.vm = this;
