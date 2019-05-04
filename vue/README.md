@@ -144,8 +144,8 @@ Watcher.prototype.update = function() {
   this.run();
 };
 Watcher.prototype.run = function() {
-  var value = this.vm.data[this.exp];
-  var oldVal = this.value;
+  let value = this.vm.data[this.exp];
+  let oldVal = this.value;
   if (value !== oldVal) {
     this.value = value;
     this.cb.call(this.vm, value, oldVal);
@@ -155,14 +155,14 @@ Watcher.prototype.get = function() {
   // 缓存自己
   Dep.target = this;
   // 强制执行监听器里的get函数
-  var value = this.vm.data[this.exp];
+  let value = this.vm.data[this.exp];
   // 释放自己
   Dep.target = null;
   return value;
 };
 ```
 
-与此同时，需要对监听器 Observer 修改一下，主要是对应 Watcher 类原型上的 get 函数。需要调整地方在于 defineReactive 函数
+与此同时，需要对监听器 Observer 修改一下，主要是对应订阅者 Watcher 类原型上的 get 函数。需要修改代码地方在 defineReactive 函数的 get 中
 
 ```javascript
 function defineReactive(data, key, value) {
@@ -202,6 +202,235 @@ function defineReactive(data, key, value) {
   });
   Dep.target = null;
 }
+```
+
+## 将监听器（Observer）和订阅者（Watcher）相关联
+
+```javascript
+// 将监听器（Observer）与订阅者（Watcher）关联起来，即可实现简单的数据双向绑定
+function MyVue(data, el, exp) {
+  this.data = data;
+  // 劫持数据
+  observer(data);
+  // 初始化模板数据的值
+  el.innerHTML = this.data[exp];
+  // 订阅
+  new Watcher(this, exp, function(value) {
+    el.innerHTML = value;
+  });
+}
+```
+
+调用
+
+```html
+<body>
+  <p id="test"></p>
+</body>
+```
+
+```javascript
+let ele = document.querySelector("#test");
+let myVue = new MyVue(
+  {
+    test: "Tom"
+  },
+  ele,
+  "test"
+);
+setTimeout(function() {
+  console.log("test值改变了");
+  // myVue.data.test 这种调用方式不是我们想要的，myVue.test 才是
+  myVue.data.test = "Jerry";
+}, 1000);
+```
+
+修改属性的调用方式 `myVue.data.test` => `myVue.test`
+
+```javascript
+// 修改属性的调用方式 myVue.data.test => myVue.test
+function MyVue(data, el, exp) {
+  this.data = data;
+  // 劫持数据
+  observer(data);
+  // 初始化模板数据的值
+  el.innerHTML = this.data[exp];
+  // 订阅
+  new Watcher(this, exp, function(value) {
+    el.innerHTML = value;
+  });
+}
+```
+
+## 实现模板（Dom）的简单编译（Compile）
+
+> - 1、解析模板的指令，并替换模板的数据，初始化视图
+> - 2、将模板的指令对应的节点绑定对应的更新函数，初始化对应的订阅器
+
+既然涉及到模板，那么就会涉及到 Dom 元素的获取和操作，先创建一个 fragment 片段，将需要解析的 Dom 节点放入 fragment 片段里再进行处理。
+
+```javascript
+// Dom 节点的统一插入处理
+function nodeToFragment(el) {
+  // 创建一个 Dom 碎片对象
+  const fragment = document.createDocumentFragment();
+  let child = el.firstChild;
+  while (child) {
+    // 将 Dom 元素存入 fragment 中
+    fragment.appendChild(child);
+    child = el.firstChild;
+  }
+  return fragment;
+}
+```
+
+遍历各个节点处理指令，事件，以及 `{{}}` 大括号，这里先处理大括号
+
+```javascript
+// 解析编译模板
+function Compile(el, vm) {
+  this.vm = vm;
+  console.log(el);
+  this.el = document.querySelector(el);
+  this.fragment = null;
+  this.init();
+}
+
+// Dom 节点的统一插入处理
+Compile.prototype.init = function() {
+  if (this.el) {
+    this.fragment = this.nodeToFragment(this.el);
+    this.compileElement(this.fragment);
+    this.el.appendChild(this.fragment);
+  } else {
+    console.log("Dom元素不存在");
+  }
+};
+
+// Dom 的文档碎片
+Compile.prototype.nodeToFragment = function(el) {
+  var fragment = document.createDocumentFragment();
+  var child = el.firstChild;
+  while (child) {
+    // 将Dom元素移入fragment中
+    fragment.appendChild(child);
+    child = el.firstChild;
+  }
+  return fragment;
+};
+
+// 解析处理 {{}}
+Compile.prototype.compileElement = function(el) {
+  const _this = this;
+  let childNodes = el.childNodes;
+  [].slice.call(childNodes).forEach(function(node) {
+    // 正则匹配 {{变量}} 不能有空格
+    const reg = /\{\{(.*)\}\}/;
+    const text = node.textContent;
+
+    if (_this.isTextNode(node) && reg.test(text)) {
+      // 判断是否是符合这种形式{{}}的指令
+      _this.compileText(node, reg.exec(text)[1]);
+    }
+
+    if (node.childNodes && node.childNodes.length) {
+      // 继续递归遍历子节点
+      _this.compileElement(node);
+    }
+  });
+};
+
+// 填充数据到视图模板中
+Compile.prototype.compileText = function(node, exp) {
+  const _this = this;
+  const initText = _this.vm[exp];
+  // 将初始化的数据初始化到模板视图中
+  _this.updateText(node, initText);
+  new Watcher(_this.vm, exp, function(value) {
+    // 生成订阅器并绑定更新函数
+    _this.updateText(node, value);
+  });
+};
+
+// 把数据插入到模板中
+Compile.prototype.updateText = function(node, value) {
+  node.textContent = typeof value == "undefined" ? "" : value;
+};
+
+// 检测是否是文本节点
+Compile.prototype.isTextNode = function(node) {
+  return node.nodeType == 3;
+};
+```
+
+将解析器 Compile 与监听器 Observer 和订阅者 Watcher 关联
+
+```javascript
+// 修改属性的调用方式 myVue.data.test => myVue.test
+function MyVue(options) {
+  const _this = this;
+  _this.vm = this;
+  _this.data = options.data;
+
+  // 修改属性的调用方式 myVue.data.test => myVue.test
+  Object.keys(_this.data).forEach(key => {
+    // 绑定代理属性
+    _this.proxyKeys(key);
+  });
+
+  // 劫持数据
+  observer(_this.data);
+  // 编译模板
+  new Compile(options.el, _this.vm);
+  return _this;
+}
+
+// 绑定代理属性
+MyVue.prototype.proxyKeys = function(key) {
+  const _this = this;
+  Object.defineProperty(_this, key, {
+    enumerable: false,
+    configurable: true,
+    get() {
+      return _this.data[key];
+    },
+    set(newValue) {
+      _this.data[key] = newValue;
+    }
+  });
+};
+```
+
+调用>测试：
+
+html
+
+```html
+<div id="test">
+  <!-- {{}} 中不能有空格-->
+  <p>{{name}}</p>
+  <p>{{age}}</p>
+</div>
+```
+
+js
+
+```javascript
+const myVue = new MyVue({
+  el: "#test",
+  data: {
+    name: "Tom",
+    age: 998
+  }
+});
+setTimeout(function() {
+  console.log("name值改变了");
+  myVue.name = "Jerry";
+}, 1000);
+setTimeout(function() {
+  console.log("age值改变了");
+  myVue.age = 100;
+}, 2000);
 ```
 
 ## :+1: Vue2.x 生命周期
@@ -249,7 +478,7 @@ new Vue({
 </div>;
 ```
 
-**Vue.extends**
+- **Vue.extends**
 
 ```javascript
 let extendsObj = {
