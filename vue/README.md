@@ -284,7 +284,7 @@ function nodeToFragment(el) {
 }
 ```
 
-遍历各个节点处理指令，事件，以及 `{{}}` 大括号，这里先处理大括号
+遍历各个节点处理指令，事件，以及 `{{}}` 大括号，这里先处理**大括号的解析**
 
 ```javascript
 // 解析编译模板
@@ -430,6 +430,66 @@ setTimeout(function() {
   console.log("age值改变了");
   myVue.age = 100;
 }, 2000);
+```
+
+- **指令的解析编译**
+
+添加一个 v-model 指令和事件指令的解析编译，对于这些节点我们使用函数 compile 进行解析处理
+
+```javascript
+function compile(node) {
+  const nodeAttrs = node.attributes;
+  const _this = this;
+  Array.prototype.forEach.call(nodeAttrs, attr => {
+    const attrName = attr.name;
+    if (_this.isDirective(attrName)) {
+      const exp = attr.value;
+      const dir = attrName.substring(2);
+      if (_this.isEventDirective(dir)) {
+        // 事件指令
+        _this.compileEvent(node, _this.vm, exp, dir);
+      } else {
+        // v-model 指令
+        _this.compileModel(node, _this.vm, exp, dir);
+      }
+      node.removeAttribute(attrName);
+    }
+  });
+}
+```
+
+PS: 把该函数挂在到 Compile 的原型上;首先遍历所有节点属性，然后再判断属性是否是指令属性。再区分是哪种指令，在对应处理函数
+
+此时，修改 MyVue 类
+
+```javascript
+function MyVue(options) {
+  const _this = this;
+  this.data = options.data;
+  this.methods = options.methods;
+
+  Object.keys(this.data).forEach(key => {
+    _this.proxyKeys(key);
+  });
+
+  observe(this.data);
+  new Compile(options.el, this);
+  // 所有事情处理好后执行mounted函数
+  options.mounted.call(this);
+}
+```
+
+调用>测试
+
+html
+
+```html
+<div id="test">
+  <p>{{name}}</p>
+  <input v-model="name" />
+  <p>{{age}}</p>
+  <button v-on:click="clickMe">click me!</button>
+</div>
 ```
 
 ## :+1: Vue2.x 生命周期
