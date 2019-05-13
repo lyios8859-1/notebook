@@ -1,0 +1,147 @@
+<template>
+  <div class="AddressBook scrollbar"
+       ref="scrollbarRefs">
+    <slot>
+      <div class="list"
+           v-if="listItem.length > 0">
+        <!-- 内容列表 -->
+        <ul class="list_item"
+            @click.stop="getItem"
+            ref="listItemRefs">
+          <template v-for="(v, i) in listItem">
+            <li class="item"
+                :key="i"
+                :class='"list_item_" + listItem[i].subject.toLocaleLowerCase()'>
+              <h3>{{v.subject}}</h3>
+              <ul class="item_content"
+                  v-if="v.content.length > 0">
+                <template v-for="(vv, ii) in v.content">
+                  <li :key="ii">{{vv.name}}</li>
+                </template>
+              </ul>
+              <p v-else>没有数据...</p>
+            </li>
+          </template>
+        </ul>
+
+        <!-- A B ... 索引 -->
+        <ul class="list_index"
+            @click="setScrollHeight">
+          <template v-for="(v, i) in subjectIndex">
+            <li :key="i">
+              <h3>{{v}}</h3>
+            </li>
+          </template>
+        </ul>
+      </div>
+      <div class="list"
+           v-else>没有数据...</div>
+    </slot>
+  </div>
+</template>
+
+<style lang="less" scoped>
+.scrollbar {
+  height: 447px; /* 不设置高度就是满屏*/
+  overflow-y: auto;
+}
+.scrollbar::-webkit-scrollbar {
+  /*滚动条整体样式*/
+  width: 8px; /*高宽分别对应横竖滚动条的尺寸*/
+}
+.scrollbar::-webkit-scrollbar-thumb {
+  /*滚动条里面小方块*/
+  border-radius: 2px;
+  -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+  background: #928e8e;
+}
+.scrollbar::-webkit-scrollbar-track {
+  /*滚动条里面轨道*/
+  -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+  background: #ededed;
+}
+.AddressBook {
+  background: #eee;
+  margin-top: 20px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 400px;
+  margin: auto;
+  border: 1px solid #ccc;
+  font-size: 0;
+
+  user-select: none;
+  li {
+    list-style: none;
+  }
+  a {
+    text-decoration: none;
+  }
+  .list {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: auto;
+    height: 100%;
+    font-size: 16px;
+    .list_item {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      .item {
+        // background: yellow;
+        h3 {
+          background: #aaa;
+        }
+        .item_content {
+          // background: #666;
+          li {
+            height: 32px;
+            line-height: 32px;
+            border-bottom: 1px solid #ddd;
+            text-indent: 4px;
+            &:hover {
+              color: red;
+            }
+          }
+          li:last-child {
+            border-bottom: 0;
+          }
+        }
+      }
+      .item:last-child {
+        margin-bottom: 0;
+      }
+    }
+    .list_index {
+      position: fixed;
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+      width: 36px;
+      li {
+        height: 32px;
+        line-height: 32px;
+        text-align: center;
+        cursor: pointer;
+        &:hover {
+          color: red;
+        }
+      }
+    }
+  }
+}
+</style>
+
+<script>
+import Vue from "vue";
+import BookComponents from "./BookComponents.js";
+// vue 组件是 vue扩展的实例子
+export default Vue.extend(BookComponents);
+</script>
