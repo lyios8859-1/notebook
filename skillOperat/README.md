@@ -100,17 +100,17 @@ console.log(o1.num); // 10
 console.log(o2.num); // undefined 不是 3
 ```
 
-|   比较   |           new           |      Object.create      |
-| :------: | :---------------------: | :---------------------: |
-| 构造函数 |   保留原构造函数属性    |   丢失原构造函数属性    |
-|  原型链  | 原构造函数prototype属性 | 原构造函数/（对象）本身 |
-| 作用对象 |        function         |    function和object     |
+|   比较   |            new            |      Object.create      |
+| :------: | :-----------------------: | :---------------------: |
+| 构造函数 |    保留原构造函数属性     |   丢失原构造函数属性    |
+|  原型链  | 原构造函数 prototype 属性 | 原构造函数/（对象）本身 |
+| 作用对象 |         function          |   function 和 object    |
 
-# constructor
+## constructor
 
 ```javascript
-function Func(){}
-console.log(Func.prototype.constructor === Func);//true
+function Func() {}
+console.log(Func.prototype.constructor === Func); //true
 
 let f1 = new Func();
 console.log(f1.constructor === Func); // true
@@ -126,24 +126,24 @@ console.log(bb.isPrototypeOf(aa)); // false 在 aa 的 [[Prototype]] 也就是 _
 **PS**: `construct` 丢失
 
 ```javascript
-function Func(){}
+function Func() {}
 Func.prototype = {};
 let f1 = new Func();
 
-console.log(f1.constructor === Func);//false
-console.log(f1.constructor === Object);//true
+console.log(f1.constructor === Func); //false
+console.log(f1.constructor === Object); //true
 ```
 
 **PS**: 不要去修改对象，如果用了，请记得检查你的原型，避免出现 `.constructor` 的丢失。
 
 ```javascript
-function Func(){}
-Func.prototype = {}
+function Func() {}
+Func.prototype = {};
 let f1 = new Foo();
 Object.defineProperty(Func.prototype, "constructor", {
   enumerable: false,
-  writeable:true,
+  writeable: true,
   configureable: true,
   value: Func // 让 .constructor 指向 Func
-})
+});
 ```

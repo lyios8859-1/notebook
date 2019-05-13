@@ -1,4 +1,6 @@
-# Nubmer.parseInt(可以转换的数字值, 基数)
+# 易错点
+
+## Nubmer.parseInt(可以转换的数字值, 基数)
 
 ```javascript
 Number.parseInt("1", 2); // 1
@@ -16,7 +18,7 @@ let arr = [1, 2, 3, 4];
 let arrA = arr.map(Number.parseInt); // [1, NaN, NaN, NaN]
 ```
 
-# 闭包
+## 闭包
 
 ```javascript
 for (var i = 0; i < 5; i++) {
