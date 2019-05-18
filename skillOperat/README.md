@@ -147,3 +147,21 @@ Object.defineProperty(Func.prototype, "constructor", {
   value: Func // 让 .constructor 指向 Func
 });
 ```
+
+## undefined 与 null 判断
+
+> undefined 表示一个已经定义的变量未赋值， null 是表示一个空的对象，一个变量指向了 null 这个对象
+
+```javascript
+
+// bad
+if(a === undefined || x === null) {
+  // ...
+};
+
+// good
+if(x == undefined) {
+  // ...
+}
+
+```

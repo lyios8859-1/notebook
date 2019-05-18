@@ -15,9 +15,11 @@ const BookComponents = (function() {
       ]
     }
   ];
+
   // 模板实例
   let vm = null;
   const BookComponents = Vue.extend(BookComponentsTpl);
+
   return function(option, mark, callback) {
     // 这个地方最好用混入
     let options = option || defaultConfig;
