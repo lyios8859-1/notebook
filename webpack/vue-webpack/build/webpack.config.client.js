@@ -13,8 +13,14 @@ let devServer = {
   overlay: true, // 如果代码出错，会在浏览器页面弹出“阴影层”。类似于 vue-cli 等脚手架
   open: true, // 打开浏览器
   hot: true,
-  overlay: true // 如果代码出错，会在浏览器页面弹出“阴影层”。类似于 vue-cli 等脚手架
+  overlay: true, // 如果代码出错，会在浏览器页面弹出“阴影层”。类似于 vue-cli 等脚手架
   // inline: false // 使用 iframe 显示相关的错误开发信息在页面
+  proxy: {
+    "/": {
+      target: "http://127.0.0.1:8080/",
+      changeOrigin: true
+    }
+  }
 };
 
 let config = Object.create(null);
