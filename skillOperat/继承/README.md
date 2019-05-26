@@ -141,3 +141,92 @@ console.log(boy instanceof Man); // true
 
 **缺点**：
 1、使用 `Man.prototype = new Person();` 调用了两次父类构造函数，生成了两份实例（子类实例将子类原型上的那份屏蔽了）（使用 `Man.prototype = Person.prototype;` 也解决了两次调用父类构造函数）
+
+## 寄生组合继承（解决了组合继承的两次调用父类构造函数）
+
+> 通过寄生方式，砍掉父类的实例属性，这样，在调用两次父类的构造的时候，就不会初始化两次实例方法/属性，避免的组合继承的缺点
+
+```javascript
+// 父类
+function Person(name) {
+  this.name = name || "书名";
+  this.run = function() {
+    console.log(this.name + "跑步！");
+  };
+}
+Person.prototype.sleep = function() {
+  console.log(this.name + "睡觉！");
+};
+Person.prototype.age = 12;
+
+// 子类
+function Man(name, sex) {
+  // 构造函数继承（可以向父类构造函数传递参数）
+  Person.call(this, name);
+  this.sex = sex || "男";
+}
+
+(function() {
+  // 创建一个没有实例的方法类
+  let Super = function() {};
+  Super.prototype = Person.prototype;
+  // 将实例作为子类的原型
+  Man.prototype = new Super();
+  // 修复子类的构造函数指向
+  Man.prototype.constructor = Man;
+
+  // 子类新增属性和方法，必须要在 new 父类() ’new Person()‘ 这样的语句之后执行，不能放到构造器中
+  Man.prototype.work = function() {
+    console.log(this.name + "工作!");
+  };
+})();
+
+let boy = new Man("Tom");
+
+boy.run(); // Tom跑步！
+boy.work(); // Tom工作！
+boy.sleep(); // Tom睡觉！
+
+console.log(boy instanceof Person); // true
+console.log(boy instanceof Man); // true
+```
+
+## 拷贝继承
+
+```javascript
+// 父类
+function Person(name) {
+  this.name = name || "书名";
+  this.run = function() {
+    console.log(this.name + "跑步！");
+  };
+}
+Person.prototype.sleep = function() {
+  console.log(this.name + "睡觉！");
+};
+Person.prototype.age = 12;
+
+// 子类
+function Man(name, sex) {
+  let person = new Person();
+  for (let p in person) {
+    Man.prototype[p] = person[p];
+  }
+  this.sex = sex || "男";
+  // 不能传递参数给父类
+  this.name = name || "Man";
+}
+Man.prototype.work = function() {
+  console.log(this.name + ":" + this.sex + ":" + "工作");
+};
+let boy = new Man("Tom", "女");
+
+boy.run(); // Tom跑步！
+boy.work(); // Tom工作！
+boy.sleep(); // Tom睡觉！
+
+console.log(boy instanceof Person); // false
+console.log(boy instanceof Man); // true
+```
+
+[参考](https://www.cnblogs.com/humin/p/4556820.html)
