@@ -13,21 +13,18 @@ Person.prototype.age = 12;
 // 子类
 function Man(name, sex) {
   let person = new Person();
-  for (let p in person) {
-    Man.prototype[p] = person[p];
-  }
-  this.sex = sex || "男";
-  // 不能传递参数给父类
-  this.name = name || "Man";
+  person.name = name || "Man";
+  return Object.assign(this, person);
 }
 Man.prototype.work = function() {
   console.log(this.name + ":" + this.sex + ":" + "工作");
 };
 let boy = new Man("Tom", "女");
 
+console.log(boy.age); // 12
 boy.run(); // Tom跑步！
-boy.work(); // Tom工作！
 boy.sleep(); // Tom睡觉！
+boy.work(); // 报错，不能调用子类的实例和原型的方法和属性！
 
 console.log(boy instanceof Person); // false
 console.log(boy instanceof Man); // true
