@@ -1,6 +1,6 @@
 # 自定义事件
 
-``` javascript
+```javascript
 // 自定义事件监听
 
 function LyEventDispatcher() {
@@ -31,7 +31,7 @@ dispatch.LyAddEventListener("lyTest", function(e) {
 dispatch.dispatchEvent("lyTest", { name: "Jerry" });
 ```
 
-**ES6**
+**ES6**:
 
 ```javascript
 class LyEventDispatcher {
@@ -50,4 +50,31 @@ class LyEventDispatcher {
     this.events[type](e);
   }
 }
+```
+
+```javascript
+const eventUtil = {
+  // 触发事件 (事件类型，传输的数据)
+  notiyEvent(type, data) {
+    let event = document.createEvent("HTMLEvents");
+    event.initEvent("lyEvent");
+    event.eventType = type;
+    event.eventData = data;
+    // 触发事件
+    document.dispatchEvent(event);
+  },
+  // 监听事件的触发（执行） （事件类型，回调函数）
+  listenerEvent(type, callback) {
+    document.addEventListener(
+      "lyEvent",
+      event => {
+        if (event.eventType === type) {
+          console.log("data:", event.eventData);
+          callback && callback(event.eventData);
+        }
+      },
+      false
+    );
+  }
+};
 ```

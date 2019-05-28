@@ -163,5 +163,44 @@ if(a === undefined || x === null) {
 if(x == undefined) {
   // ...
 }
+```
 
+## js对象数组添加属性和修改属性
+
+```javascript
+let kvArr = [
+  {key: 1, value: 20},
+  {key: 2, value: 30},
+  {key: 3, value: 40}
+];
+let reformattedArr = kvArr.map(o, i => {
+  let obj = {};
+  obj.id = i; // 添加属性
+  obj[obj.key] = obj.value; // 修改属性
+  return obj;
+});
+```
+
+## 判断滚动条是否到底
+
+```javascript
+// 判断滚动条是否到底，这里认为小于 20 就已经到底了，实际是等于 0 才到底
+function hasBottom() {
+  let pageHeight = Math.max(
+    document.body.scrollHeight,
+    document.body.offsetHeight
+  );
+  let viewportHeight =
+    window.innerHeight ||
+    document.documentElement.clientHeight ||
+    document.body.clientHeight ||
+    0;
+  let scrollHeight =
+    window.pageYOffset ||
+    document.documentElement.scrollTop ||
+    document.body.scrollTop ||
+    0;
+  // 文档真实高度 - 视窗的高度 - 上面卷起（隐藏）的高度  < 20
+  return pageHeight - viewportHeight - scrollHeight < 20;
+}
 ```
