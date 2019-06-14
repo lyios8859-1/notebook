@@ -1,13 +1,15 @@
 <template>
   <div class="parentBox">
-    dsfadsf
-    <h1>dskfajlsjkd</h1>
+    <h1>index</h1>
     <parent></parent>
+    <testSmartInput></testSmartInput>
   </div>
 </template>
 
 <script>
 import parent from "./parent.vue";
+import testSmartInput from "./SmartInput/testSmartInput.vue";
+
 export default {
   name: "App",
   data() {
@@ -16,7 +18,8 @@ export default {
   mounted() {},
   methods: {},
   components: {
-    parent
+    parent,
+    testSmartInput
   }
 };
 </script>
