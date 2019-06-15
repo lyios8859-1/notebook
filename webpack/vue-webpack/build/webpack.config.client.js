@@ -23,7 +23,7 @@ let devServer = {
   // }
 };
 
-let config = Object.create(null);
+let config = {};//Object.create(null);
 if (isDev) {
   console.log("正在开发中......");
   // 合并覆盖基本配置

@@ -1,8 +1,11 @@
 <template>
   <div class="parentBox">
     <h1>index</h1>
-    <parent></parent>
-    <testSmartInput></testSmartInput>
+    <!-- <parent></parent> -->
+    <!-- <testSmartInput></testSmartInput> -->
+    <!-- <Notification content="test notifiy"></Notification> -->
+    <div class="notify"></div>
+    <button @click="addNotify">addNotify</button>
   </div>
 </template>
 
@@ -15,8 +18,20 @@ export default {
   data() {
     return {};
   },
-  mounted() {},
-  methods: {},
+  mounted() {
+    this.$notify({
+      content: "ly content",
+      btn: "开启"
+    });
+  },
+  methods: {
+    addNotify() {
+      this.$notify({
+        content: "ly content",
+        btn: "开启"
+      });
+    }
+  },
   components: {
     parent,
     testSmartInput
@@ -28,7 +43,7 @@ export default {
 @import './index.css';
 
 .parentBox {
-  color: red;
-  border: 1px solid blue;
+  color: blue;
+  border: 1px solid red;
 }
 </style>

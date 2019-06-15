@@ -1,6 +1,10 @@
 import Vue from "vue";
 import Index from "./index.vue";
 
+import Notification from "./notification/index.js";
+Vue.use(Notification);
+
+
 new Vue({
   el: "#app",
   template: "<Index />",
