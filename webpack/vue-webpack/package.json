@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack-dev-server --config build/webpack.config.client.js ",
-    "build": "cross-env NODE_ENV=production webpack --progress --config build/webpack.config.client.js"
+    "build": "cross-env NODE_ENV=production webpack --progress --config build/webpack.config.client.js",
+    "lib": "cross-env NODE_ENV=production webpack --progress --config build/webpack.config.lib.js"
   },
   "keywords": [
     "webpack4",
