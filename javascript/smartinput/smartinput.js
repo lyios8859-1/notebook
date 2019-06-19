@@ -4,7 +4,7 @@ let list = []; // 原始数据
 let filtered = []; // 对输入的过滤
 let searching = false; // 对面板的展开控制
 let preSearching = false;
-let multiple = false; // 是否支持多选
+let multiple = true; // 是否支持多选
 let oldValue = []; // 多选是存储旧值
 function key(value) {
   return /(?:.*,)*(.*)$/.exec(value)[1];
@@ -17,7 +17,7 @@ function init() {
   searching = true;
 
   // ajax获取数据
-  list = ["Hello", "Cat", "Tom", "Jery", "Dog", "Worlld"];
+  list = ["Hello", "Cat", "Tom", "Jery", "Dog", "Worlld", "I", "You", "She", "He", "Me", "My", "Parent", "Son", "Sister"];
   filtered = list;
 }
 
@@ -36,9 +36,6 @@ window.onload = function () {
       }
       smartUl.innerHTML = html;
       smartUl.style.display = "block";
-    } else {
-      // 关闭面板
-      smartUl.style.display = "none";
     }
   };
 
@@ -49,14 +46,16 @@ window.onload = function () {
       filtered = list;
       return;
     }
-
-    // 使用分号分割多个数据
+    /*
+    // 使用分号分割多个数据 （针对与方案一的多选需要）
     let inputArr = input.value.split(";");
     // 如果支持多选
     if (multiple) {
       inputArr.pop();
       oldValue = inputArr;
     }
+    */
+
     // 修该某些数据
     //let other = input;
   };
@@ -151,8 +150,10 @@ window.onload = function () {
 
       for (let i = 0; i < len; i++) {
         itemChildren[i].style.backgroundColor = null;
+        itemChildren[i].style.color = null;
       }
       itemChildren[index].style.backgroundColor = "#ccc";
+      itemChildren[index].style.color = "red";
     }
     if (Object.is(code, 40)) {
       // index++; 这种方式不友好，需要判断两个极端最大和最小
@@ -175,8 +176,11 @@ window.onload = function () {
 
       for (let i = 0; i < len; i++) {
         itemChildren[i].style.backgroundColor = null;
+        itemChildren[i].style.color = null;
+
       }
       itemChildren[index].style.backgroundColor = "#ccc";
+      itemChildren[index].style.color = "red";
     }
     if (Object.is(code, 13)) {
       if (preSearching && index < listLength()) {
@@ -194,13 +198,12 @@ window.onload = function () {
           // 添加多个 方案二 建议
           let name = itemChildren[index].innerText.trim();
           // 判断输入的是否已经存在之前的输入中
-          if (!inputText.value.split(';').includes(name)) {
+          if (!inputText.value.split(";").includes(name)) {
             let input = inputText.value;
-            input = input && input.substring(0, input.lastIndexOf(';') + 1);
-            inputText.value = input + name + ';';
-            console.log('>>', inputText.value);
+            input = input && input.substring(0, input.lastIndexOf(";") + 1);
+            inputText.value = input + name + ";";
           } else {
-            console.log('已经选择...');
+            console.log("已经选择...");
           }
           // 关闭面板
           // searching = false;
@@ -211,7 +214,8 @@ window.onload = function () {
 
           // 关闭面板
           searching = false;
-          smartUl.style.display = "none";
+          // 以后优化时，调用函数关闭面板
+          // smartUl.style.display = "none";
         }
       }
     }
