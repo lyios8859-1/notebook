@@ -17,10 +17,29 @@ function init() {
   searching = true;
 
   // ajax获取数据
-  list = ["Hello", "Cat", "Tom", "Jery", "Dog", "Worlld", "I", "You", "She", "He", "Me", "My", "Parent", "Son", "Sister"];
+  list = ["Hello", "Cat", "Tom", "Jery", "Dog", "Worlld", "I", "You", "She", "He", "Me", "My", "Parent", "Son", "Master", "Promise"];
   filtered = list;
 }
 
+// 点击选中
+function checkItem(data) {
+  let inputText = document.querySelector("#smartItem").previousElementSibling;
+  if (multiple) {
+    // 多选
+    let name = data.trim();
+    // 判断输入的是否已经存在之前的输入中
+    if (!inputText.value.split(";").includes(name)) {
+      let input = inputText.value;
+      input = input && input.substring(0, input.lastIndexOf(";") + 1);
+      inputText.value = input + name + ";";
+    } else {
+      console.log("已经选择...");
+    }
+  } else {
+    // 单选
+    inputText.value = data + ";";
+  }
+}
 window.onload = function () {
   const smartUl = document.querySelector("#smartItem");
   const input = smartUl.previousElementSibling;
@@ -32,7 +51,7 @@ window.onload = function () {
     if (searching) {
       let html = "";
       for (let i = 0; i < filtered.length; i++) {
-        html += `<li>${filtered[i]}</li>`;
+        html += `<li onclick="checkItem('${filtered[i]}')">${filtered[i]}</li>`;
       }
       smartUl.innerHTML = html;
       smartUl.style.display = "block";
@@ -109,7 +128,7 @@ window.onload = function () {
             console.log("模糊匹配： ", filtered);
             let html = "";
             for (let i = 0; i < filtered.length; i++) {
-              html += `<li>${filtered[i]}</li>`;
+              html += `<li onclick="checkItem('${filtered[i]}')">${filtered[i]}</li>`;
             }
             smartUl.innerHTML = "";
             smartUl.innerHTML = html;
@@ -125,7 +144,7 @@ window.onload = function () {
     const isScroll = hasScrolled(scrollContainer, "vertical");
     const itemChildren = scrollContainer.children;
     let len = itemChildren.length;
-    const inputText = scrollContainer.previousElementSibling;
+    let inputText = scrollContainer.previousElementSibling;
 
     if (Object.is(code, 38)) {
       // index--; 这种方式不友好，需要判断两个极端最大和最小
