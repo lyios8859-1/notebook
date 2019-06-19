@@ -2,7 +2,7 @@ import Vue from "vue";
 import BookComponentsTpl from "./BookComponents.vue";
 import utils from "./utils.js";
 
-const BookComponents = (function() {
+const BookComponents = (function () {
   // 默认配置
   let defaultConfig = [
     {
@@ -20,9 +20,10 @@ const BookComponents = (function() {
   let vm = null;
   const BookComponents = Vue.extend(BookComponentsTpl);
 
-  return function(option, mark, callback) {
+  return function (option, mark, callback) {
     // 这个地方最好用混入
     let options = option || defaultConfig;
+    // eslint-disable-next-line 
     console.log(options);
     // 如果已经存在，则删除, 如果需要多个组件
     if (vm && mark) {
@@ -62,6 +63,7 @@ const BookComponents = (function() {
             this.isShowCover = true;
             callback && callback(result);
           } else {
+            // eslint-disable-next-line 
             console.log("点击了索引标题");
           }
         },
@@ -88,11 +90,13 @@ const BookComponents = (function() {
               for (let i = 0, len = h3Dom.length; i < len; i++) {
                 // 判断是否与列表项的h3的内容一致
                 if (Object.is(e.target.innerHTML, h3Dom[i].innerHTML)) {
+                  // scrollDom.scrollTop = h3Dom[i].offsetTop; // 这种方式有缺陷
                   scrollDom.scrollTop = h3Dom[i].offsetTop;
                 }
               }
             }
           } else {
+            // eslint-disable-next-line 
             console.log("没有滚动条");
           }
         },

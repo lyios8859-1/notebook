@@ -110,6 +110,8 @@
       .item {
         // background: yellow;
         h3 {
+          height: 32px;
+          line-height: 32px;
           background: #aaa;
         }
         .item_content {
@@ -117,7 +119,7 @@
           li {
             height: 32px;
             line-height: 32px;
-            border-bottom: 1px solid #ddd;
+            box-shadow: 0px 0px 1px #ccc;
             text-indent: 4px;
             // cursor: pointer;
             &:hover {

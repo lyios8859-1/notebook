@@ -4,7 +4,7 @@ let list = []; // 原始数据
 let filtered = []; // 对输入的过滤
 let searching = false; // 对面板的展开控制
 let preSearching = false;
-let multiple = true; // 是否支持多选
+let multiple = false; // 是否支持多选
 let oldValue = []; // 多选是存储旧值
 function key(value) {
   return /(?:.*,)*(.*)$/.exec(value)[1];
@@ -21,14 +21,14 @@ function init() {
   filtered = list;
 }
 
-window.onload = function() {
+window.onload = function () {
   const smartUl = document.querySelector("#smartItem");
   const input = smartUl.previousElementSibling;
   // 初始化数据
   init();
 
   // 获取焦点, 显示选项面板
-  input.onfocus = function() {
+  input.onfocus = function () {
     if (searching) {
       let html = "";
       for (let i = 0; i < filtered.length; i++) {
@@ -36,11 +36,14 @@ window.onload = function() {
       }
       smartUl.innerHTML = html;
       smartUl.style.display = "block";
+    } else {
+      // 关闭面板
+      smartUl.style.display = "none";
     }
   };
 
   // 键盘输入
-  input.oninput = function() {
+  input.oninput = function () {
     // 如果输入框为空
     if (!input.value) {
       filtered = list;
@@ -59,7 +62,7 @@ window.onload = function() {
   };
 
   // 联想搜索的主体功能函数，这里使用keydown是为了保证持续性的上下键能够保证执行
-  input.onkeydown = function(event) {
+  input.onkeydown = function (event) {
     preSearching = searching;
     // 非搜索状态进行点击，则呼出面板
     if (!searching) {
@@ -179,17 +182,36 @@ window.onload = function() {
       if (preSearching && index < listLength()) {
         if (multiple) {
           // 多选
-          if (oldValue.includes(itemChildren[index].innerText)) {
-            inputText.value = oldValue.join(";");
-            return;
+
+          // 添加多个 方案一
+          // if (oldValue.includes(itemChildren[index].innerText)) {
+          //   inputText.value = oldValue.join(";");
+          //   return;
+          // }
+          // oldValue.push(itemChildren[index].innerText);
+          // inputText.value = oldValue.join(";");
+
+          // 添加多个 方案二 建议
+          let name = itemChildren[index].innerText.trim();
+          // 判断输入的是否已经存在之前的输入中
+          if (!inputText.value.split(';').includes(name)) {
+            let input = inputText.value;
+            input = input && input.substring(0, input.lastIndexOf(';') + 1);
+            inputText.value = input + name + ';';
+            console.log('>>', inputText.value);
+          } else {
+            console.log('已经选择...');
           }
-          oldValue.push(itemChildren[index].innerText);
-          inputText.value = oldValue.join(";");
+          // 关闭面板
+          // searching = false;
+          // smartUl.style.display = "none";
         } else {
           // 单选
           inputText.value = itemChildren[index].innerText + ";";
+
           // 关闭面板
           searching = false;
+          smartUl.style.display = "none";
         }
       }
     }
