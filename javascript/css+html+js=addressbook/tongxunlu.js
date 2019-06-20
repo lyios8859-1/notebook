@@ -31,6 +31,25 @@ function getAllListIndexElement() {
   return listIndexElement;
 }
 
+// 给没一个索引绑定一个事件
+function indexClick() {
+  // 获取产生滚动条的元素
+  const scrollbarDom = document.querySelector('.scrollbar');
+
+  const ulDom = document.querySelector('.list-index');
+  const listItem = ulDom.children;
+  let listItems = [].slice.call(listItem);
+  listItems.forEach((el, index) => {
+    el.onclick = function (ev) {
+      let allListItemPosition = getAllListItemPosition();
+      // 设置滚动条的高度
+      // scrollbarDom.scrollTop = allListItemPosition[index].pos;
+      scrollbarDom.scrollTo(0, allListItemPosition[index].pos);
+    };
+  });
+}
+
+
 // 获取某个列表标题元素的位置和设置新的索引
 function getTopBarElement(scrollPosition) {
   let i = 0;
@@ -57,6 +76,8 @@ let topBarElement = null;
 let lastScrollPosition = 0;
 // 滚动初始化
 function scrollLisenter() {
+  // 索引绑定实践
+  indexClick();
   // 获取产生滚动条的元素
   const scrollbarDom = document.querySelector('.scrollbar');
 
