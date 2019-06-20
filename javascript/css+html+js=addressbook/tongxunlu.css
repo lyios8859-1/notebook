@@ -27,10 +27,18 @@ li {
   background: #ededed;
 }
 
-.list-warp {
+.list-container {
   position: relative;
   top: 50px;
-  left: 100px;
+  left: 200px;
+  display: inline-block;
+}
+
+/* 列表 start */
+.list-warp-item {
+  position: relative;
+  top: 0;
+  left: 0;
   display: inline-block;
   width: 300px;
   height: 500px;
@@ -39,9 +47,9 @@ li {
   user-select: none;
 }
 
-.list-warp .list-items {
-  width: auto;
-  height: auto;
+.list-warp-item .list-items {
+  width: 100%;
+  height: 100%;
 }
 
 .list-items h2 {
@@ -62,10 +70,19 @@ li {
 
 .list-items .list-item li:hover {
   color: #fff;
-  background: red;
+  background: #bb9f9f;
+}
+/* 列表 start */
+
+/* 索引 start */
+.list-warp-index {
+  position: relative;
+  left: -35px;
+  top: -163px;
+  display: inline-block;
 }
 
+/* 索引 start */
 .active {
   color: red !important;
-  background: pink;
 }

@@ -38,12 +38,15 @@ function getTopBarElement(scrollPosition) {
   let allListItemPosition = getAllListItemPosition();
   let allListIndexElement = getAllListIndexElement();
   let len = allListItemPosition.length;
+  // 判断是否当前的列表标题项的位置小于滚动的高度就索引加 1 
   while ((i < len) && ((scrollPosition + gutter) >= allListItemPosition[i].pos)) {
     i++;
   }
   if (i == 0) {
     return null;
   } else {
+    console.log(">>>> i= ", i);
+    // 向上滚动 i 减 1；向下滚动 i 加 1;
     return {
       listItemElement: allListItemPosition[i - 1].el,
       listIndexElement: allListIndexElement[i - 1].el
@@ -61,15 +64,19 @@ function scrollLisenter() {
   scrollbarDom.addEventListener('scroll', (ev) => {
     ev.preventDefault();
     ev.stopPropagation();
-    // 解决快速滚动卡顿
+
+    // 滚动的距离
     lastScrollPosition = scrollbarDom.scrollTop;
-    console.log(".scrollbarDom", lastScrollPosition)
+
+    // 解决快速滚动卡顿
     window.requestAnimationFrame(() => {
+      // 列表项标题
       let allListItemPosition = getAllListItemPosition();
       allListItemPosition.forEach(el => {
         el.el.classList.remove('active');
       });
 
+      // 索引
       let allListIndexElement = getAllListIndexElement();
       allListIndexElement.forEach(el => {
         el.el.classList.remove('active');
