@@ -195,4 +195,14 @@ li {
   border-top: 1px solid #efeff4;
   background-color: #fff;
 }
+
+.ly-contacts-list li.ly-contacts-on-top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+.ly-contacts-list li.ly-contacts-on-top + li {
+  padding-top: 20px;
+}
 /* 列表 end */

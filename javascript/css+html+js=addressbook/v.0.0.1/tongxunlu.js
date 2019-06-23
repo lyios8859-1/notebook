@@ -74,8 +74,10 @@ function getTopBarElement(scrollPosition) {
 }
 let topBarElement = null;
 let lastScrollPosition = 0;
+
 // 滚动初始化
 function scrollLisenter() {
+  let ticking = false;
   // 索引绑定实践
   indexClick();
   // 获取产生滚动条的元素
@@ -88,24 +90,27 @@ function scrollLisenter() {
 
     // 滚动的距离
     lastScrollPosition = scrollbarDom.scrollTop;
-
     // 解决快速滚动卡顿
-    window.requestAnimationFrame(() => {
-      // 列表项标题
-      let allListItemPosition = getAllListItemPosition();
-      allListItemPosition.forEach(el => {
-        el.el.classList.remove('active');
-      });
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        // 列表项标题
+        let allListItemPosition = getAllListItemPosition();
+        allListItemPosition.forEach(el => {
+          el.el.classList.remove('active');
+        });
 
-      // 索引
-      let allListIndexElement = getAllListIndexElement();
-      allListIndexElement.forEach(el => {
-        el.el.classList.remove('active');
-      });
+        // 索引
+        let allListIndexElement = getAllListIndexElement();
+        allListIndexElement.forEach(el => {
+          el.el.classList.remove('active');
+        });
 
-      topBarElement = getTopBarElement(lastScrollPosition);
-      topBarElement && topBarElement.listItemElement.classList.add('active'), topBarElement.listIndexElement.classList.add('active');
-    });
+        topBarElement = getTopBarElement(lastScrollPosition);
+        topBarElement && topBarElement.listItemElement.classList.add('active'), topBarElement.listIndexElement.classList.add('active');
+        ticking = false;
+      });
+    }
+    ticking = true;
   }, false);
 }
 
