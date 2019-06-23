@@ -27,62 +27,172 @@ li {
   background: #ededed;
 }
 
-.list-container {
+.parent-container {
   position: relative;
   top: 50px;
-  left: 200px;
+  left: 300px;
+  width: 320px;
+  height: 600px;
+  font-family: "Microsoft YaHei";
+  background: #928e8e;
   display: inline-block;
 }
 
-/* 列表 start */
-.list-warp-item {
+/* 头像 */
+.parent-container img.ly-contacts-badge {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+}
+
+/* 搜索 start */
+.parent-container .ly-contacts-search-bar {
   position: relative;
-  top: 0;
+  display: flex;
+  box-sizing: border-box;
+  background-color: #efeff4;
+}
+.parent-container .ly-contacts-search-bar:before {
+  content: " ";
+  position: absolute;
   left: 0;
-  display: inline-block;
-  width: 300px;
-  height: 500px;
-  border: 1px solid #ccc;
-  border-radius: 2px;
-  user-select: none;
+  top: 0;
+  right: 0;
+  height: 1px;
+  border-top: 1px solid #d7d6dc;
+  color: #d7d6dc;
+  transform: scaleY(0.5);
+}
+.parent-container .ly-contacts-search-bar:after {
+  content: " ";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  height: 1px;
+  border-bottom: 1px solid #d7d6dc;
+  color: #d7d6dc;
+  transform: scaleY(0.5);
 }
 
-.list-warp-item .list-items {
-  width: 100%;
-  height: 100%;
-}
-
-.list-items h2 {
-  height: 32px;
-  line-height: 32px;
-  color: #2f2b2b;
-  text-indent: 5px;
-  background: #aaa;
-}
-
-.list-items .list-item li {
-  height: 32px;
-  line-height: 32px;
-  box-shadow: 0px 0px 1px #ccc;
-  text-indent: 5px;
-  cursor: pointer;
-}
-
-.list-items .list-item li:hover {
-  color: #fff;
-  background: #bb9f9f;
-}
-/* 列表 start */
-
-/* 索引 start */
-.list-warp-index {
+.ly-contacts-search-bar .ly-contacts-search-inner {
   position: relative;
-  left: -35px;
-  top: -163px;
-  display: inline-block;
+  box-sizing: border-box;
+  margin: 7px 10px;
+  padding-left: 30px;
+  padding-right: 30px;
+  height: 26px;
+  width: 100%;
+  border-radius: 3px;
+  background: #fff;
+  z-index: 1;
 }
 
-/* 索引 start */
-.active {
-  color: red !important;
+.ly-contacts-search-inner .ly-contacts-search-input {
+  box-sizing: border-box;
+  width: 100%;
+  height: 26px;
+  line-height: 26px;
+  padding: 4px 0;
+  border: 0;
+  font-size: 14px;
+  background: transparent;
+  outline: none;
 }
+
+/* webkit 内核浏览器 type=search 的 input 自带 取消 按钮*/
+.ly-contacts-search-inner
+  .ly-contacts-search-input
+  ::-webkit-search-cancel-button {
+  display: none;
+}
+
+.ly-contacts-search-inner .ly-contacts-icon-clear {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 1px solid #999;
+  border-radius: 50%;
+  background: #999;
+  z-index: 1;
+}
+
+.ly-contacts-search-inner .ly-contacts-icon-clear::before {
+  content: "";
+  width: 1px;
+  height: 80%;
+  background-color: white;
+  position: absolute;
+  transform: translate(-50%, -50%) rotate(45deg);
+  left: 50%;
+  top: 50%;
+}
+
+.ly-contacts-search-inner .ly-contacts-icon-clear::after {
+  content: "";
+  width: 1px;
+  height: 80%;
+  background-color: white;
+  position: absolute;
+  transform: translate(-50%, -50%) rotate(-45deg);
+  left: 50%;
+  top: 50%;
+}
+
+.ly-contacts-search-inner .ly-contacts-search-text {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  bottom: 1px;
+  left: 1px;
+  margin: 8px 10px;
+  line-height: 22px;
+  z-index: 2;
+  border-radius: 3px;
+  text-align: center;
+  color: #9b9b9b;
+  background: #fff;
+}
+
+.ly-contacts-search-inner
+  .ly-contacts-search-focusing
+  .ly-contacts-search-text {
+  display: none;
+}
+
+.ly-contacts-container .hidden {
+  display: none !important;
+}
+/* 搜索 end */
+
+/* 列表 start*/
+.ly-contacts-all-result {
+  width: 100%;
+  height: auto;
+}
+.ly-contacts-all-result .ly-contacts-list {
+  position: relative;
+  padding: 0px;
+}
+.ly-contacts-list li.ly-contacts-hooks {
+  display: block;
+  height: 20px;
+  line-height: 20px;
+  background-color: #efeff4;
+  border-top: none;
+}
+
+.ly-contacts-list li {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding-left: 10px;
+  border-top: 1px solid #efeff4;
+  background-color: #fff;
+}
+/* 列表 end */
