@@ -27,6 +27,9 @@ li {
   background: #ededed;
 }
 
+.box-warp {
+  position: relative;
+}
 .parent-container {
   position: relative;
   top: 50px;
