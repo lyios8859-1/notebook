@@ -327,3 +327,46 @@ css
   margin-left: auto;
 }
 ```
+
+## 单个元素实现三条杠
+
+效果：
+![单个元素实现三条杠](./单个元素实现三条杠.png "单个元素实现三条杠")
+
+```html
+<style>
+  .icon {
+    display: inline-block;
+    width: 50px;
+    height: 5px;
+    padding: 10px 0;
+    background-color: blue;
+    border-top: 5px solid blue;
+    border-bottom: 5px solid blue;
+    background-clip: content-box;
+  }
+</style>
+<div class="icon"></div>
+```
+
+## 单个元素实现实心园
+
+效果：
+![单个元素实现三条杠](./单个元素实现实心圆.png "单个元素实现三条杠")
+
+```html
+<style>
+  .icon-dot {
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    padding: 10px;
+    background: blue;
+    border: 10px solid blue;
+    border-radius: 50%;
+    background-color: currentColor;
+    background-clip: content-box;
+  }
+</style>
+<div class="icon-dot"></div>
+```
