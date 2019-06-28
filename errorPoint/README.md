@@ -15,10 +15,9 @@ let a1 = ["1", "2", "3"].map((i, a) => parseInt(i, a));
 let a2 = ["1", "2", "3"].map(parseInt);
 
 // PS:  map 能传进回调函数 3 个参数 (element, index, array)
-parseInt('1', 0);  // 0代表10进制
-parseInt('2', 1);  // 没有1进制，不合法
-parseInt('3', 2);  // 2进制根本不会有3
-
+parseInt("1", 0); // 0代表10进制
+parseInt("2", 1); // 没有1进制，不合法
+parseInt("3", 2); // 2进制根本不会有3
 ```
 
 PS: 因此，parseInt 的第二个参数只能是 [2, 36] 的闭区间，才会对可以转换的数字值，进行进制转换。
@@ -100,41 +99,69 @@ console.log(null === undefined); // false
 
 ```javascript
 // Goodbye Jack
-var name = 'World!';
-(function () {
-  if (typeof name === 'undefined') {
-    var name = 'Jack';
-    console.log('Goodbye ' + name);
+var name = "World!";
+(function() {
+  if (typeof name === "undefined") {
+    var name = "Jack";
+    console.log("Goodbye " + name);
   } else {
-    console.log('Hello ' + name);
+    console.log("Hello " + name);
   }
 })(); // 输出 Goodbye Jack
 
 // Goodbye Jack
-var name = 'World!';
-(function () {
-  if (typeof name === 'undefined') {
-    var name = 'Jack';
-    console.log('Goodbye ' + name);
+var name = "World!";
+(function() {
+  if (typeof name === "undefined") {
+    var name = "Jack";
+    console.log("Goodbye " + name);
   } else {
-    console.log('Hello ' + name);
+    console.log("Hello " + name);
   }
 })(name); // 输出 Goodbye Jack
 
 // Hello World
-var name = 'World!';
-(function (name) {
-  if (typeof name === 'undefined') {
-    var name = 'Jack';
-    console.log('Goodbye ' + name);
+var name = "World!";
+(function(name) {
+  if (typeof name === "undefined") {
+    var name = "Jack";
+    console.log("Goodbye " + name);
   } else {
-    console.log('Hello ' + name);
+    console.log("Hello " + name);
   }
 })(name); // 输出 Hello World
-
 ```
 
-（1）typeof时 name变量提升。 在函数内部之声明未定义
-（2）typeof优先级高于===
+（1）typeof 时 name 变量提升。 在函数内部之声明未定义
+（2）typeof 优先级高于===
 
 [相关链接](https://juejin.im/post/5b1f899fe51d4506c60e46ee "javascript的技巧")
+
+## switch 的坑
+
+```javascript
+function showCase(value) {
+  switch (value) {
+    case "A":
+      console.log("Case A");
+      break;
+    case "B":
+      console.log("Case B");
+      break;
+    case undefined:
+      console.log("undefined");
+      break;
+    default:
+      console.log("Do not know!");
+  }
+}
+showCase(new String("A")); // Do not know!
+
+/*
+var a = new String('A') ;
+console.log(a.__proto__ === String.prototype); // true
+也就是说实例的原型指向构造函数的原型对象
+*/
+```
+
+PS: switch 判断的是全等（===）， new String(x)是个对象
