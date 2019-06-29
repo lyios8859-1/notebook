@@ -165,3 +165,17 @@ console.log(a.__proto__ === String.prototype); // true
 ```
 
 PS: switch 判断的是全等（===）， new String(x)是个对象
+
+## Object.getPrototypeOf(obj)
+
+> 方法返回指定对象的原型(内部[[Prototype]]属性的值)
+
+```javascript
+function fn() {}
+
+// a 是获取构造函数 fn 的原型： {constructor: ƒ}
+var a = fn.prototype;
+// b 是实例f的原型对象： ƒ () { [native code] }
+var b = Object.getPrototypeOf(fn);
+console.log(a === b); // false
+```
