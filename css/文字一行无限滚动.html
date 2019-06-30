@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <style>
+      .rotaryContainer {
+        background-color: yellow;
+        color: red;
+        height: 30px;
+        margin-top: 10px;
+        line-height: 30px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .rotaryBlockFirst {
+        animation: rotaryBlockFirst 20s linear infinite;
+        white-space: nowrap;
+        position: absolute;
+        width: 100%;
+      }
+
+      .rotaryBlockSecond {
+        animation: rotaryBlockSecond 20s linear infinite;
+        position: absolute;
+        white-space: nowrap;
+        width: 100%;
+      }
+
+      @keyframes rotaryBlockFirst {
+        0% {
+          left: 0;
+        }
+        100% {
+          left: -110%;
+        }
+      }
+
+      @keyframes rotaryBlockSecond {
+        0% {
+          left: 110%;
+        }
+        100% {
+          left: 0;
+        }
+      }
+      @media screen and (max-width: 1250px) {
+        @keyframes rotaryBlockFirst {
+          0% {
+            left: 0;
+          }
+          100% {
+            left: -1200px;
+          } /*1200px为文本的长度，利用多媒体查询，当屏幕宽度太小时，就设置滚动距离为文本的长度*/
+        }
+
+        @keyframes rotaryBlockSecond {
+          0% {
+            left: 1200px;
+          }
+          100% {
+            left: 0;
+          }
+        }
+      }
+    </style>
+    <div class="rotaryContainer">
+      <div class="rotaryBlockFirst">
+        利用多媒体查询，当屏幕宽度太小时，为文本的长度1200px为文本的长度，就设置滚动距离为文本的长度1200px为文本的长度，利用多媒体查询，当屏幕宽度太小时，就设置滚动距离为文本的长度1200px为文本的长度，利用多媒体查询，当屏幕宽度太小时，就设置滚动距离为文本的长度
+      </div>
+      <div class="rotaryBlockSecond">
+        1200px为文本的长度，利用多媒体查询，当屏幕宽度太小时，就设置滚动距离为文本的长度1200px为文本的长度，就设置滚动距离为文本的长度1200px为文本的长度，利用多媒体查询，当屏幕宽度太小时，就设置滚动距离为文本的长度
+      </div>
+    </div>
+
+    <br />
+    <br />
+    <br />
+    <br />
+    <br />
+    <style>
+      .box {
+        width: 300px;
+        margin: 0 auto;
+        border: 1px solid #ff6700;
+        overflow: hidden;
+      }
+
+      .animate {
+        padding-left: 20px;
+        font-size: 12px;
+        color: #000;
+        display: inline-block;
+        white-space: nowrap;
+        animation: 10s wordsLoop linear infinite normal;
+      }
+
+      @keyframes wordsLoop {
+        0% {
+          transform: translateX(200px);
+          -webkit-transform: translateX(200px);
+        }
+        100% {
+          transform: translateX(-100%);
+          -webkit-transform: translateX(-100%);
+        }
+      }
+
+      @-webkit-keyframes wordsLoop {
+        0% {
+          transform: translateX(200px);
+          -webkit-transform: translateX(200px);
+        }
+        100% {
+          transform: translateX(-100%);
+          -webkit-transform: translateX(-100%);
+        }
+      }
+    </style>
+    <div class="box">
+      <p class="animate">
+        文字滚动的内容
+      </p>
+    </div>
+  </body>
+</html>
