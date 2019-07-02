@@ -90,6 +90,10 @@
   flex-grow: 5;
   font-size: 12px;
 }
+.m_play .m_btn:hover {
+  color: #fff;
+  background: red;
+}
 /* m_lrc end*/
 
 /* m_list start*/

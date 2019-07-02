@@ -97,19 +97,21 @@
         <div class="m_play_tools">
           <div class="m_play">
             <div class="m_btn">
-              <a class="prev">上一首</a>
+              <a class="prev" id="prev" data-prev="prev">上一首</a>
             </div>
-            <div class="m_btn">
+            <div class="m_btn" id="palyOrPause">
               <span title="播放">播放</span>
+              \
               <span title="暂停">暂停</span>
             </div>
             <div class="m_btn">
-              <span class="next">下一首</span>
+              <span class="next" id="next" data-next="next">下一首</span>
+            </div>
+            <div class="m_btn" id="isMuted">
+              <span title="是否静音">是否静音</span>
             </div>
             <div class="m_btn">
-              <span class="b_com b_1" data-mark="2" title="顺序播放"
-                >顺序播放</span
-              >
+              <span title="顺序播放">顺序播放</span>
             </div>
             <div class="m_btn">
               <span title="随机播放">随机播放</span>
@@ -168,7 +170,7 @@
       <!-- m_list end -->
     </div>
     <!-- music_container end -->
-
+    <audio src="./mp3/1.mp3" id="audio" controls></audio>
     <script src="./js/music.js"></script>
   </body>
 </html>
