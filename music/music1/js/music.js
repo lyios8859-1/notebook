@@ -7,8 +7,8 @@ let isPlayOrPause = false;
 function playOrPause(audio) {
   if (!isPlayOrPause) {
     // 播放
-    palyMusic(audio, function (data) {
-      console.log('当前歌曲播放完毕', data);
+    palyMusic(audio, function () {
+      console.log('当前歌曲播放完毕');
       // 播放下一首
       selectPrevOrNext('next', audio);
     });
@@ -29,22 +29,18 @@ function palyMusics(audio) {
   return audio;
 }
 
-// isLoop：true 表示是否循环播放
-let isLoop = false;
 function palyMusic(audio, callback) {
   let audioObj = palyMusics(audio);
   /*判断声音(音乐)是否播放完成，播放完成之后执行回调函数*/
-  audioObj.addEventListener('ended', function () {
-    callback && callback('over');
-  }, false);
+  if (callback != undefined) {
+    var is_playFinish = setInterval(function () {
+      if (audioObj.ended) {
+        callback();
+        window.clearInterval(is_playFinish);
+      }
+    }, 10);
+  }
 }
-
-// 是否循环播放
-function isLoopPlay() {
-  isLoop = !isLoop;
-  console.log('isLoopPlay', isLoop);
-}
-
 /**
  * 暂停
  */
@@ -79,8 +75,8 @@ function selectPrevOrNext(type, audioDom) {
   }
   console.log('index>>', selectIndex);
   audioDom.setAttribute('src', mp3Container[selectIndex]);
-  palyMusic(audioDom, function (data) {
-    console.log('当前歌曲播放完毕', data);
+  palyMusic(audioDom, function () {
+    console.log('当前歌曲播放完毕');
     // 播放下一首
     selectPrevOrNext('next', audio);
   });
@@ -91,8 +87,6 @@ window.onload = function () {
   const mutedDom = document.querySelector('#isMuted');
   const selectPrevDom = document.querySelector('#prev');
   const selectNextDom = document.querySelector('#next');
-  const loopPlayDom = document.querySelector('#loopPlay');
-
   playDom.onclick = function (ev) {
     playOrPause(audioDom);
   };
