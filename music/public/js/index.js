@@ -8,6 +8,13 @@ let oLRC = {
 };
 
 function createLrcObj(lrc) {
+  // 需要清空
+  oLRC.ti = "";
+  oLRC.ar = "";
+  oLRC.al = "";
+  oLRC.by = "";
+  oLRC.offset = "";
+  oLRC.ms = [];
   if (lrc.length == 0) return;
   let lrcs = lrc.split('\n');//用回车拆分成数组
   for (let i in lrcs) {//遍历歌词数组
@@ -53,11 +60,15 @@ function createLrcObj(lrc) {
 
 function showLRC() {
   let html = "";
-  document.querySelector("#lrc").innerHTML = "";
+  let lrcDiv = document.querySelector("#lrc");
+  if (lrcDiv.children > 0) {
+    lrcDiv.innerHTML = "";
+  }
   for (let i in oLRC.ms) {//遍历ms数组，把歌词加入列表
     html += '<div class="lrcline">' + oLRC.ms[i].c + '</div>';
   }
-  document.querySelector("#lrc").innerHTML = html;
+  console.log(html);
+  lrcDiv.innerHTML = html;
 }
 // showLRC();
 function getLrcList(url, lrc) {
@@ -67,7 +78,6 @@ function getLrcList(url, lrc) {
     data: { lrcFile: lrc },
     success: function (lrc) {
       createLrcObj(lrc);
-      console.log(2222)
       showLRC();
     }
   });
@@ -134,19 +144,19 @@ window.onload = function () {
       goback();
       lineHigh();
     });
-    let curLineTime = 0; // 歌词的当前时间
+    let curLineTime = 0; // 歌词的文件的当前时间
     player.lrcScroll((currentTime) => {
       // currentTime 表示当前播放的时间
-      // currentLine 当前播放到哪一句了
       if (currentLineNo == oLRC.ms.length) {
         return;
       }
 
       curLineTime = oLRC.ms && oLRC.ms[currentLineNo]['t'];
       if (parseFloat(curLineTime) <= currentTime) {
-        lineHigh();//高亮当前行
+        //高亮当前行
+        lineHigh();
+        // 行数
         currentLineNo++;
-        console.log(currentLineNo);
       }
     });
   };
