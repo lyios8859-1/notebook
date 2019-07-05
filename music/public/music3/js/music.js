@@ -2,12 +2,11 @@ class AudioPlayer {
   constructor(mp3List) {
     // 控制播放暂停的变量，默认暂停 false
     this.isPlayOrPause = false;
-    this.audio = new Audio();
+    this.audio = null;
     // 控制那一首的索引
     this.selectIndex = 0;
 
     this.mp3Container = mp3List;
-    this.initPlayer(this.mp3Container[0]);
   }
   /**
    * 播放/暂停
@@ -34,8 +33,14 @@ class AudioPlayer {
    * 播放
    */
   palyMusics() {
+    this.init();
     this.audio.play();
-    return audio;
+  }
+
+  init() {
+    // 这两个顺序不能反了
+    this.audio = new Audio();
+    this.initPlayer(this.mp3Container[0]);
   }
   // 回调函数判断是否播放玩一首
   palyMusic(callback) {
@@ -74,40 +79,28 @@ class AudioPlayer {
       this.selectIndex = (this.selectIndex + 1 + mp3Count) % mp3Count;
     }
     console.log('index>>', this.selectIndex);
+    if (!this.audio) {
+      this.palyMusics();
+    }
     this.audio.src = this.mp3Container[this.selectIndex];
-    this.palyMusic(this.audio, (data) => {
+
+    this.palyMusic((data) => {
       console.log('当前歌曲播放完毕', data);
       // 播放下一首
       this.selectPrevOrNext('next', this.audio);
     });
   }
+
+  // 歌词处理滚动需要监听 ontimeupdate
+  lrcScroll(callback) {
+    let currentTime = '';
+    this.audio.ontimeupdate = () => {
+      currentTime = this.audio.currentTime;
+      callback && callback(currentTime);
+    };
+  }
 }
 
-window.onload = function () {
-  const playDom = document.querySelector('#palyOrPause');
-  const mutedDom = document.querySelector('#isMuted');
-  const selectPrevDom = document.querySelector('#prev');
-  const selectNextDom = document.querySelector('#next');
-  let mp3List = ['./mp3/2.mp3', './mp3/1.mp3', './mp3/3.mp3', './mp3/4.mp3', './mp3/5.mp3'];
-  const player = new AudioPlayer(mp3List);
-
-  playDom.onclick = function (ev) {
-    let isPlayOrPause = player.playOrPause();
-    console.log('>>', isPlayOrPause);
-  };
-  mutedDom.onclick = function (ev) {
-    let isMuted = player.isMuted();
-    console.log('>>', isMuted);
-  }
-  // 上一首
-  selectPrevDom.onclick = function (ev) {
-    player.selectPrevOrNext(ev.target.dataset.prev);
-  }
-  // 下一首
-  selectNextDom.onclick = function (ev) {
-    player.selectPrevOrNext(ev.target.dataset.next);
-  }
-};
 
 /**
  * console.log('当前播放时间', audio.currentTime); //当前播放时间

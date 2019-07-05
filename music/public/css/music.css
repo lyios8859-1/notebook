@@ -71,7 +71,6 @@
   height: 30px;
   line-height: 30px;
   text-align: center;
-  color: red;
 }
 
 .m_lrc_container .m_play_tools {
@@ -94,6 +93,13 @@
   color: #fff;
   background: red;
 }
+/*当前歌词选中*/
+.lineHigh {
+  color: blue;
+  font-size: 16px;
+  font-weight: 800;
+}
+
 /* m_lrc end*/
 
 /* m_list start*/
