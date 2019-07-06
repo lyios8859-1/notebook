@@ -139,10 +139,11 @@ window.onload = function () {
   }
 
   // 滚回到开头，用于播放结束时
-  function goback(num) {
+  function goback() {
     lrcDom.scrollTo(0, 0);
     currentLineNo = 0;
-    getLrcList('/lrc/getLrc', num || globalNum);
+    console.log('goback', globalNum);
+    getLrcList('/lrc/getLrc', globalNum);
   }
 
   // 格式化时间
@@ -185,7 +186,9 @@ window.onload = function () {
 
   function playMusic() {
     // 播放
-    let isPlayOrPause = player.playOrPause(() => {
+    let isPlayOrPause = player.playOrPause((num) => {
+      console.log('isPlayOrPause', num)
+      globalNum = num;
       goback(globalNum);
       lineHigh();
     });
@@ -196,6 +199,7 @@ window.onload = function () {
       if (currentLineNo == oLRC.ms.length) {
         return;
       }
+
       addtime(currentTime, durations);
       curLineTime = oLRC.ms && oLRC.ms[currentLineNo]['t'];
       if (parseFloat(curLineTime) <= currentTime) {
@@ -220,6 +224,7 @@ window.onload = function () {
     player.selectPrevOrNext(ev.target.dataset.prev, (num) => {
       globalNum = num;
       goback(globalNum);
+      console.log(num, globalNum);
       playMusic();
     });
   }

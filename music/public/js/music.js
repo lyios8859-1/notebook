@@ -19,8 +19,9 @@ class AudioPlayer {
       this.palyMusic((data) => {
         console.log('当前歌曲播放完毕', data);
         // 播放下一首
-        this.selectPrevOrNext('next');
-        callback && callback();
+        this.selectPrevOrNext('next', (index) => {
+          callback && callback(index);
+        });
       });
       // 暂停
       this.isPlayOrPause = true;
@@ -94,9 +95,11 @@ class AudioPlayer {
   playCurrentTime(callback) {
     // 播放的当前时间，单位为秒
     let currentTime = '';
-    let duration = this.getDuration();
+    let duration = 0;
     this.audio.ontimeupdate = () => {
+      duration = this.getDuration();
       currentTime = this.audio.currentTime;
+      if (Object.is(duration, NaN)) return;
       callback && callback(currentTime, duration);
     };
   }
