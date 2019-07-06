@@ -108,13 +108,13 @@
 }
 .m_play_progress .play_progress {
   background: red;
-  width: 20%;
+  width: 10%;
   height: 12px;
 }
 .m_timer_porgress .m_play_timer {
   display: inline-block;
   width: 38%;
-  background: brown;
+  text-align: center;
 }
 
 /*当前歌词选中*/

@@ -24,10 +24,8 @@ router.post('/getLrc', function (req, res, next) {
   let filePath = '';
   if (lrcName == '1') {
     filePath = './public/mp3/1.lrc';
-    console.log('11111111111111111111111111111111111');
   } else {
     filePath = './public/mp3/2.lrc';
-    console.log('222222222222222222222222222222222');
   }
   console.log('>>', lrcName);
   readeFileCon(filePath).then(data => {

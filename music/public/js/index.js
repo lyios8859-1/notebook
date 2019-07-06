@@ -94,18 +94,15 @@ window.onload = function () {
   const lrcDom = document.querySelector('#lrc');
   const lrc = lrcDom.children;
   const playProgressDom = document.querySelector('#playProgress');
+  const playTimeDom = document.querySelector('#playTimer');
   const C_POS = 30; // 偏移量，最好是歌词行高的倍数
   let currentLineNo = 0;//当前播放到哪一行
   let timer = null;
 
   const player = new AudioPlayer();
 
-  //高亮显示歌词当前行及文字滚动控制，行号为lineNo
+  //高亮显示歌词当前行及文字滚动控制，行号为 currentLineNo
   function lineHigh() {
-    // if (currentLineNo > 0) {
-    //   lrc[currentLineNo - 1].classList.remove('lineHigh');//去掉上一行的高亮样式
-    // }
-    // lrc[currentLineNo].classList.add('lineHigh');//高亮显示当前行
 
     //文字滚动，设置滚动条的位置
     let curPositon = lrcDom.clientHeight / 2 / lrc[currentLineNo].offsetHeight;
@@ -151,15 +148,26 @@ window.onload = function () {
     }
 
     // 总共时长的秒数
-    // let allTime = parseInt(minutes * 60 + seconds);
-    return minutes + ":" + seconds;
+    let allTime = parseInt(minutes * 60 + seconds);
+    return {
+      s: allTime,
+      f: minutes + ":" + seconds
+    };
   }
 
 
   //播放时间
   function addtime(currentTime, durations) {
     timer = setTimeout(() => {
-      playProgressDom.innerHTML = formatTimer(currentTime) + "==" + formatTimer(durations);
+      playTimeDom.innerHTML = formatTimer(currentTime).f + " / " + formatTimer(durations).f;
+
+      //  (audio.currentTime / audio.duration).toFixed(4) * 100 + "%"
+      let progressPercent = (formatTimer(currentTime).s / formatTimer(durations).s).toFixed(4) * 100 + 10;
+      if (progressPercent >= 100) {
+        progressPercent = 100;
+      }
+      playProgressDom.style.width = Math.round(progressPercent) + "%";
+      console.log('.>>', Math.round(progressPercent));
     }, 1000);
   }
 
