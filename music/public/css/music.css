@@ -93,6 +93,30 @@
   color: #fff;
   background: red;
 }
+
+.m_play_tools .m_timer_porgress {
+  background: #bbb;
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+}
+.m_timer_porgress .m_play_progress {
+  display: inline-block;
+  width: 60%;
+  background: yellow;
+  box-sizing: border-box;
+}
+.m_play_progress .play_progress {
+  background: red;
+  width: 20%;
+  height: 12px;
+}
+.m_timer_porgress .m_play_timer {
+  display: inline-block;
+  width: 38%;
+  background: brown;
+}
+
 /*当前歌词选中*/
 .lineHigh {
   color: blue;

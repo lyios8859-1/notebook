@@ -84,13 +84,22 @@ class AudioPlayer {
   }
 
   // 歌词处理滚动需要监听 ontimeupdate
-  lrcScroll(callback) {
+  playCurrentTime(callback) {
+    // 播放的当前时间，单位为秒
     let currentTime = '';
+    let duration = this.getDuration();
     this.audio.ontimeupdate = () => {
       currentTime = this.audio.currentTime;
-      callback && callback(currentTime);
+      callback && callback(currentTime, duration);
     };
   }
+
+  // 获取总时长
+  getDuration() {
+    return this.audio.duration;
+  }
+
+
 }
 
 
@@ -99,5 +108,10 @@ class AudioPlayer {
   console.log('总时长：', audio.duration) //总时间
 
 
+
+
+  audio.addEventListener("canplay", function(){//监听audio是否加载完毕，如果加载完毕，则读取audio播放时间
+    document.getElementById('audio_length_total').innerHTML=transTime(audio.duration);
+  });
   https://blog.csdn.net/qq_34182808/article/details/84347393
 */

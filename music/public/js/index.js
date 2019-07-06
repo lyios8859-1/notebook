@@ -93,15 +93,13 @@ window.onload = function () {
   const selectNextDom = document.querySelector('#next');
   const lrcDom = document.querySelector('#lrc');
   const lrc = lrcDom.children;
+  const playProgressDom = document.querySelector('#playProgress');
   const C_POS = 30; // 偏移量，最好是歌词行高的倍数
   let currentLineNo = 0;//当前播放到哪一行
+  let timer = null;
 
   const player = new AudioPlayer();
 
-  function fomartTime(key) {
-    //00:00.000转化为00.000格式
-    return parseFloat(key && key.substring(1, 3)) * 60 + parseFloat(key && key.substring(4, 10));
-  }
   //高亮显示歌词当前行及文字滚动控制，行号为lineNo
   function lineHigh() {
     // if (currentLineNo > 0) {
@@ -135,22 +133,53 @@ window.onload = function () {
     getLrcList('/lrc/getLrc', 2);
     lrcDom.scrollTo(0, 0);
     currentLineNo = 0;
-    console.log(288888888888888888);
+  }
+
+  // 格式化时间
+  function formatTimer(time) {
+    //分钟
+    let minute = time / 60;
+    let minutes = parseInt(minute);
+    if (minutes < 10) {
+      minutes = "0" + minutes;
+    }
+    //秒
+    let second = time % 60;
+    let seconds = Math.round(second);
+    if (seconds < 10) {
+      seconds = "0" + seconds;
+    }
+
+    // 总共时长的秒数
+    // let allTime = parseInt(minutes * 60 + seconds);
+    return minutes + ":" + seconds;
   }
 
 
+  //播放时间
+  function addtime(currentTime, durations) {
+    timer = setTimeout(() => {
+      playProgressDom.innerHTML = formatTimer(currentTime) + "==" + formatTimer(durations);
+    }, 1000);
+  }
+
   playDom.onclick = function (ev) {
+    // 播放
     let isPlayOrPause = player.playOrPause(() => {
       goback();
       lineHigh();
     });
+
+    // 播放进度
+    console.log(">>>>", playProgressDom);
+
     let curLineTime = 0; // 歌词的文件的当前时间
-    player.lrcScroll((currentTime) => {
+    player.playCurrentTime((currentTime, durations) => {
       // currentTime 表示当前播放的时间
       if (currentLineNo == oLRC.ms.length) {
         return;
       }
-
+      addtime(currentTime, durations);
       curLineTime = oLRC.ms && oLRC.ms[currentLineNo]['t'];
       if (parseFloat(curLineTime) <= currentTime) {
         //高亮当前行
