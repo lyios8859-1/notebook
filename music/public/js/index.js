@@ -82,7 +82,6 @@ function getLrcList(url, lrc) {
   });
 }
 
-
 window.onload = function () {
   getLrcList('/lrc/getLrc', 1);
 
@@ -92,6 +91,7 @@ window.onload = function () {
   const selectNextDom = document.querySelector('#next');
   const lrcDom = document.querySelector('#lrc');
   const lrc = lrcDom.children;
+  const clickPlayProgressDom = document.querySelector('#clickPlayProgress');
   const playProgressDom = document.querySelector('#playProgress');
   const playTimeDom = document.querySelector('#playTimer');
   const C_POS = 30; // 偏移量，最好是歌词行高的倍数
@@ -99,6 +99,20 @@ window.onload = function () {
   let timer = null;
 
   const player = new AudioPlayer();
+
+  clickPlayProgressDom.addEventListener('click', function (event) {
+    let coordStart = this.getBoundingClientRect().left;
+    let coordEnd = event.pageX;
+    let p = (coordEnd - coordStart) / this.offsetWidth;
+    playProgressDom.style.width = p.toFixed(3) * 100 + '%';
+
+    player.audio.currentTime = p * player.audio.duration;
+    console.log(player.audio.currentTime);
+    player.audio.play()
+  })
+
+
+
 
   // 高亮显示歌词当前行及文字滚动控制，行号为 currentLineNo
   function lineHigh() {
@@ -164,7 +178,6 @@ window.onload = function () {
         progressPercent = 100;
       }
       playProgressDom.style.width = progressPercent + '%';
-      console.log('>>', progressPercent);
     }, 1000);
   }
 
