@@ -36,7 +36,7 @@ class AudioPlayer {
   // 回调函数判断是否播放完一首
   palyMusic(callback) {
     this.palyMusicing();
-    /*判断声音(音乐)是否播放完成，播放完成之后执行回调函数*/
+    // 判断声音(音乐)是否播放完成，播放完成之后执行回调函数
     this.audio.addEventListener('ended', () => {
       callback && callback('over');
     }, false);
@@ -99,18 +99,12 @@ class AudioPlayer {
     return this.audio.duration;
   }
 
-
 }
 
 
 /**
- * console.log('当前播放时间', audio.currentTime); //当前播放时间
-  console.log('总时长：', audio.duration) //总时间
-
-
-
-
-  audio.addEventListener("canplay", function(){//监听audio是否加载完毕，如果加载完毕，则读取audio播放时间
+  // 监听audio是否加载完毕，如果加载完毕，则读取audio播放时间
+  audio.addEventListener("canplay", function(){
     document.getElementById('audio_length_total').innerHTML=transTime(audio.duration);
   });
   https://blog.csdn.net/qq_34182808/article/details/84347393
