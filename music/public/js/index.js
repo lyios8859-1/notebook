@@ -83,7 +83,6 @@ function getLrcList(url, lrc) {
 }
 
 window.onload = function () {
-  getLrcList('/lrc/getLrc', 1);
 
   const playDom = document.querySelector('#palyOrPause');
   const mutedDom = document.querySelector('#isMuted');
@@ -97,18 +96,19 @@ window.onload = function () {
   const C_POS = 30; // 偏移量，最好是歌词行高的倍数
   let currentLineNo = 0;// 当前播放到哪一行
   let timer = null;
+  let globalNum = 0;
+
+  getLrcList('/lrc/getLrc', globalNum);
 
   const player = new AudioPlayer();
 
   clickPlayProgressDom.addEventListener('click', function (event) {
     let coordStart = this.getBoundingClientRect().left;
     let coordEnd = event.pageX;
+    // 点击的比率
     let p = (coordEnd - coordStart) / this.offsetWidth;
     playProgressDom.style.width = p.toFixed(3) * 100 + '%';
-
-    player.audio.currentTime = p * player.audio.duration;
-    console.log(player.audio.currentTime);
-    player.audio.play()
+    player.setCurrentTime(p);
   })
 
 
@@ -139,10 +139,10 @@ window.onload = function () {
   }
 
   // 滚回到开头，用于播放结束时
-  function goback() {
-    getLrcList('/lrc/getLrc', 2);
+  function goback(num) {
     lrcDom.scrollTo(0, 0);
     currentLineNo = 0;
+    getLrcList('/lrc/getLrc', num || globalNum);
   }
 
   // 格式化时间
@@ -181,10 +181,12 @@ window.onload = function () {
     }, 1000);
   }
 
-  playDom.onclick = function (ev) {
+
+
+  function playMusic() {
     // 播放
     let isPlayOrPause = player.playOrPause(() => {
-      goback();
+      goback(globalNum);
       lineHigh();
     });
 
@@ -203,6 +205,9 @@ window.onload = function () {
         currentLineNo++;
       }
     });
+  }
+  playDom.onclick = function (ev) {
+    playMusic();
   };
 
   // 暂停
@@ -212,10 +217,18 @@ window.onload = function () {
   }
   // 上一首
   selectPrevDom.onclick = function (ev) {
-    player.selectPrevOrNext(ev.target.dataset.prev);
+    player.selectPrevOrNext(ev.target.dataset.prev, (num) => {
+      globalNum = num;
+      goback(globalNum);
+      playMusic();
+    });
   }
   // 下一首
   selectNextDom.onclick = function (ev) {
-    player.selectPrevOrNext(ev.target.dataset.next);
+    player.selectPrevOrNext(ev.target.dataset.next, (num) => {
+      globalNum = num;
+      goback(globalNum);
+      playMusic();
+    });
   }
 };

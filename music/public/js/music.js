@@ -6,7 +6,7 @@ class AudioPlayer {
     // 控制那一首的索引
     this.selectIndex = 0;
 
-    this.mp3Container = ['./mp3/1.mp3', './mp3/2.mp3', './mp3/3.mp3', './mp3/4.mp3', './mp3/5.mp3'];
+    this.mp3Container = ['./mp3/0.mp3', './mp3/1.mp3', './mp3/2.mp3', './mp3/3.mp3', './mp3/4.mp3', './mp3/5.mp3'];
     this.audio.src = this.mp3Container[0];
   }
 
@@ -42,6 +42,12 @@ class AudioPlayer {
     }, false);
   }
 
+  setCurrentTime(percnet) {
+    // p 表示点击所在的比率 （p * this.audio.duration）等于当前时间
+    this.audio.currentTime = percnet * this.audio.duration;
+    this.palyMusicing();
+  }
+
   /**
    * 播放
    */
@@ -67,7 +73,7 @@ class AudioPlayer {
   }
 
   // 上一首，下一首
-  selectPrevOrNext(type) {
+  selectPrevOrNext(type, callback) {
     let mp3Count = this.mp3Container.length;
 
     if (type === 'prev') {
@@ -79,6 +85,7 @@ class AudioPlayer {
     }
     console.log('index>>', this.selectIndex, this.mp3Container[this.selectIndex]);
 
+    callback && callback(this.selectIndex);
     this.setSrc(this.mp3Container[this.selectIndex]);
     this.palyMusic();
   }
@@ -92,6 +99,12 @@ class AudioPlayer {
       currentTime = this.audio.currentTime;
       callback && callback(currentTime, duration);
     };
+  }
+
+
+  // 监听是否音乐加载完成,才获取时间
+  loadComplate(callback) {
+
   }
 
   // 获取总时长

@@ -22,10 +22,27 @@ router.get('/', function (req, res, next) {
 router.post('/getLrc', function (req, res, next) {
   let lrcName = req.body.lrcFile;
   let filePath = '';
-  if (lrcName == '1') {
-    filePath = './public/mp3/1.lrc';
-  } else {
-    filePath = './public/mp3/2.lrc';
+  switch (lrcName) {
+    case '0':
+      filePath = './public/mp3/0.lrc';
+      break;
+    case '1':
+      filePath = './public/mp3/1.lrc';
+      break;
+    case '2':
+      filePath = './public/mp3/2.lrc';
+      break;
+    case '3':
+      filePath = './public/mp3/3.lrc';
+      break;
+    case '4':
+      filePath = './public/mp3/4.lrc';
+      break;
+    case '5':
+      filePath = './public/mp3/5.lrc';
+      break;
+    default:
+      break;
   }
   console.log('>>', lrcName);
   readeFileCon(filePath).then(data => {
