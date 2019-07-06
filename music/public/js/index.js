@@ -93,6 +93,8 @@ window.onload = function () {
   const clickPlayProgressDom = document.querySelector('#clickPlayProgress');
   const playProgressDom = document.querySelector('#playProgress');
   const playTimeDom = document.querySelector('#playTimer');
+  const randomPlayDOm = document.querySelector('#randomPlay');
+  const loopPlayDom = document.querySelector('#loopPlay');
   const C_POS = 30; // 偏移量，最好是歌词行高的倍数
   let currentLineNo = 0;// 当前播放到哪一行
   let timer = null;
@@ -231,6 +233,23 @@ window.onload = function () {
   // 下一首
   selectNextDom.onclick = function (ev) {
     player.selectPrevOrNext(ev.target.dataset.next, (num) => {
+      globalNum = num;
+      goback(globalNum);
+      playMusic();
+    });
+  }
+
+  // 随机播放
+  randomPlayDOm.onclick = function (ev) {
+    player.randomPlay((num) => {
+      globalNum = num;
+      goback(globalNum);
+      playMusic();
+    });
+  }
+
+  loopPlayDom.onclick = function (ev) {
+    player.loopPlay((num) => {
       globalNum = num;
       goback(globalNum);
       playMusic();

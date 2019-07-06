@@ -8,6 +8,8 @@ class AudioPlayer {
 
     this.mp3Container = ['./mp3/0.mp3', './mp3/1.mp3', './mp3/2.mp3', './mp3/3.mp3', './mp3/4.mp3', './mp3/5.mp3'];
     this.audio.src = this.mp3Container[0];
+    // 随机播放
+    this.randomMrk = false;
   }
 
   /**
@@ -46,14 +48,18 @@ class AudioPlayer {
   setCurrentTime(percnet) {
     // p 表示点击所在的比率 （p * this.audio.duration）等于当前时间
     this.audio.currentTime = percnet * this.audio.duration;
-    this.palyMusicing();
+    this.audio.play();
   }
 
   /**
    * 播放
    */
   palyMusicing() {
-    this.audio.play();
+    this.loadComplate(mark => {
+      if (mark) {
+        this.audio.play();
+      }
+    });
   }
 
   /**
@@ -75,6 +81,14 @@ class AudioPlayer {
 
   // 上一首，下一首
   selectPrevOrNext(type, callback) {
+    if (this.randomMrk) {
+      this.randomPlay((num) => {
+        this.setSrc(this.mp3Container[num]);
+        this.palyMusic();
+        callback && callback(num);
+      });
+      return;
+    }
     let mp3Count = this.mp3Container.length;
 
     if (type === 'prev') {
@@ -88,7 +102,11 @@ class AudioPlayer {
 
     callback && callback(this.selectIndex);
     this.setSrc(this.mp3Container[this.selectIndex]);
-    this.palyMusic();
+    this.loadComplate(mark => {
+      if (mark) {
+        this.palyMusic();
+      }
+    });
   }
 
   // 歌词处理滚动需要监听 ontimeupdate
@@ -104,10 +122,36 @@ class AudioPlayer {
     };
   }
 
+  // 随机播放
+  randomPlay(callback) {
+    let randomNum = 0;
+    randomNum = getRandomNum(0, this.mp3Container.length - 1);
+    this.setSrc(this.mp3Container[randomNum]);
+    this.randomMrk = true;
+    callback && callback(randomNum);
+  }
+  // 循环播放
+  loopPlay(callback) {
+    // this.randomMrk = true;
+    // // 播放下一首
+    // this.selectPrevOrNext('next', (index) => {
+    //   callback && callback(index);
+    // });
+  }
 
   // 监听是否音乐加载完成,才获取时间
   loadComplate(callback) {
-
+    try {
+      this.audio.addEventListener('canplaythrough', function (e) {
+        callback && callback && callback(true);
+      }, false);
+      this.audio.addEventListener('error', function (e) {
+        callback && callback(false, this.error)
+      }, false);
+      this.audio.load();
+    } catch (e) {
+      callback && callback(false, '没加载完成...');
+    }
   }
 
   // 获取总时长
@@ -116,7 +160,20 @@ class AudioPlayer {
   }
 
 }
-
+//生成从minNum到maxNum的随机数
+function getRandomNum(minNum, maxNum) {
+  switch (arguments.length) {
+    case 1:
+      return parseInt(Math.random() * minNum + 1, 10);
+      break;
+    case 2:
+      return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
+      break;
+    default:
+      return 0;
+      break;
+  }
+}
 
 /**
   // 监听audio是否加载完毕，如果加载完毕，则读取audio播放时间
