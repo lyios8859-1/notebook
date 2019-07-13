@@ -24,19 +24,18 @@
       }
     </style>
     <div id="drag"></div>
-    <!-- <canvas id="canvas" width="1100" height="1000"></canvas> -->
     <script>
       let dragDom = document.querySelector("#drag");
       // 获取元素的初始位置
-      let oldLeft = dragDom.offsetLeft;
-      let oldTop = dragDom.offsetTop;
+      let eleLeft = dragDom.offsetLeft;
+      let eleTop = dragDom.offsetTop;
 
       // 获取元素的宽度和高度
       let elsWidth = dragDom.offsetWidth;
       let elsHeight = dragDom.offsetHeight;
 
       // 鼠标的位置
-      //let mouse = { x: 0, y: 0 };
+      let mouse = { x: 0, y: 0 };
 
       // 声明鼠标按下时，鼠标与元素中心的距离
       let dx = 0,
@@ -57,6 +56,9 @@
       // 是否按下鼠标
       let isPressed = false;
 
+      let bounce = -0.7;
+      let gravity = 0.5;
+
       // 元素中心
       dragDom.x = elsWidth / 2;
       dragDom.y = elsHeight / 2;
@@ -65,10 +67,7 @@
         // 判断当前鼠标是否在元素内
         let mouse = getMousePos(ev);
 
-        if (
-          (mouse.x > oldLeft || mouse.x < oldLeft + elsWidth) &&
-          (mouse.y > oldTop || mouse.y < oldTop + elsHeight)
-        ) {
+        if (isMouseOnElementInner(mouse)) {
           console.log(22);
           // 按下了鼠标
           isPressed = true;
@@ -79,6 +78,7 @@
           // 获得小球拖拽前的位置
           oldX = mouse.x;
           oldY = mouse.y;
+
           console.log(`获得小球拖拽前的位置=>oldX: ${oldX}, oldY: ${oldY}`);
 
           document.onmousemove = function(ev) {
@@ -94,8 +94,10 @@
             // 把鼠标与元素中心的距离位置恢复初始值
             dx = 0;
             dy = 0;
+
             // 获得小球拖拽后的位置
             let mouse = getMousePos(ev);
+
             currentX = mouse.x;
             currentY = mouse.y;
 
@@ -106,14 +108,75 @@
           };
         }
       };
-
+      let speedX = 5,
+        speedY = 5;
       function startMove() {
         timer = window.requestAnimationFrame(startMove);
+        vy += gravity;
         x += vx;
         y += vy;
+        let left = 0;
+        let right = 1000;
+        let top = 0;
+        let bottom = 1000;
 
-        dragDom.style.left = x - dragDom.x + "px";
-        dragDom.style.top = y - dragDom.y + "px";
+        if (x + 50 > right) {
+          x = right - 50;
+          vx *= bounce;
+        } else if (x - 50 < left) {
+          x = left + 50;
+          vx *= bounce;
+        }
+        if (y + 50 > bottom) {
+          y = right - 50;
+          vy *= bounce;
+        } else if (y - 50 < top) {
+          y = left + 50;
+          vy *= bounce;
+        }
+        // 什么情况下清楚定时器
+        // if () {
+        //   window.cancelAnimationFrame(startMove);
+        // }
+        dragDom.style.left = Math.floor(x) - Math.floor(dragDom.x) + "px";
+        dragDom.style.top = Math.floor(y) - Math.floor(dragDom.y) + "px";
+
+        /*
+        //竖直方向上反向运动时速度为负值，为了达到反弹逐渐速度逐渐减小的效果，可以在向下碰撞后速度加上一个正值
+        speedY += 6;
+        //分别获取div距离左边距和上边距的动态距离
+        var iW = dragDom.offsetLeft + speedX;
+        var iH = dragDom.offsetTop + speedY;
+        //获取div水平方向运动的最大距离，即不包含边框的浏览器窗口的宽度clientWidth减去div的宽度
+        var w = document.documentElement.clientWidth - dragDom.offsetWidth;
+        //获取div垂直方向运动的最大距离
+        var h = document.documentElement.clientHeight - dragDom.offsetHeight;
+        //当动态宽度达到div最大运动宽度范围时，立刻转换速度为反方向负值，同时把w的值负值给iw，因为w是可视窗口范围，当w缩小时，iw保存的还是上一次窗口条件下的距离左边距的距离
+        if (iW >= w || iW <= 0) {
+          speedX = -speedX;
+          iW = w;
+        }
+        //当动态高度达到div最大运动高度范围时，立刻转向速度，同时将x方向速度乘以0.8，使之速度逐渐减小
+        if (iH >= h || iH <= 0) {
+          speedY = -speedY;
+          iH = h;
+          speedX *= 0.95;
+        }
+        if (Math.floor(iW) == dragDom.offsetLeft) {
+          window.cancelAnimationFrame(timer);
+        }
+        dragDom.style.left = iW + "px";
+        dragDom.style.top = iH + "px";
+        console.log(iW, iH, Math.round(iW), dragDom.offsetLeft);
+        */
+      }
+
+      function isMouseOnElementInner(mouse) {
+        let xFlag =
+          mouse.x > eleLeft && mouse.x < eleLeft + dragDom.offsetWidth;
+        let yFlag = mouse.y > eleTop && mouse.y < eleTop + dragDom.offsetHeight;
+        let mark = xFlag && yFlag;
+        return mark;
       }
 
       // 获得当前鼠标位置
