@@ -22,6 +22,8 @@ router.get('/', function (req, res, next) {
 router.post('/getLrc', function (req, res, next) {
   let lrcName = req.body.lrcFile;
   let filePath = '';
+  let lrcList = ['./public/mp3/0.lrc', './public/mp3/1.lrc', './public/mp3/2.lrc', './public/mp3/3.lrc', './public/mp3/4.lrc', './public/mp3/5.lrc'];
+  /*
   switch (lrcName) {
     case '0':
       filePath = './public/mp3/0.lrc';
@@ -44,7 +46,9 @@ router.post('/getLrc', function (req, res, next) {
     default:
       break;
   }
+  */
   console.log('>>', lrcName);
+  filePath = lrcList[lrcName * 1];
   readeFileCon(filePath).then(data => {
     res.write(data);
     res.end();
