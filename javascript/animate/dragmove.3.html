@@ -115,31 +115,47 @@
         vy += gravity;
         x += vx;
         y += vy;
+        var w = window.innerWidth - dragDom.offsetWidth;
+        //获取div垂直方向运动的最大距离
+        var h = window.innerHeight - dragDom.offsetHeight;
         let left = 0;
         let right = 1000;
         let top = 0;
         let bottom = 1000;
 
-        if (x + 50 > right) {
-          x = right - 50;
+        if (x + dragDom.x > right) {
+          x = right - dragDom.x;
           vx *= bounce;
-        } else if (x - 50 < left) {
-          x = left + 50;
+        } else if (x - dragDom.x < left) {
+          x = left + dragDom.x;
           vx *= bounce;
         }
-        if (y + 50 > bottom) {
-          y = right - 50;
+        if (y + dragDom.y > bottom) {
+          y = right - dragDom.y;
           vy *= bounce;
-        } else if (y - 50 < top) {
-          y = left + 50;
+        } else if (y - dragDom.y < top) {
+          y = left + dragDom.y;
           vy *= bounce;
         }
         // 什么情况下清楚定时器
         // if () {
-        //   window.cancelAnimationFrame(startMove);
+        //   window.cancelAnimationFrame(timer);
         // }
+
         dragDom.style.left = Math.floor(x) - Math.floor(dragDom.x) + "px";
         dragDom.style.top = Math.floor(y) - Math.floor(dragDom.y) + "px";
+        console.log(
+          "x=",
+          Math.floor(x),
+          "y=",
+          Math.floor(y),
+          "vx=",
+          vx,
+          "vy=",
+          vy,
+          w,
+          h
+        );
 
         /*
         //竖直方向上反向运动时速度为负值，为了达到反弹逐渐速度逐渐减小的效果，可以在向下碰撞后速度加上一个正值

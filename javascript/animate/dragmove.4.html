@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <body>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      #ball {
+        position: absolute;
+        top: 100px;
+        left: 100px;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: -webkit-repeating-radial-gradient(
+          center,
+          rgb(255, 255, 255),
+          rgb(50, 50, 50)
+        );
+        cursor: pointer;
+      }
+      div {
+        position: absolute;
+        background: black;
+        width: 5px;
+        height: 5px;
+      }
+    </style>
+    <div id="ball"></div>
+    <script>
+      // X 方向和 Y 方向的速度
+      let speedX = 0,
+        speedY = 0;
+      let ball = document.querySelector("#ball");
+      let timer = null;
+      // 保证元素在可视区域
+      let H =
+        (window.innerWidth || document.documentElement.clientWidth) -
+        ball.offsetWidth;
+      let V =
+        (window.innerHeight || document.documentElement.clientHeight) -
+        ball.offsetHeight;
+      ball.onmousedown = function(ev) {
+        clearInterval(timer); // 用于可以空中抓取物体
+        let oEvent = ev || window.event;
+        let disX = 0,
+          disY = 0;
+        let lastX = 0,
+          lastY = 0;
+
+        // 获取鼠标按下时物体的边缘的距离
+        disX = oEvent.clientX - ball.offsetLeft;
+        disY = oEvent.clientY - ball.offsetTop;
+        console.log(disX, disY);
+
+        document.onmousemove = function(ev) {
+          let oEvent = ev || window.event;
+
+          // 物体左顶点一移动的距离 = 当前鼠标点击的位置 - 鼠标距离物体边缘的距离
+          let L = oEvent.clientX - disX;
+          let T = oEvent.clientY - disY;
+
+          // 左右边界判断
+          if (L <= 0) {
+            L = 0;
+          } else if (L >= H) {
+            L = H;
+          }
+
+          // 上下边界判断
+          if (T <= 0) {
+            T = 0;
+          } else if (T >= V) {
+            T = V;
+          }
+
+          // 记录当前的速度
+          speedX = L - lastX;
+          speedY = T - lastY;
+
+          // 记录当前的位置
+          lastX = L;
+          lastY = T;
+
+          console.log(`speedX:${speedX}, speedY: ${speedY}`);
+
+          // 可在次做移动跟随 创建div
+
+          ball.style.left = L + "px";
+          ball.style.top = T + "px";
+
+          document.onmouseup = function() {
+            document.onmousemove = null;
+            document.onmouseup = null;
+            startMove();
+          };
+        };
+      };
+
+      function startMove() {
+        timer && clearInterval(timer);
+        let gravity = 10; // 重力速度
+        let frictionX = 0.99; // x 方向的摩擦因子
+        let frictionY = 0.99; // y 方向的摩擦因子
+
+        timer = setInterval(() => {
+          // 生活常识知道物体下落是越来越快的
+          speedY += 10;
+
+          // 移动的坐标
+          let moveX = ball.offsetLeft + speedX;
+          let moveY = ball.offsetTop + speedY;
+
+          // 左右边界判断，并设置摩擦系数
+          if (moveX <= 0) {
+            moveX = 0;
+            speedX *= -0.99;
+          } else if (moveX >= H) {
+            moveX = H;
+            speedX *= -0.9;
+          }
+
+          // 上下边界判断，并设置摩擦系数
+          if (moveY <= 0) {
+            moveY = 0;
+            speedY *= -0.99;
+            speedX *= 0.99;
+          } else if (moveY >= V) {
+            moveY = V;
+            speedY *= -0.99;
+            speedX *= 0.99;
+          }
+
+          // 停止位置判断，当在空中时，Vx = 0 && Vy = 0 时不是停止状态
+          if (Math.abs(speedX) < 1) {
+            speedX = 0;
+          }
+          if (Math.abs(speedY) < 1) {
+            speedY = 0;
+          }
+
+          // 停止动画，speedX = 0, speed Y = 0, 并且落地了，清楚定时器（这个判断不完善）
+          if (moveY === V) {
+            speedY === 0;
+          }
+          if (speedX === 0 && speedY === 0 && moveY === V) {
+            timer && clearInterval(timer);
+          } else {
+            ball.style.left = moveX + "px";
+            ball.style.top = moveY + "px";
+          }
+          console.log(speedX, speedY, H, V, moveY);
+        }, 30);
+      }
+    </script>
+  </body>
+</html>
