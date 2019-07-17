@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+  </head>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    ul,
+    li {
+      list-style: none;
+    }
+    .wrap {
+      background: #ccc;
+      text-align: center;
+      min-width: 888px;
+    }
+    .btn {
+      display: inline-block;
+      width: 40px;
+      height: 34px;
+      line-height: 34px;
+      text-align: center;
+      background: #ccc;
+      vertical-align: top;
+    }
+
+    .box {
+      width: 800px;
+      height: 34px;
+      display: inline-block;
+      line-height: 34px;
+      background: #ccc;
+      overflow: hidden;
+      vertical-align: top;
+    }
+    .roll {
+      width: auto;
+      height: 34px;
+      text-align: center;
+    }
+    .roll li {
+      float: left;
+      width: 100px;
+    }
+  </style>
+  <body>
+    <div class="wrap">
+      <span class="btn" onclick="toggle('left')">左</span>
+      <div class="box">
+        <ul class="roll"></ul>
+      </div>
+      <span class="btn" onclick="toggle('right')">右</span>
+    </div>
+    <script>
+      let ulDom = document.querySelector(".roll");
+      let arr = Array.from({ length: 25 }, (v, k) => k);
+
+      addHtml(arr);
+      function addHtml(arr) {
+        let html = "";
+        arr.forEach(i => {
+          html += `<li>${i}<li>`;
+        });
+        ulDom.innerHTML = html;
+      }
+
+      let clickNum = 0;
+      let list = [];
+      let leftFlag = false;
+      let rightFlag = true;
+      let pageNum = Math.floor(
+        ulDom.offsetWidth / ulDom.firstChild.offsetWidth
+      ); // 每一页多少个
+      let totalPage = Math.floor(arr.length / pageNum); // 总共多少页
+      console.log(totalPage);
+      function toggle(type) {
+        if (type == "left") {
+          rightFlag = true;
+          if (clickNum == 0) {
+            clickNum = 0;
+            leftFlag = false;
+          }
+          if (leftFlag) {
+            list = arr.slice(pageNum * (clickNum - 1), pageNum * clickNum);
+            clickNum--;
+            addHtml(list);
+          }
+        } else {
+          leftFlag = true;
+          if (clickNum == totalPage) {
+            clickNum = totalPage;
+            rightFlag = false;
+          }
+          if (rightFlag) {
+            clickNum++;
+            list = arr.slice(pageNum * clickNum, pageNum * (clickNum + 1));
+            console.log(clickNum);
+            addHtml(list);
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
