@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      #ul-content {
+        position: absolute;
+        white-space: nowrap;
+      }
+
+      #ul-content li {
+        margin: 10px;
+        width: 80px;
+        height: 30px;
+        background: red;
+        display: inline-block;
+        border-radius: 10px;
+        list-style: none;
+      }
+      #ul-content li:first-child {
+        margin-left: 0;
+        background: yellow;
+      }
+      #ul-content li:last-child {
+        margin-right: 0;
+        background: rebeccapurple;
+      }
+      #div-view {
+        position: relative;
+        margin: 200px auto;
+        height: 50px;
+        width: 496px;
+        line-height: 30px;
+        text-align: center;
+        background-color: olivedrab;
+        overflow: hidden;
+        padding: 0 40px;
+      }
+      span {
+        position: absolute;
+        width: 30px;
+        height: 50px;
+        line-height: 50px;
+        text-align: center;
+        display: inline-block;
+        background: #ddd;
+        color: red;
+      }
+
+      .left {
+        left: 0;
+      }
+
+      .right {
+        right: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="div-view">
+      <ul id="ul-content">
+        <li>1</li>
+        <li>2</li>
+        <li>3</li>
+        <li>4</li>
+        <li>5</li>
+        <li>6</li>
+        <li>7</li>
+        <li>8</li>
+        <li>9</li>
+        <li>10</li>
+      </ul>
+      <span class="left" type="button">&lt;</span>
+      <span class="right" type="button">&gt;</span>
+    </div>
+    <script>
+      var left = document.querySelector(".left");
+      var right = document.querySelector(".right");
+      var ul = document.getElementById("ul-content");
+      // 根据初始情况文档所在位置确定（最好是 0 的位置）
+      var left_position = ul.offsetLeft;
+      //  右点击到底条件
+      var initPosition = ul.offsetLeft;
+      // 左点击到底条件
+      var stopPosition = 480;
+
+      left.onmousedown = function() {
+        if (left_position == -stopPosition) {
+          left_position = -stopPosition;
+          console.log("到底了...");
+          return;
+        }
+        left_position -= 10;
+        ul.style.left = left_position + "px";
+      };
+      right.onmousedown = function() {
+        if (left_position == initPosition) {
+          left_position = initPosition;
+          console.log("到头了...");
+          return;
+        }
+        left_position += 10;
+        ul.style.left = left_position + "px";
+      };
+    </script>
+  </body>
+</html>
