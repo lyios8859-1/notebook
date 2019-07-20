@@ -4,6 +4,7 @@ import Index from "./index.vue";
 import Notification from "./notification/index.js";
 Vue.use(Notification);
 
+import './custome-directive/directive.js';
 
 new Vue({
   el: "#app",

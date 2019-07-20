@@ -6,6 +6,10 @@
     <!-- <Notification content="test notifiy"></Notification> -->
     <div class="notify"></div>
     <button @click="addNotify">addNotify</button>
+
+    <div v-time="timeNow"></div>
+    <div v-time="timeBefore"></div>
+
   </div>
 </template>
 
@@ -16,7 +20,10 @@ import testSmartInput from "./SmartInput/testSmartInput.vue";
 export default {
   name: "App",
   data() {
-    return {};
+    return {
+      timeNow: new Date().getTime(),
+      timeBefore: 1488930695721
+    };
   },
   mounted() {
     this.$notify({
@@ -43,7 +50,7 @@ export default {
 @import './index.css';
 
 .parentBox {
-  color: blue;
+  color: red;
   border: 1px solid red;
 }
 </style>
