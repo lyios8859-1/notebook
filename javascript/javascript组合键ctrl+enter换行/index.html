@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <style>
+      #inputTxtArea {
+        border: 1px solid #ccc;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="inputTxtArea" contenteditable="true"></div>
+    <span style="color:#ddd;">Press Ctrl+Enter to start a new line</span>
+    <script src="./jquery-1.11.1.min.js"></script>
+    <script>
+      $(document).keydown(function(e) {
+        var e = e || window.event,
+          ec = e.keyCode || e.which;
+
+        // Enter 发送消息
+        if (!e.ctrlKey && 13 == ec) {
+          console.log("发送");
+          sendMsgTal();
+          return false;
+        }
+
+        // Ctrl + Enter 换行
+        if (e.ctrlKey && 13 == ec) {
+          console.log("换行");
+          if (browserType() == "IE" || browserType() == "Edge") {
+            $("#inputTxtArea").append("<div></div>");
+          } else if (browserType() == "FF") {
+            $("#inputTxtArea").append("<br/><br/>");
+          } else {
+            $("#inputTxtArea").append("<div><br/></div>");
+          }
+          //设置输入焦点
+          var o = document.getElementById("inputTxtArea").lastChild;
+          var textbox = document.getElementById("inputTxtArea");
+          var sel = window.getSelection();
+          var range = document.createRange();
+          range.selectNodeContents(textbox);
+          range.collapse(false);
+          range.setEndAfter(o); //
+          range.setStartAfter(o); //
+          sel.removeAllRanges();
+          sel.addRange(range);
+        }
+      });
+
+      function sendMsgTal() {
+        console.log("函数发送信息");
+      }
+      function browserType() {
+        var userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
+        var isOpera = false;
+        if (userAgent.indexOf("Edge") > -1) {
+          return "Edge";
+        }
+        if (userAgent.indexOf(".NET") > -1) {
+          return "IE";
+        }
+        if (userAgent.indexOf("Opera") > -1 || userAgent.indexOf("OPR") > -1) {
+          isOpera = true;
+          return "Opera";
+        } //判断是否Opera浏览器
+        if (userAgent.indexOf("Firefox") > -1) {
+          return "FF";
+        } //判断是否Firefox浏览器
+        if (userAgent.indexOf("Chrome") > -1) {
+          return "Chrome";
+        }
+        if (userAgent.indexOf("Safari") > -1) {
+          return "Safari";
+        } //判断是否Safari浏览器
+        if (
+          userAgent.indexOf("compatible") > -1 &&
+          userAgent.indexOf("MSIE") > -1 &&
+          !isOpera
+        ) {
+          return "IE";
+        } //判断是否IE浏览器
+      }
+    </script>
+  </body>
+</html>
