@@ -9,7 +9,6 @@
 
     <div v-time="timeNow"></div>
     <div v-time="timeBefore"></div>
-
   </div>
 </template>
 
@@ -22,7 +21,8 @@ export default {
   data() {
     return {
       timeNow: new Date().getTime(),
-      timeBefore: 1488930695721
+      // timeBefore: 1488930695721
+      timeBefore: new Date("2019-07-19 10:57:00").getTime()
     };
   },
   mounted() {

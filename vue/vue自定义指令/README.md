@@ -89,8 +89,11 @@ directives: {
       // 输出的结果为:null
       console.log('bind:', el, el.parentElement);
     },
+      // 当绑定元素插入到 DOM 中。
     inserted(el, binding) {
       // 输出的结果为: 某个标签, 即对应的父级标签
+      // 聚焦元素
+      el.focus();
       console.log('inserted:', el, el.parentElement);
     },
     // 指令所绑定的值, 再次改变的时候, 才会触发 (组件更新)
