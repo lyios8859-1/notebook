@@ -153,25 +153,24 @@ Object.defineProperty(Func.prototype, "constructor", {
 > undefined 表示一个已经定义的变量未赋值， null 是表示一个空的对象，一个变量指向了 null 这个对象
 
 ```javascript
-
 // bad
-if(a === undefined || x === null) {
+if (a === undefined || x === null) {
   // ...
-};
+}
 
 // good
-if(x == undefined) {
+if (x == undefined) {
   // ...
 }
 ```
 
-## js对象数组添加属性和修改属性
+## js 对象数组添加属性和修改属性
 
 ```javascript
 let kvArr = [
-  {key: 1, value: 20},
-  {key: 2, value: 30},
-  {key: 3, value: 40}
+  { key: 1, value: 20 },
+  { key: 2, value: 30 },
+  { key: 3, value: 40 }
 ];
 let reformattedArr = kvArr.map(o, i => {
   let obj = {};
@@ -207,7 +206,7 @@ function hasBottom() {
 
 ## 字节转换
 
-````javascript
+```javascript
 // K KB MB GB ...转换
 function bytesToSize(bytes) {
   if (bytes == 0) {
@@ -220,4 +219,22 @@ function bytesToSize(bytes) {
 }
 
 console.log(bytesToSize(2000));
+```
+
+## 自判断链接和空合并
+
+> 自判断：允许在没有显示检查中欧功能键节点是否存在的时可以处理树形结构的属性
+> 空合并：确保节点在不存在的时候有设置一个默认值
+
+```javascript
+const Person = {
+  sex: "girl",
+  hobby: {
+    makeup: "涂粉",
+    love: 100,
+    action: {
+      run: "跑步"
+    }
+  }
+};
 ```
