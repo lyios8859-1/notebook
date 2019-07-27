@@ -5,8 +5,11 @@ const Demo = {
     sex: "boy"
   }
 };
+
+debugger;
 // 如果需要对所有属性都进行监听的话，那么可以通过递归方法遍历所有属性值，并对其进行Object.defineProperty()处理
 function defineReactive(data, key, value) {
+  debugger;
   // 遍历递归所有的子属性
   observer(value);
   // 创建一个消息订阅的容器 Dep,存放所有的订阅者

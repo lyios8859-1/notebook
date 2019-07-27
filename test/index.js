@@ -8,15 +8,17 @@
  * 空间复杂度O(1)
  * 稳定性：不稳定
  */
-let arr = [94, 15, 88, 55, 76, 21, 39, 8];
+const arr = [94, 15, 88, 55, 76, 21, 39, 8];
 // 升序
+
 function selectSort(arr) {
-  let len = arr.length;
+  const len = arr.length;
   let minIndex, temp;
-  console.time('选择排序耗时');
-  for (i = 0; i < len - 1; i++) {
+  console.time("选择排序耗时");
+  for (let i = 0; i < len - 1; i++) {
     minIndex = i;
-    for (j = i + 1; j < len; j++) {
+
+    for (let j = i + 1; j < len; j++) {
       if (arr[j] < arr[minIndex]) {
         minIndex = j;
       }
@@ -25,7 +27,7 @@ function selectSort(arr) {
     arr[i] = arr[minIndex];
     arr[minIndex] = temp;
   }
-  console.timeEnd('选择排序耗时');
+  console.timeEnd("选择排序耗时");
   return arr;
 }
 console.log(selectSort(arr));

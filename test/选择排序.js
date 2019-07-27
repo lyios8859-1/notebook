@@ -9,16 +9,19 @@
  * 空间复杂度O(1)
  * 稳定性：不稳定
  */
+
 let arr = [94, 15, 88, 55, 76, 21, 39, 8];
 // 升序
 function selectSort(arr) {
   let len = arr.length;
   let minIndex; //minIndex始终保存着最小值的位置的索引，随着i的自增，遍历的数组长度越来越短
   let temp;
-  console.time('选择排序耗时');
-  for (i = 0; i < len - 1; i++) {
+  console.time("选择排序耗时");
+  for (let i = 0; i < len - 1; i++) {
     minIndex = i;
-    for (j = i + 1; j < len; j++) {
+
+    // 这里 for 循环结束，才循环外层的 for 循环
+    for (let j = i + 1; j < len; j++) {
       if (arr[j] < arr[minIndex]) {
         minIndex = j;
       }
@@ -27,7 +30,7 @@ function selectSort(arr) {
     arr[i] = arr[minIndex];
     arr[minIndex] = temp;
   }
-  console.timeEnd('选择排序耗时');
+  console.timeEnd("选择排序耗时");
   return arr;
 }
 console.log(selectSort(arr));

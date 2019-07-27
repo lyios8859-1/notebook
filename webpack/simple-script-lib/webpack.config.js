@@ -7,7 +7,7 @@ const webpack = require("webpack"),
 let name = packageConf.envVariable,
   version = packageConf.version,
   library = name.replace(/^(\w)/, m => m.toUpperCase()),
-  proxyPort = 8081,
+  proxyPort = 8082,
   plugins = [],
   optimization = null,
   rules = [];
@@ -21,6 +21,7 @@ if (fs.existsSync("./.babelrc")) {
     query: babelConf
   });
 }
+// 开发环境
 if (Object.is(environment, "development")) {
   const HtmlWebpackPlugin = require("html-webpack-plugin");
   plugins.push(
@@ -31,43 +32,43 @@ if (Object.is(environment, "development")) {
   );
   plugins.push(new webpack.HotModuleReplacementPlugin());
 }
+let minjs = {
+  cache: false,
+  parallel: true, // 开启并行压缩，充分利用 CPU 快速压缩
+  sourceMap: true,
+  uglifyOptions: {
+    compress: {
+      // 在UglifyJs删除没有用到的代码时不输出警告
+      warnings: false,
+      // 删除所有的 `debugger` 语句
+      drop_debugger: true,
+      // 删除所有的 `console` 语句
+      drop_console: true,
+      // 内嵌定义了但是只用到一次的变量
+      collapse_vars: true,
+      // // 提取出出现多次但是没有定义成变量去引用的静态值
+      reduce_vars: true
+    },
+    output: {
+      // 最紧凑的输出
+      beautify: false, // 这两个必须同时为 false 才会压缩
+      // 删除所有的注释
+      comments: false
+    }
+  }
+};
+// 生产环境
 if (Object.is(environment, "production")) {
+  console.log("build...");
   const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
   optimization = {
-    minimizer: [
-      new UglifyJsPlugin({
-        exclude: /\.min\.js$/, // 过滤 .min.js 结尾的不需要再打包
-        include: /\.\/src/,
-        cache: false,
-        parallel: true, // 开启并行压缩，充分利用 CPU 快速压缩
-        sourceMap: false,
-        uglifyOptions: {
-          compress: {
-            // 在UglifyJs删除没有用到的代码时不输出警告
-            warnings: false,
-            // 删除所有的 `debugger` 语句
-            drop_debugger: true,
-            // 删除所有的 `console` 语句
-            drop_console: true,
-            // 内嵌定义了但是只用到一次的变量
-            collapse_vars: true,
-            // 提取出出现多次但是没有定义成变量去引用的静态值
-            reduce_vars: true
-          },
-          output: {
-            // 最紧凑的输出
-            beautify: false,
-            // 删除所有的注释
-            comments: false
-          }
-        }
-      })
-    ]
+    minimizer: [new UglifyJsPlugin(minjs)]
   };
 
   let CleanWebpackPlugin = require("clean-webpack-plugin");
   plugins.push(new CleanWebpackPlugin(["dist"]));
 }
+console.log("optimizationoptimizationoptimizationoptimization", optimization);
 module.exports = () => {
   return {
     mode: environment,

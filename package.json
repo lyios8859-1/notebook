@@ -1,0 +1,25 @@
+{
+  "name": "notebook",
+  "version": "1.0.0",
+  "description": "好记性不如烂笔头，勤动口不如勤动手！",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lyios8859-1/notebook.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lyios8859-1/notebook/issues"
+  },
+  "homepage": "https://github.com/lyios8859-1/notebook#readme",
+  "devDependencies": {
+    "eslint-plugin-vue": "^3.14.0"
+  }
+}
