@@ -68,7 +68,7 @@ if (Object.is(environment, "production")) {
   let CleanWebpackPlugin = require("clean-webpack-plugin");
   plugins.push(new CleanWebpackPlugin(["dist"]));
 }
-console.log("optimizationoptimizationoptimizationoptimization", optimization);
+
 module.exports = () => {
   return {
     mode: environment,
