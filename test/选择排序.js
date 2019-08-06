@@ -10,13 +10,13 @@
  * 稳定性：不稳定
  */
 
-let arr = [94, 15, 88, 55, 76, 21, 39, 8];
+const arr = [94, 15, 88, 55, 76, 21, 39, 8];
 // 升序
 function selectSort(arr) {
-  let len = arr.length;
-  let minIndex; //minIndex始终保存着最小值的位置的索引，随着i的自增，遍历的数组长度越来越短
+  const len = arr.length;
+  let minIndex; // minIndex始终保存着最小值的位置的索引，随着i的自增，遍历的数组长度越来越短
   let temp;
-  console.time("选择排序耗时");
+  console.time('选择排序耗时');
   for (let i = 0; i < len - 1; i++) {
     minIndex = i;
 
@@ -30,7 +30,7 @@ function selectSort(arr) {
     arr[i] = arr[minIndex];
     arr[minIndex] = temp;
   }
-  console.timeEnd("选择排序耗时");
+  console.timeEnd('选择排序耗时');
   return arr;
 }
 console.log(selectSort(arr));
