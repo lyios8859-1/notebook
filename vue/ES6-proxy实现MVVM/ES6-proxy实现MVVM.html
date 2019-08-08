@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <div id="app">
+    <h1>人类：{{people}}</h1>
+    <h2>组成部分：</h2>
+    <ul>
+      <li>{{person.hande}}</li>
+      <li>{{person.foot}}</li>
+      <li>{{person.breast}}</li>
+    </ul>
+    <h2>描述：</h2>
+    <p>{{describe}}</p>
+    <p>年龄：{{age}}</p>
+    <input placeholder="人呐" v-module="people" />
+  </div>
+  <script>
+    class Mvvm {
+      constructor(options = {}) {
+        // 把options 赋值给 this.$options
+        this.$options = options;
+        // 把 options.data 赋值给 this._data
+        let data = this._data = this.$options.data;
+        let vm = this.initVm.call(this);
+        // 要使得 Proxy 起作用，必须针对 Proxy 实例, 所以返回 Proxy 是实例
+        return this._vm;
+      }
+      initVm() {
+        // 使用 Proxy 代理
+        this._vm = new Proxy(this, {
+          // 拦截get
+          get: (target, key, receiver) => {
+            return this[key] || this._data[key] || this._computed[key];
+          },
+          // 拦截set
+          set: (target, key, value) => {
+            return Reflect.set(this._data, key, value);
+          }
+        });
+        return this._vm;
+      }
+    }
+
+
+    const mvvm = new Mvvm({
+      el: '#app',
+      data: {
+        people: '人类这种生物',
+        person: {
+          hande: '机智的头部',
+          foot: '行走的脚',
+          breast: '坦荡的胸'
+        },
+        describe: '人呐就那样吧,什么都明白了...',
+        prvAge: 10,
+        nowAge: 1
+      },
+      computed: {
+        age() {
+          return this.nowAge + this.prvAge;
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>
