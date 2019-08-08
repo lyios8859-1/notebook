@@ -6,7 +6,8 @@
 .smartcontainer {
   width: 300px;
   height: auto;
-  margin: 0 auto;
+  margin: 100px;
+  display: inline-block;
 }
 
 .smartcontainer ul {

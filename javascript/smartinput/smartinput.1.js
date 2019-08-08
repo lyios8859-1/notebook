@@ -4,7 +4,7 @@ let list = []; // 原始数据
 let filtered = []; // 对输入的过滤
 let searching = false; // 对面板的展开控制
 let preSearching = false;
-let multiple = false; // 是否支持多选
+const multiple = false; // 是否支持多选
 function key(value) {
   return /(?:.*,)*(.*)$/.exec(value)[1];
 }
@@ -16,12 +16,12 @@ function init() {
   searching = true;
 
   // ajax获取数据
-  list = ["Hello", "Cat", "Tom", "Jery", "Dog", "Worlld"];
+  list = ['Hello', 'Cat', 'Tom', 'Jery', 'Dog', 'Worlld'];
   filtered = list;
 }
 
 window.onload = function() {
-  const smartUl = document.querySelector("#smartItem");
+  const smartUl = document.querySelector('#smartItem');
   const input = smartUl.previousElementSibling;
   // 初始化数据
   init();
@@ -29,12 +29,12 @@ window.onload = function() {
   // 获取焦点, 显示选项面板
   input.onfocus = function() {
     if (searching) {
-      let html = "";
+      let html = '';
       for (let i = 0; i < filtered.length; i++) {
         html += `<li>${filtered[i]}</li>`;
       }
       smartUl.innerHTML = html;
-      smartUl.style.display = "block";
+      smartUl.style.display = 'block';
     }
   };
 
@@ -46,12 +46,12 @@ window.onload = function() {
       return;
     }
     // 使用分号分割多个数据
-    let inputArr = input.value.split(";");
+    const inputArr = input.value.split(';');
     // 如果支持多选
     if (multiple) {
       // 存储输入的数据不再原始数据中的容器
-      let isinvalidData = []; // 存储合法的数据
-      let noinvalidData = []; // 存储不合法的数据
+      const isinvalidData = []; // 存储合法的数据
+      const noinvalidData = []; // 存储不合法的数据
       // 删除 ”;“ 分割成的数组中的最后一个空值
       if (inputArr.length > 1) {
         inputArr.pop();
@@ -65,13 +65,13 @@ window.onload = function() {
         }
       });
       if (isinvalidData.length) {
-        console.log(`输入的 ${isinvalidData.join(",")} 数据不合法`);
+        console.log(`输入的 ${isinvalidData.join(',')} 数据不合法`);
       } else {
-        console.log(`输入的 ${noinvalidData.join(",")} 数据合法`);
+        console.log(`输入的 ${noinvalidData.join(',')} 数据合法`);
       }
     }
     // 修该某些数据
-    //let other = input;
+    // let other = input;
   };
 
   // 联想搜索的主体功能函数，这里使用keydown是为了保证持续性的上下键能够保证执行
@@ -82,7 +82,7 @@ window.onload = function() {
       searching = true;
     }
     const ev = event || window.event;
-    let code = ev.keyCode;
+    const code = ev.keyCode;
     switch (code) {
       case 38:
         ev.preventDefault();
@@ -108,15 +108,15 @@ window.onload = function() {
             return item.toLowerCase().includes(key(input.value).toLowerCase());
           });
           if (filtered.length < 0) {
-            console.log("没有匹配的数据......");
+            console.log('没有匹配的数据......');
           } else {
             // 匹配数据后的操作,展示的面板数据
-            console.log("模糊匹配： ", filtered);
-            let html = "";
+            console.log('模糊匹配： ', filtered);
+            let html = '';
             for (let i = 0; i < filtered.length; i++) {
               html += `<li>${filtered[i]}</li>`;
             }
-            smartUl.innerHTML = "";
+            smartUl.innerHTML = '';
             smartUl.innerHTML = html;
           }
           // 修正索引
@@ -128,9 +128,9 @@ window.onload = function() {
 
   // 键盘按下
   function keyUpDown(code, scrollContainer) {
-    const isScroll = hasScrolled(scrollContainer, "vertical");
+    const isScroll = hasScrolled(scrollContainer, 'vertical');
     const itemChildren = scrollContainer.children;
-    let len = itemChildren.length;
+    const len = itemChildren.length;
     const inputText = scrollContainer.previousElementSibling;
 
     if (Object.is(code, 38)) {
@@ -145,9 +145,9 @@ window.onload = function() {
       // 设置滚动条的位置
       if (isScroll) {
         // 这确定选中的位置
-        let _index_positon =
+        const _index_positon =
           smartUl.clientHeight / 2 / itemChildren[index].offsetHeight;
-        let postion =
+        const postion =
           Math.ceil(_index_positon) * itemChildren[index].offsetHeight;
         itemChildren[index].offsetHeight;
 
@@ -157,7 +157,7 @@ window.onload = function() {
       for (let i = 0; i < len; i++) {
         itemChildren[i].style.backgroundColor = null;
       }
-      itemChildren[index].style.backgroundColor = "#ccc";
+      itemChildren[index].style.backgroundColor = '#ccc';
     }
     if (Object.is(code, 40)) {
       // index++; 这种方式不友好，需要判断两个极端最大和最小
@@ -170,9 +170,9 @@ window.onload = function() {
       // 设置滚动条的位置
       if (isScroll) {
         // 这确定选中的位置
-        let _index_positon =
+        const _index_positon =
           smartUl.clientHeight / 2 / itemChildren[index].offsetHeight;
-        let postion =
+        const postion =
           Math.ceil(_index_positon) * itemChildren[index].offsetHeight;
 
         smartUl.scrollTo(0, itemChildren[index].offsetTop - postion);
@@ -181,7 +181,7 @@ window.onload = function() {
       for (let i = 0; i < len; i++) {
         itemChildren[i].style.backgroundColor = null;
       }
-      itemChildren[index].style.backgroundColor = "#ccc";
+      itemChildren[index].style.backgroundColor = '#ccc';
     }
     if (Object.is(code, 13)) {
       // if (preSearching && index < listLength()) {
@@ -198,10 +198,10 @@ window.onload = function() {
  * @param {显示滚动条的元素} el
  * @param {滚动条的方向} direction
  */
-function hasScrolled(el, direction = "vertical") {
-  if (Object.is(direction, "vertical")) {
+function hasScrolled(el, direction = 'vertical') {
+  if (Object.is(direction, 'vertical')) {
     return el.scrollHeight > el.clientHeight;
-  } else if (Object.is(direction, "horizontal")) {
+  } else if (Object.is(direction, 'horizontal')) {
     return el.scrollWidth > el.clientWidth;
   }
 }
