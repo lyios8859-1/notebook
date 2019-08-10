@@ -83,7 +83,7 @@ Vue.directive("check", {
 
 ```javascript
 directives: {
-  check: {  // 使用时 v-check
+  check: { // 使用时 v-check
     // 需要访问该指令所绑定元素的父级,必须要在inserted钩子中.
     bind(el, binding) {
       // 输出的结果为:null
