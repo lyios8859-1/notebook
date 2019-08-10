@@ -18,15 +18,66 @@
     </ul>
     <h2>描述：</h2>
     <p>{{describe}}</p>
-    <!-- <p>年龄：{{age}}</p> -->
+    <p>年龄：{{age}}</p>
     <input placeholder="人呐" v-module="people" />
   </div>
   <script>
+    // 订阅类
+    class Dep {
+      constructor() {
+        // 定义数组, 存储订阅者函数
+        this.subs = [];
+      }
+      // 订阅函数
+      addSub(sub) {
+        this.subs.push(sub);
+      }
+      // 发布函数(触发函数)
+      notify() {
+        this.subs.filter(item => typeof item !== 'string').forEach(sub => sub.update());
+      }
+    }
+
+    // 监听数据变化类
+    class Watcher {
+      // Watcher类就是我们要订阅的 watcher, 里面有回调函数 fn, 有 update 函数调用 fn.
+      constructor(vm, exp, fn) {
+        this.fn = fn;
+        // 传进来的匹配到 exp 例如："people"，"person.foot" 等
+        this.exp = exp;
+        this.vm = vm;
+        // 给 Dep 类挂载一个 exp
+        Dep.exp = exp;
+        // 给 Dep 类挂载一个 watcher 数据监听对象，更新的时候需要
+        Dep.target = this;
+
+        let arr = exp.split('.');
+        let val = vm;
+        arr.forEach(key => {
+          // 获取值，此时就会触发 vm.proxy 的 get() 函数，get() 里面就添加 addSub 订阅函数
+          val = val[key];
+        })
+        // 添加了订阅之后，把 Dep.target 清空
+        Dep.target = null;
+      }
+
+      update() {
+        // 设置值会触发vm.proxy.set函数，然后调用发布的 notify，
+        // 最后调用update，update里面继续调用this.fn(val).
+        let exp = this.exp;
+        let arr = exp.split('.');
+        let val = this.vm;
+        arr.forEach(key => {
+          val = val[key];
+        })
+        this.fn(val);
+      }
+    }
 
     // 创建观察类
     class Observe {
       constructor(data) {
-        // this.dep = new Dep(); // 订阅者 类
+        this.dep = new Dep(); // 订阅者类
         for (let key in data) {
           // 递归调用子对象, 通过层层递归添加proxy，把 _data 对象都添加一遍代理
           data[key] = observe(data[key]);
@@ -34,14 +85,25 @@
         return this.proxy(data);
       }
       proxy(data) {
-        // let dep = this.dep;
+        let dep = this.dep;
         return new Proxy(data, {
           get: (target, key, receiver) => {
+            if (Dep.target) {
+              // 如果之前是push过的，就不用重复push了
+              if (!dep.subs.includes(Dep.exp)) {
+                // 把 Dep.exp。push到sub数组里面，订阅
+                dep.addSub(Dep.exp);
+                // 把Dep.target。push到sub数组里面，订阅
+                dep.addSub(Dep.target);
+              }
+            }
             return Reflect.get(target, key, receiver);
           },
           set: (target, key, value) => {
             // 对于新添加的对象也要进行添加observe
-            const result = Reflect.set(target, key, observe(value)); 
+            const result = Reflect.set(target, key, observe(value));
+            // 发布
+            dep.notify();
             return result;
           }
         });
@@ -73,15 +135,43 @@
 
           // 匹配大括号 {{}} 中的变量
           let reg = /\{\{(.*?)\}\}/g;
+          
+          // 对节点判断是否是元素属性节点
+          if (node.nodeType === 1) {
+             // 获取元素的属性集合
+            const nodeAttr = node.attributes;
+
+            Array.from(nodeAttr).forEach(item => {
+                let name = item.name; // 属性名
+                let exp = item.value; // 属性值
+                // 如果属性有 v-
+                if (name.includes('v-')){
+                  node.value = vm[exp];
+                  node.addEventListener('input', e => {
+                    // 相当于给 this.people 赋了一个新值
+                    // 而值的改变会调用 set，set 中又会调用 notify，notify 中调用 watcher 的update 方法实现了更新操作
+                    vm[exp] = e.target.value;
+                  })
+                }
+            });
+          }
           // 说明是文本节点
           if (node.nodeType === 3 && reg.test(txt)) {
-            // 如果匹配到的，就替换文本
-            node.textContent = txt.replace(reg, (matched, placeholder) => {
-              let text = placeholder.split('.').reduce((obj, key) => {
-                return obj[key]; // 如：获取到 vm.person.foot 对象的值
-              }, vm);
-              return text;
-            });
+            replaceTxt();
+            // 局部函数
+            function replaceTxt() {
+              // 如果已经匹配到，就替换文本
+              node.textContent = txt.replace(reg, (matched, placeholder) => {
+                // 监听变化，进行匹配替换内容
+                new Watcher(vm, placeholder, replaceTxt);
+  
+                let text = placeholder.split('.').reduce((obj, key) => {
+                  // 如：获取到 vm.person.foot 对象的值
+                  return obj[key];
+                }, vm);
+                return text;
+              });
+            }
           }
           // 如果还有字节点，并且长度不为0 
           if (node.childNodes && node.childNodes.length > 0) {
@@ -159,8 +249,7 @@
       }
     });
 
-    console.log(mvvm)
+    console.log(mvvm);
   </script>
 </body>
-
 </html>
