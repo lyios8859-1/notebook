@@ -633,7 +633,7 @@ class Mvvm {
       return;
     }
     let self = this; //指向 MVVM 实例
-    // 和 VUE 格式类似
+    // 和 vue 格式类似
     this._computed = {};
 
     // 循环代理 computed 中的属性
@@ -641,7 +641,7 @@ class Mvvm {
       // 相当于把计算属性（computed）中的方法（age）里的 this 指向到 this._vm，然后就可以拿到 this.prvAge、this.nextAge
       this._computed[key] = computed[key].call(this._vm);
       // 添加新的 Watcher 才会走代理， 修改时不会显示数据到页面（例： mvvm.prvAge，mvvm.nowAge）
-      new Watcher(this._vm, key, val => { 
+      new Watcher(this._vm, key, val => {
         console.log("val>>>", val)
         // 每次设置的时候都会计算
         this._computed[key] = computed[key].call(this._vm);
