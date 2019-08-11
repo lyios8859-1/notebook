@@ -108,13 +108,15 @@ class Compile {
   init() {
     const element = this.element;
     this.fragment.append(element);
-    this.replace(this.fragment);
+    this.compile(this.fragment);
     document.body.appendChild(this.fragment);
   }
-  replace(frag) {
+  compile(frag) {
     const vm = this.vm;
     Array.from(frag.childNodes).forEach(node => {
       const txt = node.textContent;
+
+      // 这个正则匹配 {{}} 需要优化， 
       const reg = /\{\{(.*?)\}\}/g;
       if (node.nodeType === 1) {
         const nodeAttr = node.attributes;
@@ -143,7 +145,8 @@ class Compile {
         replaceTxt();
       }
       if (node.childNodes && node.childNodes.length) {
-        this.replace(node);
+        // 递归
+        this.compile(node);
       }
     });
   }
@@ -159,7 +162,9 @@ class Dep {
     this.subs.filter(item => typeof item !== 'string').forEach(sub => sub.update());
   }
 }
+// 监听触发变化
 class Watcher {
+  // vm 需要代理的目标对象, exp 代理的目标对象的属性（键）, fn 回调函数
   constructor(vm, exp, fn) {
     this.fn = fn;
     this.vm = vm;
@@ -168,19 +173,28 @@ class Watcher {
     Dep.target = this;
     const arr = exp.split('.');
     let val = vm;
+
     arr.forEach(key => {
       val = val[key];
     });
+
     Dep.target = null;
   }
   update() {
+
     const exp = this.exp;
     const arr = exp.split('.');
     let val = this.vm;
+
     arr.forEach(key => {
       val = val[key];
     });
-    this.fn(val);
+
+    if(this.fn && (typeof(this.fn) === 'function')) {
+      this.fn(val);
+    } else {
+      console.err('fn isn\'t exite');
+    }
   }
 }
 
@@ -198,6 +212,7 @@ const mvvm = new Mvvm({
     nowAge: 1
   },
   computed: {
+    // 这里的计算属性，没有做到像 vue 那样一般情况下不允许下直接修改计算属性的值，例：这样是不允许的 mvvm.age = 34;
     age() {
       return this.nowAge + this.prvAge;
     }

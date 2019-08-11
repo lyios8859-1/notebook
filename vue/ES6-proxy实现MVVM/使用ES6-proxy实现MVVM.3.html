@@ -98,7 +98,7 @@
               // 解决 计算属性修改后无法显示在页面
               // if (!dep.subs.includes(Dep.exp)) {
                 // 把 Dep.exp。push到sub数组里面，订阅
-                dep.addSub(Dep.exp);
+                // dep.addSub(Dep.exp);
                 // 把Dep.target。push到sub数组里面，订阅
                 dep.addSub(Dep.target);
               // }

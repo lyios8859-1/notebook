@@ -319,28 +319,6 @@ class Mvvm {
     this._data = observe(data); // 把所有observe都赋值到 this._data
   }
 }
-
-const mvvm = new Mvvm({
-  el: '#app',
-  data: {
-    people: '人类这种生物',
-    person: {
-      hande: '机智的头部',
-      foot: '行走的脚',
-      breast: '坦荡的胸'
-    },
-    describe: '人呐就那样吧,什么都明白了...',
-    prvAge: 10,
-    nowAge: 1
-  },
-  computed: {
-    age() {
-      return this.nowAge + this.prvAge;
-    }
-  }
-});
-
-console.log(mvvm)
 ```
 
 这样除了 HTML 模板页面的计算属性(computed中的age)的无法编译外都可以把数据值显示到页面了. 虽然现在已经可以把数据编译到页面显示了,但是还没有做到数据变化了页面数据也能相应的变化, 接下来就是实现数据的响应(订阅发布数据).
@@ -404,13 +382,8 @@ class Observe {
     return new Proxy(data, {
       get: (target, key, receiver) => {
         if (Dep.target) {
-          // 如果之前是push过的，就不用重复push了
-          if (!dep.subs.includes(Dep.exp)) {
-            // 把 Dep.exp。push到sub数组里面，订阅
-            dep.addSub(Dep.exp);
-            // 把Dep.target。push到sub数组里面，订阅
-            dep.addSub(Dep.target);
-          }
+          // 把Dep.target。push到sub数组里面，订阅
+          dep.addSub(Dep.target);
         }
         return Reflect.get(target, key, receiver);
       },
@@ -618,3 +591,81 @@ PS: 在页面的 `input` 修改,即可看到效果.
 
 ## 计算属性的监听
 
+```javascript
+// Mvvm 类
+class Mvvm {
+  constructor(options = {}) {
+    // 把options 赋值给 this.$options
+    this.$options = options;
+    // 把 options.data 赋值给 this._data
+    let data = this._data = this.$options.data;
+  
+    // 把 this._vm 添加代理 (注意:把方法单独写在外面需要改变this的指向, 使用 call 方式调用,)
+    // let vm = initVm.call(this);
+    let vm = this._vm = this.initVm();
+
+    // 把 this._data 的数据都添加到代理 (注意:把方法单独写在外面需要改变this的指向, 使用 call 方式调用,)
+    // initObserve.call(this, data);
+    this.initObserve(data)
+
+    // 添加计算函数. (注意:把方法单独写在外面需要改变 this 的指向, 使用 call 方式调用,)
+    // initComputed.call(this);
+    this.initComputed(); // 必须在编译前调用
+
+    // 添加一个模板编译函数
+    new Compile(this.$options.el, vm);
+
+    // 要使得 Proxy 起作用，必须针对 Proxy 实例, 所以返回 Proxy 是实例
+    return this._vm;
+  }
+
+  // 把 this._vm 添加代理
+  initVm() {
+    // 使用 Proxy 代理
+    this._vm = new Proxy(this, {
+      // 拦截get
+      get: (target, key, receiver) => {
+        // 如果MVVM中存在属性 _data, _computed 等等, 就会通过这里拦截
+        return this[key] || this._data[key] || this._computed[key];
+      },
+      // 拦截set
+      set: (target, key, value) => {
+        return Reflect.set(this._data, key, value);
+      }
+    });
+    return this._vm;
+  }
+
+  // 对 this._data 的数据添加代理
+  initObserve(data) {
+    this._data = observe(data); // 把所有observe都赋值到 this._data
+  }
+  
+  // 计算属性添加代理
+  initComputed() {
+    // 整个过程： this._vm改变 ---> vm.set() ---> notify() -->update()-->更新界面
+    // 获取 MVVM 初始化的 computed
+    let computed = this.$options.computed;
+
+    // 如果配置中没有 computed  计算属性，就返回
+    if(!computed) { 
+      return;
+    }
+    let self = this; //指向 MVVM 实例
+    // 和 VUE 格式类似
+    this._computed = {};
+
+    // 循环代理 computed 中的属性
+    Object.keys(computed).forEach((key) => {
+      // 相当于把计算属性（computed）中的方法（age）里的 this 指向到 this._vm，然后就可以拿到 this.prvAge、this.nextAge
+      this._computed[key] = computed[key].call(this._vm);
+      // 添加新的 Watcher 才会走代理， 修改时不会显示数据到页面（例： mvvm.prvAge，mvvm.nowAge）
+      new Watcher(this._vm, key, val => { 
+        console.log("val>>>", val)
+        // 每次设置的时候都会计算
+        this._computed[key] = computed[key].call(this._vm);
+      })
+    });
+  }
+}
+```
