@@ -62,6 +62,9 @@ PS: `new Proxy(param1, param2)` 中 param1 表示需要拦截的对象, param2 �
       age() {
         return this.nowAge + this.prvAge
       }
+    },
+    mounted() {
+      console.log(`I'm mounted. ${this.nowAge}`);
     }
   })
   </script>
@@ -172,28 +175,6 @@ class Mvvm {
     this._data = observe(data); // 把所有observe都赋值到 this._data
   }
 }
-
-const mvvm = new Mvvm({
-  el: '#app',
-  data: {
-    people: '人类这种生物',
-    person: {
-      hande: '机智的头部',
-      foot: '行走的脚',
-      breast: '坦荡的胸'
-    },
-    describe: '人呐就那样吧,什么都明白了...',
-    prvAge: 10,
-    nowAge: 1
-  },
-  computed: {
-    age() {
-      return this.nowAge + this.prvAge;
-    }
-  }
-});
-
-console.log(mvvm)
 ```
 
 ![_datat实现了代理](_data实现了代理.png "_datat实现了代理")
@@ -648,7 +629,7 @@ class Mvvm {
     let computed = this.$options.computed;
 
     // 如果配置中没有 computed  计算属性，就返回
-    if(!computed) { 
+    if(!computed) {
       return;
     }
     let self = this; //指向 MVVM 实例
