@@ -25,274 +25,188 @@
       age: {{age}}</p>
     <input placeholder="人呐" v-module="people" />
   </div>
-  <script>
-    // 订阅类
-    class Dep {
-      constructor() {
-        // 定义数组, 存储订阅者函数
-        this.subs = [];
-      }
-      // 订阅函数
-      addSub(sub) {
-        this.subs.push(sub);
-      }
-      // 发布函数(触发函数)
-      notify() {
-        this.subs.filter(item => typeof item !== 'string').forEach(sub => sub.update());
-      }
-    }
+<script>
 
-    // 监听数据变化类
-    class Watcher {
-      // Watcher类就是我们要订阅的 watcher, 里面有回调函数 fn, 有 update 函数调用 fn.
-      constructor(vm, exp, fn) {
-        this.fn = fn;
-        // 传进来的匹配到 exp 例如："people"，"person.foot" 等
-        this.exp = exp; // 需要代理的键
-        this.vm = vm; // 需要代理的目标对象
-        // 给 Dep 类挂载一个 exp
-        Dep.exp = exp;
-        // 给 Dep 类挂载一个 watcher 数据监听对象，更新的时候需要
-        Dep.target = this;
-
-        let arr = exp.split('.');
-        let val = vm;
-        arr.forEach(key => {
-          // 获取值，此时就会触发 vm.proxy 的 get() 函数，get() 里面就添加 addSub 订阅函数
-          val = val[key];
-        })
-        // 添加了订阅之后，把 Dep.target 清空
-        Dep.target = null;
-      }
-
-      update() {
-        // 设置值会触发vm.proxy.set函数，然后调用发布的 notify，
-        // 最后调用update，update里面继续调用this.fn(val).
-        let exp = this.exp;
-        let arr = exp.split('.');
-        let val = this.vm;
-        arr.forEach(key => {
-          val = val[key];
-        })
-        this.fn(val);
-      }
-    }
-
-    // 创建观察类
-    class Observe {
-      constructor(data) {
-        this.dep = new Dep(); // 订阅者类
-        for (let key in data) {
-          // 递归调用子对象, 通过层层递归添加proxy，把 _data 对象都添加一遍代理
-          data[key] = observe(data[key]);
-        }
-        return this.proxy(data);
-      }
-      proxy(data) {
-        let dep = this.dep;
-        return new Proxy(data, {
-          get: (target, key, receiver) => {
-            // console.log("getting: ", target, key, receiver)
-            if (Dep.target) {
-              // 如果之前是push过的，就不用重复push了
-              if (!dep.subs.includes(Dep.exp)) {
-                // 把 Dep.exp。push到sub数组里面，订阅
-                dep.addSub(Dep.exp);
-                // 把Dep.target。push到sub数组里面，订阅
-                dep.addSub(Dep.target);
-              }
-            }
-            return Reflect.get(target, key, receiver);
-          },
-          set: (target, key, value) => {
-            console.log("setting: ", target, key, value)
-            // 对于新添加的对象也要进行添加observe
-            const result = Reflect.set(target, key, observe(value));
-            // 发布
-            dep.notify();
-            return result;
-          }
-        });
-      }
-    }
-    // html 模板编译类
-    class Compile {
-      constructor(el, vm) {
-        // 受 MVVM 管理的数据缓存
-        this.vm = vm;
-        // 受 MVVM 管理的 HTML 根节点
-        let element = document.querySelector(el);
-
-        // 为了性能,使用碎片添加操作元素
-        let fragment = document.createDocumentFragment(); // 创建fragment代码片段
-        // 把受 MVVM 管理的根节点添加到创建的 fragment 代码片段中
-        fragment.append(element);
-        // 模板的编译处理函数
-        this.compile(fragment);
-        document.body.appendChild(fragment);
-      }
-      compile(fragment) {
-        // 获取缓存的的数据
-        let vm = this.vm;
-        // 循环操作子元素
-        Array.from(fragment.childNodes).forEach((node) => {
-           // 获取到文本
-          let txt = node.textContent;
-          // 匹配大括号 {{}} 中的变量
-          let reg = /\{\{(.*?)\}\}/g;
-
-          // 对节点判断是否是元素属性节点
-          if (node.nodeType === 1) {
-             // 获取元素的属性集合
-            const nodeAttr = node.attributes;
-
-            Array.from(nodeAttr).forEach(item => {
-                let name = item.name; // 属性名
-                let exp = item.value; // 属性值
-                // 如果属性有 v-
-                if (name.includes('v-')){
-                  node.value = vm[exp];
-                  node.addEventListener('input', e => {
-                    // 相当于给 this.people 赋了一个新值
-                    // 而值的改变会调用 set，set 中又会调用 notify，notify 中调用 watcher 的update 方法实现了更新操作
-                    vm[exp] = e.target.value;
-                  })
-                }
-            });
-          }
-          // 说明是文本节点
-          if (node.nodeType === 3 && reg.test(txt)) {
-            replaceTxt();
-            // 局部函数
-            function replaceTxt() {
-              // 如果已经匹配到，就替换文本
-              node.textContent = txt.replace(reg, (matched, placeholder) => {
-                // 监听变化，进行匹配替换内容
-                new Watcher(vm, placeholder, replaceTxt);
-  
-                let text = placeholder.split('.').reduce((obj, key) => {
-                  // 如：获取到 vm.person.foot 对象的值
-                  return obj[key];
-                }, vm);
-                return text;
-              });
-            }
-          }
-          // 如果还有字节点，并且长度不为0 
-          if (node.childNodes && node.childNodes.length > 0) {
-            // 直接递归匹配替换
-            this.compile(node);
-          }
-        });
-      }
-    }
-    // 为了下面递归调用
-    function observe(data) {
-      if (!data || typeof data !== 'object') {
-        // 如果不是对象直接返回值
-        return data;
-      }
-      return new Observe(data); // 调用类观察对象 Observe
-    }
-
-    // Mvvm 类
-    class Mvvm {
-      constructor(options = {}) {
-        // 把options 赋值给 this.$options
-        this.$options = options;
-        // 把 options.data 赋值给 this._data
-        let data = this._data = this.$options.data;
-      
-        // 把 this._vm 添加代理 (注意:把方法单独写在外面需要改变this的指向, 使用 call 方式调用,)
-        // let vm = initVm.call(this);
-        let vm = this._vm = this.initVm();
-
-        // 把 this._data 的数据都添加到代理 (注意:把方法单独写在外面需要改变this的指向, 使用 call 方式调用,)
-        // initObserve.call(this, data);
-        this.initObserve(data)
-
-        // 添加计算函数. (注意:把方法单独写在外面需要改变 this 的指向, 使用 call 方式调用,)
-        // initComputed.call(this);
-        this.initComputed(); // 必须在编译前调用
-
-        // 添加一个模板编译函数
-        new Compile(this.$options.el, vm);
-        
-        // 要使得 Proxy 起作用，必须针对 Proxy 实例, 所以返回 Proxy 是实例
-        return this._vm;
-      }
-
-      // 把 this._vm 添加代理
-      initVm() {
-        // 使用 Proxy 代理
-        this._vm = new Proxy(this, {
-          // 拦截get
-          get: (target, key, receiver) => {
-            // 如果MVVM中存在属性 _data, _computed 等等, 就会通过这里拦截
-            return this[key] || this._data[key] || this._computed[key];
-          },
-          // 拦截set
-          set: (target, key, value) => {
-            return Reflect.set(this._data, key, value);
-          }
-        });
-        return this._vm;
-      }
-
-      // 对 this._data 的数据添加代理
-      initObserve(data) {
-        this._data = observe(data); // 把所有observe都赋值到 this._data
-      }
-      
-      // 计算属性添加代理
-      initComputed() {
-        // 整个过程： this._vm改变 ---> vm.set() ---> notify() -->update()-->更新界面
-        // 获取 MVVM 初始化的 computed
-        let computed = this.$options.computed;
-
-        // 如果配置中没有 computed  计算属性，就返回
-        if(!computed) { 
-          return;
-        }
-        let self = this; //指向 MVVM 实例
-        // 和 VUE 格式类似
-        this._computed = {};
-
-        // 循环代理 computed 中的属性
-        Object.keys(computed).forEach((key) => {
-          // 相当于把计算属性（computed）中的方法（age）里的 this 指向到 this._vm，然后就可以拿到 this.prvAge、this.nextAge
-          this._computed[key] = computed[key].call(this._vm);
-          // 添加新的 Watcher 才会走代理， 修改时不会显示数据到页面（例： mvvm.prvAge，mvvm.nowAge）
-          new Watcher(this._vm, key, val => { 
-            console.log("val>>>", val)
-            // 每次设置的时候都会计算
-            this._computed[key] = computed[key].call(this._vm);
-          })
-        });
-      }
-    }
-
-    const mvvm = new Mvvm({
-      el: '#app',
-      data: {
-        people: '人类这种生物',
-        person: {
-          hande: '机智的头部',
-          foot: '行走的脚',
-          breast: '坦荡的胸'
-        },
-        describe: '人呐就那样吧,什么都明白了...',
-        prvAge: 10,
-        nowAge: 1
+function observe(data) {
+  if (!data || typeof data !== 'object') return data;
+  return new Observe(data);
+}
+class Mvvm {
+  constructor(options = {}) {
+    this.$options = options;
+    const data = this._data = this.$options.data;
+    const vm = this.initVm();
+    this.initObserve(data);
+    this.initComputed();
+    new Compile(this.$options.el, vm);
+    this.mounted();
+    return this._vm;
+  }
+  initVm() {
+    this._vm = new Proxy(this, {
+      get: (target, key, receiver) => {
+        return this[key] || this._data[key] || this._computed[key];
       },
-      computed: {
-        age() {
-          return this.nowAge + this.prvAge;
-        }
+      set: (target, key, value) => {
+        return Reflect.set(this._data, key, value);
       }
     });
+    return this._vm;
+  }
+  initObserve(data) {
+    this._data = observe(data);
+  }
+  initComputed() {
+    const vm = this;
+    const computed = this.$options.computed;
+    vm._computed = {};
+    if (!computed) return;
+    Object.keys(computed).forEach(key => {
+      this._computed[key] = computed[key].call(this._vm);
+      new Watcher(this._vm, key, val => {
+        this._computed[key] = computed[key].call(this._vm);
+      });
+    });
+  }
+  mounted() {
+    const mounted = this._vm.$options.mounted;
+    mounted && mounted.call(this._vm);
+  }
+}
+class Observe {
+  constructor(data) {
+    this.dep = new Dep();
+    for (const key in data) {
+      data[key] = observe(data[key]);
+    }
+    return this.proxy(data);
+  }
+  proxy(data) {
+    const dep = this.dep;
+    return new Proxy(data, {
+      get: (target, prop, receiver) => {
+        if (Dep.target) {
+          dep.addSub(Dep.target);
+        }
+        return Reflect.get(target, prop, receiver);
+      },
+      set: (target, prop, value) => {
+        const result = Reflect.set(target, prop, observe(value));
+        dep.notify();
+        return result;
+      }
+    });
+  }
+}
+class Compile {
+  constructor(el, vm) {
+    this.vm = vm;
+    this.element = document.querySelector(el);
+    this.fragment = document.createDocumentFragment();
+    this.init();
+  }
+  init() {
+    const element = this.element;
+    this.fragment.append(element);
+    this.replace(this.fragment);
+    document.body.appendChild(this.fragment);
+  }
+  replace(frag) {
+    const vm = this.vm;
+    Array.from(frag.childNodes).forEach(node => {
+      const txt = node.textContent;
+      const reg = /\{\{(.*?)\}\}/g;
+      if (node.nodeType === 1) {
+        const nodeAttr = node.attributes;
+        Array.from(nodeAttr).forEach(attr => {
+          const name = attr.name;
+          const exp = attr.value;
+          if (name.includes('v-')) {
+            node.value = vm[exp];
+            node.addEventListener('input', e => {
+              const newVal = e.target.value;
+              // 相当于给this.a赋了一个新值
+              // 而值的改变会调用set，set中又会调用notify，notify中调用watcher的update方法实现了更新
+              vm[exp] = newVal;
+            });
+          }
+        });
+      } else if (node.nodeType === 3 && reg.test(txt)) {
+        replaceTxt();
+        function replaceTxt() {
+          node.textContent = txt.replace(reg, (matched, placeholder) => {
+            new Watcher(vm, placeholder, replaceTxt); // 监听变化，进行匹配替换内容
+            return placeholder.split('.').reduce((val, key) => {
+              return val[key];
+            }, vm);
+          });
+        }
+      }
+      if (node.childNodes && node.childNodes.length) {
+        this.replace(node);
+      }
+    });
+  }
+}
+class Dep {
+  constructor() {
+    this.subs = [];
+  }
+  addSub(sub) {
+    this.subs.push(sub);
+  }
+  notify() {
+    this.subs.filter(item => typeof item !== 'string').forEach(sub => sub.update());
+  }
+}
+class Watcher {
+  constructor(vm, exp, fn) {
+    this.fn = fn;
+    this.vm = vm;
+    this.exp = exp;
+    Dep.exp = exp;
+    Dep.target = this;
+    const arr = exp.split('.');
+    let val = vm;
+    arr.forEach(key => {
+      val = val[key];
+    });
+    Dep.target = null;
+  }
+  update() {
+    const exp = this.exp;
+    const arr = exp.split('.');
+    let val = this.vm;
+    arr.forEach(key => {
+      val = val[key];
+    });
+    this.fn(val);
+  }
+}
 
-    console.log(mvvm);
-  </script>
+const mvvm = new Mvvm({
+  el: '#app',
+  data: {
+    people: '人类这种生物',
+    person: {
+      hande: '机智的头部',
+      foot: '行走的脚',
+      breast: '坦荡的胸'
+    },
+    describe: '人呐就那样吧,什么都明白了...',
+    prvAge: 22,
+    nowAge: 1
+  },
+  computed: {
+    age() {
+      return this.nowAge + this.prvAge;
+    }
+  },
+  mounted() {
+    console.log('I am mounted', this.prvAge);
+  }
+});
+console.log(mvvm);
+</script>
 </body>
 </html>
