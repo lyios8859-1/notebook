@@ -74,6 +74,7 @@ function toTree(data) {
   });
   return val;
 }
+// 把data数据转化成树结构数据格式
 console.log(toTree(data));
 
 // 菜单列表html
@@ -84,6 +85,7 @@ let menus = '';
 // arry：菜单数组信息
 function GetData(id, arry) {
   const childArry = GetParentArry(id, arry);
+  console.log(childArry);
   if (childArry.length > 0) {
     menus += '<ul style="margin-left:' + 20 + 'px">';
     for (const i in childArry) {
