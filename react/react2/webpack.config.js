@@ -47,7 +47,7 @@ module.exports = {
   devServer: {
     port: 8888,
     open: true, // 自动拉起浏览器
-    hot: true, // 自动刷新 (只用页面刷新吧)
+    hot: true // 自动刷新 (只用页面刷新吧)
   }
 };
 
