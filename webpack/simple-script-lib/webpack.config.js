@@ -1,38 +1,47 @@
 const environment = process.env.NODE_ENV;
-const webpack = require("webpack"),
-  path = require("path"),
-  fs = require("fs"),
-  packageConf = JSON.parse(fs.readFileSync("./package.json", "utf-8"));
+const webpack = require('webpack');
 
-let name = packageConf.envVariable,
-  version = packageConf.version,
-  library = name.replace(/^(\w)/, m => m.toUpperCase()),
-  proxyPort = 8082,
-  plugins = [],
-  optimization = null,
-  rules = [];
+const path = require('path');
 
-if (fs.existsSync("./.babelrc")) {
-  let babelConf = JSON.parse(fs.readFileSync("./.babelrc"));
+const fs = require('fs');
+
+const packageConf = JSON.parse(fs.readFileSync('./package.json', 'utf-8'));
+
+let name = packageConf.envVariable;
+
+const version = packageConf.version;
+
+const library = name.replace(/^(\w)/, m => m.toUpperCase());
+
+const proxyPort = 8082;
+
+const plugins = [];
+
+let optimization = null;
+
+const rules = [];
+
+if (fs.existsSync('./.babelrc')) {
+  const babelConf = JSON.parse(fs.readFileSync('./.babelrc'));
   rules.push({
     test: /\.js$/,
     exclude: /(node_modules|bower_components)/,
-    loader: "babel-loader",
+    loader: 'babel-loader',
     query: babelConf
   });
 }
 // 开发环境
-if (Object.is(environment, "development")) {
-  const HtmlWebpackPlugin = require("html-webpack-plugin");
+if (Object.is(environment, 'development')) {
+  const HtmlWebpackPlugin = require('html-webpack-plugin');
   plugins.push(
     new HtmlWebpackPlugin({
-      template: "./index.html",
-      filename: "index.html"
+      template: './index.html',
+      filename: 'index.html'
     })
   );
   plugins.push(new webpack.HotModuleReplacementPlugin());
 }
-let minjs = {
+const minjs = {
   cache: false,
   parallel: true, // 开启并行压缩，充分利用 CPU 快速压缩
   sourceMap: true,
@@ -58,35 +67,35 @@ let minjs = {
   }
 };
 // 生产环境
-if (Object.is(environment, "production")) {
-  console.log("build...");
-  const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+if (Object.is(environment, 'production')) {
+  console.log('build...');
+  const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
   optimization = {
     minimizer: [new UglifyJsPlugin(minjs)]
   };
 
-  let CleanWebpackPlugin = require("clean-webpack-plugin");
-  plugins.push(new CleanWebpackPlugin(["dist"]));
+  const CleanWebpackPlugin = require('clean-webpack-plugin');
+  plugins.push(new CleanWebpackPlugin(['dist']));
 }
 
 module.exports = () => {
   return {
     mode: environment,
     entry: {
-      index: "./src/index.js"
+      index: './src/index.js'
     },
     output: {
-      filename: Object.is(environment, "production")
+      filename: Object.is(environment, 'production')
         ? (name += `-${version}.min.js`)
-        : "[name].js", // 打包之后生成的文件名
-      path: path.resolve(__dirname, "dist"), // 打包后的文件的存放路径
-      publicPath: "/static/js/", // // 指定文件的引用路径（虚拟目录-开发时候使用）
+        : '[name].js', // 打包之后生成的文件名
+      path: path.resolve(__dirname, 'dist'), // 打包后的文件的存放路径
+      publicPath: '/static/js/', // // 指定文件的引用路径（虚拟目录-开发时候使用）
       library: `${library}`, // 指定类库名，主要用于直接引用的方式（如：支持AMD Commonjs script 标签引入）
-      libraryTarget: "umd", // 定义打包方式，同时支持CommonJS，AMD和全局引用（script）
-      globalObject: "this" // 兼容nodejs环境和浏览器环境
+      libraryTarget: 'umd', // 定义打包方式，同时支持CommonJS，AMD和全局引用（script）
+      globalObject: 'this' // 兼容nodejs环境和浏览器环境
     },
     plugins: plugins,
-    optimization: optimization ? optimization : {},
+    optimization: optimization || {},
     devServer: {
       port: proxyPort, // 本地服务器端口号
       hot: true, // 热重载
