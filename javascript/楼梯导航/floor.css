@@ -1,0 +1,140 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+ul {
+  list-style: none;
+}
+
+a {
+  text-decoration: none
+}
+
+.menu {
+  position: fixed;
+  top: 50%;
+  left: 5%;
+  width: 40px;
+  height: 200px;
+  border: 1px solid red;
+  transform: translate(0, -50%);
+}
+
+ul {
+  background: #ccc;
+}
+ul li {
+  height: 34px;
+  width: 100%;
+  text-align: center;
+  line-height: 34px;
+  border-bottom: 1px solid #ddd;
+}
+ul li:last-child{
+  border-bottom: none;
+}
+.scrollBar {
+  box-sizing: border-box;
+  overflow: auto;
+  /*三角箭头的颜色*/
+  scrollbar-arrow-color: #f4ae21;
+  /*立体滚动条的颜色*/
+  scrollbar-face-color: #333;
+  /*立体滚动条亮边的颜色*/
+  scrollbar-3dlight-color: #666;
+  /*滚动条空白部分的颜色*/
+  scrollbar-highlight-color: #666;
+  /*立体滚动条阴影的颜色*/
+  scrollbar-shadow-color: #999;
+  /*立体滚动条强阴影的颜色*/
+  scrollbar-darkshadow-color: #666;
+  /*立体滚动条背景颜色*/
+  scrollbar-track-color: #666;
+  /*滚动条的基本颜色*/
+  scrollbar-base-color: #f8f8f8;
+}
+
+
+.scrollBar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.scrollBar::-webkit-scrollbar-track {
+  background: #f6f6f6;
+  border-radius: 2px;
+}
+
+.scrollBar::-webkit-scrollbar-thumb {
+  background: #aaa;
+  border-radius: 2px;
+}
+
+.scrollBar::-webkit-scrollbar-thumb:hover {
+  background: #747474;
+}
+
+.scrollBar::-webkit-scrollbar-corner {
+  background: #f6f6f6;
+}
+
+
+/*滚动条整体部分*/
+/* .scrollBar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background: yellow;
+} */
+
+/*滚动条两端的按钮，可以用display:none让其不显示，也可以添加背景图片*/
+/* .scrollBar::-webkit-scrollbar-button{
+  background:#74D334;
+  display: none;
+} */
+
+/*外层轨道，可以用display:none让其不显示，也可以添加背景图片*/
+/* .scrollBar::-webkit-scrollbar-track{
+  background:#FF66D5;
+} */
+
+/*内层轨道，滚动条中间部分*/
+/* .scrollBar::-webkit-scrollbar-track-piece{
+  background:red;
+  border-radius: 4px;
+} */
+
+/* 滚动条里面可以拖动的那部分 */
+/* .scrollBar::-webkit-scrollbar-thumb{
+  background:#FFA711;
+  border-radius:4px;
+} */
+
+/*边角, x,y都有滚动条时x与y接触的地方*/
+/* .scrollBar::-webkit-scrollbar-corner {
+  background: red;
+  border-radius: 50%;
+} */
+
+/*右下角拖动块的样式*/
+/* .scrollBar::-webkit-scrollbar-resizer  {
+  background:blur;
+}
+ */
+
+
+.content div {
+  height: 500px;
+  background: rgba(109, 102, 102, 0.2);
+  margin: 10px 0;
+  text-align: center;
+  line-height: 500px;
+  font-size: 34px;
+  color: #fff;
+}
+.content div:first-child {
+  margin-top: 0; 
+}
+.content div:last-child {
+  margin-bottom: 0;
+}
