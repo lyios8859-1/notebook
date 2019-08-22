@@ -370,3 +370,74 @@ css
 </style>
 <div class="icon-dot"></div>
 ```
+
+## CSS3 的 `：not(el)`
+
+> 排除某个元素 el
+
+最后一个 li 排除，不添加 border
+
+```html
+<style>
+/*一般做法*/
+ul li {
+  border: 1px solid #666;
+}
+ul li:last-child {
+  border: none;
+}
+
+/*高级的做法*/
+ul li:not(:last-child) {
+  border: 1px solid #666;
+}
+
+/*添加逗号*/
+ul > li:not(:last-child)::after { 
+  content: ",";
+}
+</style>
+
+<ul>
+  <li>1</li>
+  <li>2</li>
+  <li>3</li>
+  <li>4</li>
+  <li>5</li>
+</ul>
+
+
+```
+
+## 黑白图像
+
+```html
+<style>
+img {
+  filter: grayscale(100%);
+  -webkit-filter: grayscale(100%);
+  -moz-filter: grayscale(100%);
+  -ms-filter: grayscale(100%);
+  -o-filter: grayscale(100%);
+}
+</style>
+```
+
+## 页面顶部阴影
+
+```html
+<style>
+body:before {
+  content: "";
+  position: fixed;
+  top: -10px;
+  left: 0;
+  width: 100%;
+  height: 10px;
+  -webkit-box-shadow: 0px 0px 10px rgba(0, 0, 0, .8);
+  -moz-box-shadow: 0px 0px 10px rgba(0, 0, 0, .8);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, .8);
+  z-index: 100;
+}
+</style>
+```

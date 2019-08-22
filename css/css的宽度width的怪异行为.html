@@ -1,24 +1,78 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Document</title>
-  </head>
-  <body>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      ul {
-        list-style: none;
-      }
-      a {
-        text-decoration: none;
-      }
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Document</title>
+</head>
+
+<body>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+
+    ul {
+      list-style: none;
+    }
+
+    a {
+      text-decoration: none;
+    }
+
+    .box1 {
+      border: 1px solid blue;
+      width: 300px;
+      margin-bottom: 10px;
+    }
+
+    .box1>a {
+      /* 不设置 width*/
+      display: block;
+      border: 1px solid red;
+      margin: 0 10px;
+      padding: 0 30px;
+    }
+
+    .box2 {
+      border: 1px solid blue;
+      width: 300px;
+    }
+
+    .box2>a {
+      /* 设置 width: auto;*/
+      display: block;
+      width: auto;
+      border: 1px solid red;
+      margin: 0 10px;
+      padding: 0 30px;
+    }
+
+    .box3 {
+      border: 1px solid blue;
+      width: 300px;
+      margin-top: 10px;
+    }
+
+    .box3>a {
+      /* 设置 width: 100%; 这样添加的padding,margin会撑开父盒子，父盒子固定宽度*/
+      display: block;
+      width: 100%;
+      border: 1px solid red;
+      margin: 0 10px;
+      padding: 0 30px;
+    }
+  </style>
+  <h2>
+    a > display: block; 不给宽度, a
+    自动适应固定的宽度的父元素的宽度，不管添加多大的 margin,padding
+  </h2>
+  <pre>
       .box1 {
         border: 1px solid blue;
         width: 300px;
@@ -31,6 +85,19 @@
         margin: 0 10px;
         padding: 0 30px;
       }
+    </pre>
+  <div class="box1">
+    <a href="javascript:void(0);">a1</a>
+    <a href="javascript:void(0);">a2</a>
+    <a href="javascript:void(0);">a3</a>
+    <a href="javascript:void(0);">a4</a>
+  </div>
+  <hr />
+  <h2>
+    a > display: block; width: auto; a
+    自动适应固定的宽度的父元素的宽度，不管添加多大的 margin,padding
+  </h2>
+  <pre>
       .box2 {
         border: 1px solid blue;
         width: 300px;
@@ -43,6 +110,19 @@
         margin: 0 10px;
         padding: 0 30px;
       }
+    </pre>
+  <div class="box2">
+    <a href="javascript:void(0);">a1</a>
+    <a href="javascript:void(0);">a2</a>
+    <a href="javascript:void(0);">a3</a>
+    <a href="javascript:void(0);">a4</a>
+  </div>
+  <hr />
+  <h2>
+    a > display: block; width: 100%; 添加 margin,padding，a
+    会超出固定的宽度的父元素
+  </h2>
+  <pre>
       .box3 {
         border: 1px solid blue;
         width: 300px;
@@ -56,81 +136,13 @@
         margin: 0 10px;
         padding: 0 30px;
       }
-    </style>
-    <h2>
-      a > display: block; 不给宽度, a
-      自动适应固定的宽度的父元素的宽度，不管添加多大的 margin,padding
-    </h2>
-    <pre>
-      .box1 {
-        border: 1px solid blue;
-        width: 300px;
-        margin-bottom: 10px;
-      }
-      .box1 > a {
-        /* 不设置 width*/
-        display: block;
-        border: 1px solid red;
-        margin: 0 10px;
-        padding: 0 30px;
-      }
     </pre>
-    <div class="box1">
-      <a href="javascript:void(0);">a1</a>
-      <a href="javascript:void(0);">a2</a>
-      <a href="javascript:void(0);">a3</a>
-      <a href="javascript:void(0);">a4</a>
-    </div>
-    <hr />
-    <h2>
-      a > display: block; width: auto; a
-      自动适应固定的宽度的父元素的宽度，不管添加多大的 margin,padding
-    </h2>
-    <pre>
-      .box2 {
-        border: 1px solid blue;
-        width: 300px;
-      }
-      .box2 > a {
-        /* 设置 width: auto;*/
-        display: block;
-        width: auto;
-        border: 1px solid red;
-        margin: 0 10px;
-        padding: 0 30px;
-      }
-    </pre>
-    <div class="box2">
-      <a href="javascript:void(0);">a1</a>
-      <a href="javascript:void(0);">a2</a>
-      <a href="javascript:void(0);">a3</a>
-      <a href="javascript:void(0);">a4</a>
-    </div>
-    <hr />
-    <h2>
-      a > display: block; width: 100%; 添加 margin,padding，a
-      会超出固定的宽度的父元素
-    </h2>
-    <pre>
-      .box3 {
-        border: 1px solid blue;
-        width: 300px;
-        margin-top: 10px;
-      }
-      .box3 > a {
-        /* 设置 width: 100%; 这样添加的padding,margin会撑开父盒子，父盒子固定宽度*/
-        display: block;
-        width: 100%;
-        border: 1px solid red;
-        margin: 0 10px;
-        padding: 0 30px;
-      }
-    </pre>
-    <div class="box3">
-      <a href="javascript:void(0);">a1</a>
-      <a href="javascript:void(0);">a2</a>
-      <a href="javascript:void(0);">a3</a>
-      <a href="javascript:void(0);">a4</a>
-    </div>
-  </body>
+  <div class="box3">
+    <a href="javascript:void(0);">a1</a>
+    <a href="javascript:void(0);">a2</a>
+    <a href="javascript:void(0);">a3</a>
+    <a href="javascript:void(0);">a4</a>
+  </div>
+</body>
+
 </html>
