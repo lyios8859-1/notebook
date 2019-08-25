@@ -1,10 +1,26 @@
 @nice-blue: #5B83AD;
 @light-blue: @nice-blue + #111;
 
-@mt: 5px;
-@mt_1: 10px;
-@mt_2: 20px;
+@margin-top: 20px;
 
-@ml: 5px;
-@ml_1: 10px;
-@ml_2: 20px;
+
+.loop(@n, @i: 0) when (@i =< @n) {
+  @size: @i*2;
+
+  .pt-@{size} { padding-top: unit(@size, px) !important; }
+  .pr-@{size} { padding-right: unit(@size, px) !important; }
+  .pb-@{size} { padding-bottom: unit(@size, px) !important; }
+  .pl-@{size} { padding-left: unit(@size, px) !important; }
+
+  .mt-@{size} { margin-top: unit(@size, px) !important; }
+  .mr-@{size} { margin-right: unit(@size, px) !important; }
+  .mb-@{size} { margin-bottom: unit(@size, px) !important; }
+  .ml-@{size} { margin-left: unit(@size, px) !important; }
+
+  .fs-@{size} { font-size: unit(@size, px) !important; }
+
+  .loop(@n, (@i + 1));
+}
+
+// 调用，统一生成一些公共的 class 类名样式
+.loop(2);

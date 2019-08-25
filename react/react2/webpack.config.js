@@ -42,12 +42,19 @@ module.exports = {
       inject: 'body' // 有四个选项值 true, body, head, false----true:默认值，script标签位于html文件的 body 底部 body:同true head:插入的js文件位于head标签内 false:不插入生成的js文件，只生成一个纯html
     }),
     // 热更新插件
-    new webpack.HotModuleReplacementPlugin()
+    new webpack.HotModuleReplacementPlugin(),
+    // 确保可以在 chrome 可以使用React调试的插件
+    new webpack.DefinePlugin({
+      'process.env':{
+        'NODE_ENV': JSON.stringify('production')
+      }
+    }),
   ],
   devServer: {
     port: 8888,
     open: true, // 自动拉起浏览器
-    hot: true // 自动刷新 (只用页面刷新吧)
+    hot: true, // 自动刷新 (只用页面刷新吧)
+    inline: true
   }
 };
 

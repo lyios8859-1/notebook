@@ -15,6 +15,7 @@ class Welcome extends React.Component {
           <li>item1</li>
           <li>item2</li>
           <li>item3</li>
+<li>i的的的3</li>
         </ul>
       </div>
     );
