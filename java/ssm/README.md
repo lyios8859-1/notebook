@@ -8,6 +8,16 @@
 - mvn pakage 打包,动态 web工程打 war包，Java工程打 jar 包。
 - mvn install 将项目生成 jar 包放在仓库中，以便别的模块调用
 
+## 流程
+
+1、将 Mybatis 与 Spring 整合， 为了通过 Spring 来创建 mapper 对象，调用对应的 mapper 接口；
+2、将业务层与数据层整合，a：service接口中可以调用mapper， b：事物控制；
+3、控制层与业务层整合，a：action（Web）中调用service，b：将 service 中的数据拿出在视图层展示即可。
+
+![SSM框架流程.png](SSM框架流程.png "SSM 框架流程")
+
+
+
 ## Maven
 
 修改默认的jar包（本地仓库）到指定的存放位置， 找到 `conf` 文件夹中的 `settings.xml` 文件
@@ -195,6 +205,13 @@
     select name, create_time as createTime from ly_user;
   </select>
 </mapper>
+```
+
+### 测试
+
+```shell
+# 在 pom.xml 所在文件下执行 mvn 命令
+mvn test
 ```
 
 PS: mvn test 测试时候不能有注释
