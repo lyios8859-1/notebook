@@ -2,10 +2,13 @@
 node_modules
 dist
 lib
-
+java/**/target
+java/**/.settings/
 # local env files
 .env.local
 .env.*.local
+.classpath
+.project
 
 # Log files
 *.log
@@ -22,3 +25,4 @@ yarn-error.log*
 *.sln
 *.sw?
 *.temp
+
