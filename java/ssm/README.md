@@ -1,9 +1,6 @@
 # Spring + SpringMVC + Mybatis + Maven 框架整合
 
-> Spring 4.0.2 RELEASE
-> Spring MVC 4.0.2 RELEASE
-> MyBatis 3.2.6
-> Maven 3.6.1
+> Maven 3.6.1 + Spring 4.0.2 RELEASE + Spring MVC 4.0.2 RELEASE + MyBatis 3.2.6
 
 - mvn compile 编译,将Java 源程序编译成 class 字节码文件。
 - mvn test 测试，并生成测试报告
