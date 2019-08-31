@@ -16,8 +16,6 @@
 
 ![SSM框架流程.png](SSM框架流程.png "SSM 框架流程")
 
-
-
 ## Maven
 
 修改默认的jar包（本地仓库）到指定的存放位置， 找到 `conf` 文件夹中的 `settings.xml` 文件
