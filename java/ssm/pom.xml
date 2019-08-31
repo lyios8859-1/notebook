@@ -1,6 +1,4 @@
 
-
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.tom.mavenssm</groupId>
@@ -24,8 +22,24 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 
-  <!-- mvn 编译时不需要编译的问题处理,会拷贝到对应的classes目录下 -->
-  <!-- <build>
+  <build>
+    <plugins>
+      <!-- 配置 tomcat 热部署 -->
+      <plugin>
+        <groupId>org.apache.tomcat.maven</groupId>
+        <artifactId>tomcat7-maven-plugin</artifactId>
+        <version>2.2</version>
+        <configuration>
+          <port>8080</port>
+          <path>/ly</path>
+          <url>http://127.0.0.1:8080/manager/text</url>
+          <username>liuyun</username>
+          <password>liuyun</password>
+        </configuration>
+      </plugin>
+    </plugins>
+
+    <!-- mvn 编译时不需要编译的问题处理,会拷贝到对应的classes目录下 -->
     <resources>
       <resource>  
         <directory>src/main/resources</directory>  
@@ -46,8 +60,8 @@
         <filtering>false</filtering>  
       </resource> 
     </resources>
-  </build> -->
-  
+  </build>
+
   <dependencies>
     <!-- junit 单元测试 -->
     <dependency>
@@ -208,6 +222,13 @@
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
       <version>1.9</version>
+    </dependency>
+
+    <!-- manen tomcat 热部署依赖 -->
+    <dependency>
+      <groupId>org.apache.tomcat.maven</groupId>
+      <artifactId>tomcat7-maven-plugin</artifactId>
+      <version>2.2</version>
     </dependency>
 
   </dependencies>

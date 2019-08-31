@@ -17,6 +17,7 @@ public class UserServiceImpl implements IUserService{
 
   public List<User> getAllUserInfo() {
     List<User> allUserInfoList = userDao.selectAllUserInfo();
+
     return allUserInfoList;
   }
   

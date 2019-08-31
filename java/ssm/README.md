@@ -213,3 +213,62 @@ mvn test
 ```
 
 PS: mvn test 测试时候不能有注释
+
+## web.xml
+
+
+## Maven+Tomcat实现热部署
+
+### tomcat 配置
+
+1、修改Tomcat的conf/tomcat-users.xml配置文件。添加用户名、密码、权限
+
+```xml
+<role rolename="manager-gui" />
+<role rolename="manager-script" />
+<user username="tomcat" password="tomcat" roles="manager-gui, manager-script"/>
+```
+
+2、重启 Tomcat
+浏览器访问： `http://localhost:8080/manager/html`，输入用户和密码即可。
+
+### 使用maven的tomcat插件实现热部署
+
+1、修改 pom.xml 文件
+
+```xml
+<!-- 配置 tomcat 热部署 -->
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.apache.tomcat.maven</groupId>
+      <artifactId>tomcat7-maven-plugin</artifactId>
+      <version>2.2</version>
+      <configuration>
+        <port>8080</port>
+        <path>/</path>
+        <url>http://127.0.0.1:8080/manager/text</url>
+        <username>liuyun</username>
+        <password>liuyun</password>
+      </configuration>
+    </plugin>
+  </plugins>
+</build>
+
+<!-- manen tomcat 热部署依赖 -->
+<dependency>
+  <groupId>org.apache.tomcat.maven</groupId>
+  <artifactId>tomcat7-maven-plugin</artifactId>
+  <version>2.2</version>
+</dependency>
+```
+
+### maven 命令部署
+
+```shell
+# 跳过测试直接部署
+mvn clean tomcat7:redeploy -D skip Tests
+
+# 先测试，再部署
+mvn clean tomcat7:redeploy
+```

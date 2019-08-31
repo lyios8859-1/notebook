@@ -7,3 +7,4 @@ import com.tom.bean.User;
 public interface IUserService {
   public List<User> getAllUserInfo();
 }
+
