@@ -106,7 +106,7 @@ public class HelloTest {
   @Test
   public void testController(){
     System.out.println("=====================================Controller 测试==============================================");
-    List<User> allUserInfoListController = userView.getAllUserList();
+    List<User> allUserInfoListController = userView.getAllUserListAjax();
     // 美化 json 字符串输出在控制台
     // String jsonString = JSON.toJSONString(allUserInfoList, SerializerFeature.PrettyFormat, SerializerFeature.WriteNullStringAsEmpty, SerializerFeature.UseSingleQuotes);
     String jsonString = JSON.toJSONString(allUserInfoListController);
