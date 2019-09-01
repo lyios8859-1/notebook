@@ -8,5 +8,8 @@
 </head>
 <body>
   Maven-SSM
+  <form action="user/test" method="get">
+    <input type="submit" value="submit">
+  </form>
 </body>
 </html>

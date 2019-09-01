@@ -10,7 +10,7 @@
   
   <!-- 自动扫描 -->
   <context:component-scan base-package="com.tom.*" />
-
+  
   <!--加载配置文件-->
   <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
     <property name="location" value="classpath:properties/jdbc.properties"/>

@@ -26,9 +26,9 @@ import com.tom.service.IUserService;
 import com.alibaba.fastjson.JSON;
 // import com.alibaba.fastjson.serializer.SerializerFeature;
 
-
 @RunWith(SpringJUnit4ClassRunner.class) //表示继承了SpringJUnit4ClassRunner类
 @ContextConfiguration(locations = { "classpath:spring/spring-mybatis.xml",  })
+
 public class HelloTest {
 
   @Autowired

@@ -260,12 +260,12 @@ PS: mvn test 测试时候不能有注释
   </plugins>
 </build>
 
-<!-- manen tomcat 热部署依赖 -->
-<dependency>
+<!-- manen tomcat 热部署依赖 部署时也不需要了, 否则该依赖包会和tomcat的包冲突访问项目是报 404 -->
+<!-- <dependency>
   <groupId>org.apache.tomcat.maven</groupId>
   <artifactId>tomcat7-maven-plugin</artifactId>
   <version>2.2</version>
-</dependency>
+</dependency> -->
 ```
 
 ### maven 命令部署
