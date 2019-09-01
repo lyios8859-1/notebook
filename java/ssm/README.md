@@ -359,5 +359,5 @@ rm -rvf mavenssm mavenssm.war && mvn clean tomcat7:redeploy
 
 ## 部署后,浏览器测试
 
-> 工程名: mavenssm,和 pom.xml 的 artifactId 的至相同, `http://127.0.0.1:8080/mavenssm/user/test/`
+> 工程名: mavenssm,和 pom.xml 的 artifactId 的值相同, `http://127.0.0.1:8080/mavenssm/user/test/`
 
