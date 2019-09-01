@@ -22,9 +22,17 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 
+  <!-- 可以和tomcat容器的端口一样
+  <port>8080</port>
+  部署的war到ly目录下
+  <path>/ly</path>
+  http://tomcat容器所在服务器IP:端口/manager/text
+  <url>http://127.0.0.1:8080/manager/text</url>
+  tomcat容器中的conf/tomcat-users.xml文件中配置的用户名和密码
+  <username>liuyun</username>
+  <password>liuyun</password> -->
   <build>
     <plugins>
-      <!-- 配置 tomcat 热部署 -->
       <plugin>
         <groupId>org.apache.tomcat.maven</groupId>
         <artifactId>tomcat7-maven-plugin</artifactId>
@@ -39,7 +47,7 @@
       </plugin>
     </plugins>
 
-    <!-- mvn 编译时不需要编译的问题处理,会拷贝到对应的classes目录下 -->
+    <!-- mvn 编译时不需要编译的文件处理,会拷贝到对应的编译后的classes目录下 -->
     <resources>
       <resource>  
         <directory>src/main/resources</directory>  

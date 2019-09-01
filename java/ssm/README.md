@@ -270,5 +270,6 @@ PS: mvn test 测试时候不能有注释
 mvn clean tomcat7:redeploy -D skip Tests
 
 # 先测试，再部署
-mvn clean tomcat7:redeploy
+# 服务器的 tomcat 路径 /home/timly/Desktop/install/java/apache-tomcat-7.0.96/webapps/
+rm -rvf ly ly.war && mvn clean tomcat7:redeploy
 ```
