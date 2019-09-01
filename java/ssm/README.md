@@ -326,8 +326,8 @@ PS: mvn test 测试时候不能有注释
       <configuration>
         <!-- 可以和tomcat容器的端口一样 -->
         <port>8080</port>
-        <!-- 部署的war到ly目录下 -->
-        <path>/ly</path>
+        <!-- 部署的war到mavenssm目录下 -->
+        <path>/mavenssm</path>
         <!-- http://tomcat容器所在服务器IP:端口/manager/text -->
         <url>http://127.0.0.1:8080/manager/text</url>
         <!-- tomcat容器中的conf/tomcat-users.xml文件中配置的用户名和密码 -->
@@ -352,12 +352,12 @@ PS: mvn test 测试时候不能有注释
 # 跳过测试直接部署
 mvn clean tomcat7:redeploy -D skip Tests
 
-# 先测试，再部署 mavenssm 是 pom.xml 文件配置中的 artifactId 配置的值,也是工程名
+# 先测试，再部署 mavenssm 是 pom.xml 文件配置中的 <path>/mavenssm</path> 配置的值,也是工程名
 # 服务器的 tomcat 路径 /home/timly/Desktop/install/java/apache-tomcat-7.0.96/webapps/
 rm -rvf mavenssm mavenssm.war && mvn clean tomcat7:redeploy
 ```
 
 ## 部署后,浏览器测试
 
-> 工程名: mavenssm,和 pom.xml 的 artifactId 的值相同, `http://127.0.0.1:8080/mavenssm/user/test/`
+> 工程名: mavenssm,和 pom.xml 的 `<path>/mavenssm</path>` 的值相同, `http://127.0.0.1:8080/mavenssm/user/test/`
 
