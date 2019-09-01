@@ -14,14 +14,6 @@ module.exports = {
         test: /\.vue$/,
         use: 'vue-loader'
       },
-      // {
-      //   test: /\.css$/,
-      //   loader: 'vue-style-loader!css-loader'
-      // },
-      // {
-      //   test: /\.less$/,
-      //   loader: 'vue-style-loader!css-loader!less-loader' // 这里不可以少,千万不要使用loader:'less-loader'的形式
-      // },
       {
         test: /\.(css|less)$/,
         use: [
@@ -46,8 +38,8 @@ module.exports = {
     new HtmlWebpackPlugin({
       filename: 'index.html', // 需要自动注入的文件名称
       template: 'index.html', // 需要自动注入的模板的文件名称
-      inject: true// 是否自动注入生成后的文件
+      inject: true // 是否自动注入生成后的文件
     })
-  ]
-}
-;
+  ],
+  devtool: 'inline-source-map'
+};
