@@ -240,14 +240,19 @@ PS: mvn test 测试时候不能有注释
 <!-- 配置 tomcat 热部署 -->
 <build>
   <plugins>
+    <!-- 配置 tomcat 热部署 -->
     <plugin>
       <groupId>org.apache.tomcat.maven</groupId>
       <artifactId>tomcat7-maven-plugin</artifactId>
       <version>2.2</version>
       <configuration>
+        <!-- 可以和tomcat容器的端口一样 -->
         <port>8080</port>
-        <path>/</path>
+        <!-- 部署的war到ly目录下 -->
+        <path>/ly</path>
+        <!-- http://tomcat容器所在服务器IP:端口/manager/text -->
         <url>http://127.0.0.1:8080/manager/text</url>
+        <!-- tomcat容器中的conf/tomcat-users.xml文件中配置的用户名和密码 -->
         <username>liuyun</username>
         <password>liuyun</password>
       </configuration>
