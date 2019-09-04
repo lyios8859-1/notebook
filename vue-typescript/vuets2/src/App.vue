@@ -7,3 +7,11 @@ export default {
   name: 'App',
 };
 </script>
+
+<style lang="less">
+  @import "./s.less";
+  .app {
+    background: blue;
+
+  }
+</style>

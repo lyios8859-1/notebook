@@ -20,6 +20,10 @@
   },
   "homepage": "https://github.com/lyios8859-1/notebook#readme",
   "devDependencies": {
-    "eslint-plugin-vue": "^3.14.0"
+    "css-loader": "^3.2.0",
+    "eslint-plugin-vue": "^3.14.0",
+    "less": "^3.10.3",
+    "less-loader": "^5.0.0",
+    "vue-style-loader": "^4.1.2"
   }
 }

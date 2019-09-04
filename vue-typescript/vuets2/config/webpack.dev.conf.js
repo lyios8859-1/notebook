@@ -1,5 +1,6 @@
 const path = require('path');
-const VueLoaderPlugin = require('vue-loader/lib/plugin'); // 引入vue-loader库
+const { VueLoaderPlugin } = require('vue-loader');
+// const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const config_build_assetsSubDirectory = 'static';
@@ -55,10 +56,17 @@ module.exports = {
       },
       {
         test: /\.(ts|tsx)$/,
-        // enforce: 'pre',
         loader: 'tslint-loader',
         exclude: /node_modules/,
         include: resolve('src')
+      },
+      {
+        test: /\.(css|less)/,
+        use: [
+          'vue-style-loader',
+          'css-loader',
+          'less-loader'
+        ]
       },
       {
         test: /\.tsx?$/,
