@@ -190,6 +190,6 @@ module.exports = {
       objectsInObjects: false
     }],
     'array-bracket-spacing': [2, 'never'],
-    'no-var-keyword': false
+    'no-var-keyword': false,
   }
 }

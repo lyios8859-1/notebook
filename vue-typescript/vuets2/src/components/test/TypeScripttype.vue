@@ -12,18 +12,8 @@ import { Component, Emit, Inject, Model, Prop, Provide, Vue, Watch } from 'vue-p
 @Component({})
 export default class MyComponent extends Vue {
 
-  // data
-  private msg: string = 'TypeScript 方式的写法, data';
-
-  // methods
   public clickMe() {
-    console.log('TypeScript 方式的写法, methods');
+    console.log(3);
   }
-
-  // 钩子
-  public mounted() {
-    console.log('TypeScript 方式的写法, mounted, Props: ');
-  }
-
 }
 </script>
