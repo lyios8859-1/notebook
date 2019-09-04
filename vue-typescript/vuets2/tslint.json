@@ -7,7 +7,7 @@
     "no-console": false,
     "no-debugger": false,
     "no-unused-expression": false,
-    "object-literal-sort-keys": true,
+    "object-literal-sort-keys": false,
     "quotemark": [true, "single"],
     "trailing-comma": false,
     "no-consecutive-blank-lines": [true, 2],
@@ -15,6 +15,7 @@
     "indent": [true, "spaces", 2],
     "no-var-keyword": false,
     "prefer-const": false,
-    "object-literal-shorthand": false
+    "object-literal-shorthand": false,
+    "space-before-function-paren": false
   }
 }

@@ -3,20 +3,18 @@ const { VueLoaderPlugin } = require('vue-loader');
 // const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const config_build_assetsSubDirectory = 'static';
-const config_dev_assetsSubDirectory = 'static';
-const config_build_assetsRoot = path.resolve(__dirname, '../dist');
-const config_build_assetsPublicPath = '/';
-const config_dev_assetsPublicPath = '/';
+const buildAssetsSubDirectory = 'static';
+const devAssetsSubDirectory = 'static';
+const buildAssetsRoot = path.resolve(__dirname, '../dist');
+const buildAssetsPublicPath = '/';
+const devAssetsPublicPath = '/';
 
 function resolve(dir) {
   console.log('>path: ', path.join(__dirname, '..', dir));
   return path.join(__dirname, '..', dir);
 }
 function assetsPath(_path) {
-  const assetsSubDirectory = process.env.NODE_ENV === 'production'
-    ? config_build_assetsSubDirectory
-    : config_dev_assetsSubDirectory;
+  const assetsSubDirectory = process.env.NODE_ENV === 'production' ? buildAssetsSubDirectory : devAssetsSubDirectory;
 
   return path.posix.join(assetsSubDirectory, _path);
 }
@@ -26,11 +24,9 @@ module.exports = {
     app: './src/main.ts'
   },
   output: {
-    path: config_build_assetsRoot,
-    filename: '[name].js',
-    publicPath: process.env.NODE_ENV === 'production'
-      ? config_build_assetsPublicPath
-      : config_dev_assetsPublicPath
+    path: buildAssetsRoot,
+    filename: '[name].[hash:8].min.js',
+    publicPath: process.env.NODE_ENV === 'production' ? buildAssetsPublicPath : devAssetsPublicPath
   },
   resolve: {
     extensions: ['.js', '.vue', '.json', 'ts', '.tsx'],
