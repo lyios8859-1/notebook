@@ -25,7 +25,7 @@ export default Vue.extend({
   },
   mounted() {
     console.log('Bable 方式的写法, mounted, Props: ' + this.propBableName);
-  }
+  },
 
 });
 </script>

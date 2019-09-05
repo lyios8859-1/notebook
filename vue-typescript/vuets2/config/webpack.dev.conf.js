@@ -28,6 +28,7 @@ module.exports = {
     filename: '[name].[hash:8].min.js',
     publicPath: process.env.NODE_ENV === 'production' ? buildAssetsPublicPath : devAssetsPublicPath
   },
+  devtool: 'cheap-module-eval-source-map', // 开发环境推荐： cheap-module-eval-source-map 生产环境推荐： cheap-module-source-map
   resolve: {
     extensions: ['.js', '.vue', '.json', 'ts', '.tsx'],
     alias: {
@@ -38,24 +39,29 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.vue$/,
+        test: /\.(vue|ts|tsx)$/,
         enforce: 'pre',
         loader: 'vue-tslint-loader',
         exclude: /node_modules/,
         include: resolve('src')
       },
-      {
-        test: /\.vue$/,
-        loader: 'vue-loader',
-        exclude: /node_modules/,
-        include: resolve('src')
-      },
-      {
-        test: /\.(ts|tsx)$/,
-        loader: 'tslint-loader',
-        exclude: /node_modules/,
-        include: resolve('src')
-      },
+      // {
+      //   test: /\.(ts|tsx)$/,
+      //   loader: 'tslint-loader',
+      //   exclude: /node_modules/,
+      //   include: resolve('src')
+      // },
+      // {
+      //   test: /\.tsx?$/,
+      //   exclude: /node_modules/,
+      //   use: [
+      //     "babel-loader",
+      //     {
+      //       loader: "ts-loader",
+      //       options: { appendTsxSuffixTo: [/\.vue$/] }
+      //     }
+      //   ]
+      // },
       {
         test: /\.(css|less)/,
         use: [
@@ -65,14 +71,22 @@ module.exports = {
         ]
       },
       {
+        test: /\.vue$/,
+        loader: 'vue-loader',
+        exclude: /node_modules/,
+        include: resolve('src')
+      },
+      {
         test: /\.tsx?$/,
         loader: 'ts-loader',
         options: {
+          transpileOnly: false, // true 编译就不检测typescript的语言但是这个没有意义, 所以就设置为fasle
           appendTsSuffixTo: [/\.vue$/]
         },
         exclude: /node_modules/,
         include: resolve('src')
-      },
+      }
+      /*
       {
         test: /\.js$/,
         loader: 'babel-loader',
@@ -101,7 +115,7 @@ module.exports = {
           limit: 10000,
           name: assetsPath('fonts/[name].[hash:7].[ext]')
         }
-      }
+      }*/
     ]
   },
   plugins: [

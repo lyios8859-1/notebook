@@ -18,24 +18,8 @@
     "prefer-const": false,
     "object-literal-shorthand": false,
     "space-before-function-paren": false,
-
-    "curly": false,
-    "variable-name": false,
-    "ordered-imports":false,
-    "semicolon":[false, "always", "ignore-interfaces"],
-    "interface-name":false,
-    "typedef-whitespace": false,
-    "whitespace": false,
-    "one-line": false,
-    "only-arrow-functions":false,
-    "arrow-parens":false,
-    "ban-types": [true, ["Object", "Use {} instead."], ["String"]],
-    "max-line-length": [true, {"limit": 200, "ignore-pattern": "^import |^export {(.*?)}|class [a-zA-Z]+ implements |//"}],
-    "max-classes-per-file":[true, 1],
     "trailing-comma": false,
-    "no-shadowed-variable": false,
-    "no-conditional-assignment": false,
-    "one-variable-per-declaration": false
+    "interface-name" : false
   },
   "rulesDirectory": []
 }
