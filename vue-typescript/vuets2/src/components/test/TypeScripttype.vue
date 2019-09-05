@@ -15,7 +15,7 @@ import FormValidataeMixin from './FormValidataeMixin.vue';
 })
 export default class MyComponent extends Vue {
   @Prop(String)
-  public propTypeScriptTypeNmae!: string;
+  public propTypeScriptTypeNmae: string;
 
   public clickMe() {
     console.log(3);

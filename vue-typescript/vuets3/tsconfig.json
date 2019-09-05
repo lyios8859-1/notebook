@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "module": "es2015",
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "sourceMap": true,
+    "target": "es5",
+    "jsx": "preserve",
+    "lib": [
+      "dom",
+      "es5",
+      "es6",
+      "es7",
+      "es2015.promise"
+    ]
+  },
+  "include": [
+    "./src/**/*.ts",
+    "./src/**/*.vue",
+    "./src/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

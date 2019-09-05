@@ -1,0 +1,29 @@
+{
+  "name": "vuets3",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "NODE_ENV=development webpack-dev-server --inline --open --progress --config config/webpack.dev.conf.js",
+    "build": "NODE_ENV=production webpack --progress --config config/webpack.prod.conf.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "html-webpack-plugin": "^3.2.0",
+    "ts-loader": "^6.0.4",
+    "typescript": "^3.6.2",
+    "vue-loader": "^15.7.1",
+    "vue-property-decorator": "^8.2.2",
+    "vue-template-compiler": "^2.6.10",
+    "webpack": "^4.39.3",
+    "webpack-cli": "^3.3.7",
+    "webpack-dev-server": "^3.8.0"
+  },
+  "dependencies": {
+    "@types/vue": "^2.0.0",
+    "vue": "^2.6.10"
+  }
+}
