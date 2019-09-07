@@ -31,9 +31,6 @@ dispatch.dispatchEvent("lyTest", { name: "Jerry" });
 
 /*************************************************/
 
-
-
-
 // const eventUtil = {
 //   // 触发事件 (事件类型，传输的数据)
 //   notiyEvent(type, data) {

@@ -1,8 +1,7 @@
 const path = require("path");
-const webpack = require('webpack');
-const { VueLoaderPlugin } = require('vue-loader');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const  { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const { VueLoaderPlugin } = require('vue-loader');
+const webpack = require('webpack');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 function resolve (dir) {
   console.log('path: ', path.join(__dirname, '..', dir));
@@ -10,7 +9,7 @@ function resolve (dir) {
 }
 
 module.exports = {
-  mode: 'production',//process.env.NODE_ENV,
+  mode: process.env.NODE_ENV,
   entry: {
     app: './src/index.ts',
     lodash: ["lodash"], // 引入第三方库，如果需要全局使用：在plugins配置ProvidePlugin
@@ -23,7 +22,6 @@ module.exports = {
     publicPath: '/' // 这里开发就不需要设置绝对路径了,否则 生成的js文件不会加载到index.html里
   },
   module: {
-    noParse: /underscore|lodash/,
     rules: [
       {
         test: /\.tsx?$/,
@@ -51,25 +49,21 @@ module.exports = {
       inject: true // 是否自动注入生成后的文件
     }),
     new webpack.ProvidePlugin({
-      _: 'lodash', // 使用typescript 需要在vue-shims.d.ts中定义全局变量
+      _: 'lodash', // 如何使用typescript 需要在vue-shims.d.ts中定义全局变量
       _underscore: "underscore"
     }),
-    // 每次构建完成后先清理一遍dist目录
-    new CleanWebpackPlugin({
-      cleanAfterEveryBuildPatterns: ['dist']
-    }),
-    // new BundleAnalyzerPlugin({
-    //   analyzerMode: 'server',
-    //   analyzerHost: '127.0.0.1',
-    //   analyzerPort: 8889,
-    //   reportFilename: 'report.html',
-    //   defaultSizes: 'parsed',
-    //   openAnalyzer: true,
-    //   generateStatsFile: false,
-    //   statsFilename: 'stats.json',
-    //   statsOptions: null,
-    //   logLevel: 'info'
-    // })
+    new BundleAnalyzerPlugin({
+      analyzerMode: 'server',
+      analyzerHost: '127.0.0.1',
+      analyzerPort: 8889,
+      reportFilename: 'report.html',
+      defaultSizes: 'parsed',
+      openAnalyzer: true,
+      generateStatsFile: false,
+      statsFilename: 'stats.json',
+      statsOptions: null,
+      logLevel: 'info'
+    })
   ],
   optimization: {
     splitChunks: {

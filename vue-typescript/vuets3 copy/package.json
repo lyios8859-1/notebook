@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "NODE_ENV=development webpack-dev-server --watch --hot --inline --open --progress --config config/webpack.dev.conf.js",
-    "build": "NODE_ENV=production webpack --progress --config config/webpack.prod.conf.js",
+    "dev": "NODE_ENV=development webpack-dev-server --inline --open --progress --config config/webpack.dev.conf.js",
+    "build": "NODE_ENV=production rm -rvf dist/* && webpack --progress --config config/webpack.prod.conf.js",
     "analyz": "NODE_ENV=production npm_config_report=true npm run build"
   },
   "keywords": [],
@@ -14,7 +14,6 @@
   "license": "ISC",
   "devDependencies": {
     "@types/lodash": "^4.14.138",
-    "clean-webpack-plugin": "^3.0.0",
     "html-webpack-plugin": "^3.2.0",
     "ts-loader": "^6.0.4",
     "typescript": "^3.6.2",
