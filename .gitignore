@@ -4,6 +4,7 @@ dist
 lib
 java/**/target
 java/**/.settings/
+project
 # local env files
 .env.local
 .env.*.local
