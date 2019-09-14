@@ -1,6 +1,42 @@
 # async/await
 
 > Generator --> Promise --> 地狱回调(callback hell) --> 异步 --> 单线程的javascript
+> async: 用在函数前,表示函数是一个异步函数,则该函数的执行不会阻塞海面的代码,async 函数返回的是
+> 一个promise对象.
+> await: await(等待)后面的函数运行完并且有了返回结果之后，才继续执行下面的代码。同步的效果
+
+## 简单案例
+
+```javascript
+function getData() {
+  return new Promise((resolve, reject) => {
+    $.ajax({
+      type: "POST",
+      url:"...",
+      data: {},
+      success: function (data) {
+        reject(data);
+      },
+      error: function (err) {
+        reject(err);
+      }
+    });
+  });
+}
+
+// 调用
+async function runFunc() {
+  try {
+    let data = await getData();
+    console.log("后台返回的数据", data);
+    // 等请求数据回来了,才继续往下执行代码
+    // ... 其他代码
+  } catch(err) {
+    console.error("Error: ", err);
+  }
+}
+
+```
 
 ## 同步获取图片的高度,宽度
 
