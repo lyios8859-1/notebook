@@ -1,20 +1,26 @@
-
 const arr = [94, 15, 88, 55, 76, 21, 39, 8];
-
+// 计数排序
 // 升序
-function insertSort() {
-  const len = arr.length;
-  let preIndex, current;
-  for (let i = 1; i < len; i++) {
-    preIndex = i - 1;
-    current = arr[i];
-    // 需要插入的值是否需要插入到相比较的值之后
-    while (preIndex >= 0 && arr[preIndex] > current) {
-      arr[preIndex + 1] = arr[preIndex];
-      preIndex--;
+function countingSort(arr, maxValue) {
+  let bucket = new Array(maxValue + 1);
+  let sortedIndex = 0;
+  let arrLen = arr.length;
+  let bucketLen = maxValue + 1;
+
+  for (let i = 0; i < arrLen; i++) {
+    if (!bucket[arr[i]]) {
+      bucket[arr[i]] = 0;
     }
-    arr[preIndex + 1] = current;
+    bucket[arr[i]]++;
+  }
+
+  for (let j = 0; j < bucketLen; j++) {
+    while (bucket[j] > 0) {
+      arr[sortedIndex++] = j;
+      bucket[j]--;
+    }
   }
   return arr;
 }
-console.log(insertSort(arr));
+// 94 自已先知道须排序的最值
+console.log(countingSort(arr, 94));
