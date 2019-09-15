@@ -8,34 +8,51 @@
 ## 简单案例
 
 ```javascript
-function getData() {
+function fetchApi(method, url) {
   return new Promise((resolve, reject) => {
-    $.ajax({
-      type: "POST",
-      url:"...",
-      data: {},
-      success: function (data) {
-        reject(data);
-      },
-      error: function (err) {
-        reject(err);
+    let xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if(xhr.readyState === 4) {
+        if(xhr.status >= 200 && xhr.status < 300) {
+          let response;
+          try {
+            response = xhr.responseText;
+          } catch (error) {
+            reject(error);
+          }
+          if(resolve) {
+            resolve({
+              message: response,
+              status: xhr.status
+            });
+          }
+        }
+      } else {
+        reject(xhr);
       }
-    });
+    };
+
+    if(method.toLocaleLowerCase() === "post") {
+      xhr.open("POST", url, true);
+      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+      xhr.send();
+    } else {
+      xhr.open('GET', url);
+      xhr.setRequestHeader("Content-Type", "text/plain");
+      xhr.send(data);
+    }
   });
 }
 
 // 调用
-async function runFunc() {
+(async function() {
   try {
-    let data = await getData();
-    console.log("后台返回的数据", data);
-    // 等请求数据回来了,才继续往下执行代码
-    // ... 其他代码
-  } catch(err) {
-    console.error("Error: ", err);
+    let result = await fetchApi();
+    console.log(result);
+  } catch (e) {
+    console.log(e);
   }
-}
-
+})();
 ```
 
 ## 同步获取图片的高度,宽度
@@ -111,5 +128,77 @@ async function uploadImageList(list) {
     return
   }
   return results;
+}
+```
+
+## await和async，将回调函数变成同步的处理
+
+[参考](https://blog.csdn.net/zdhsoft/article/details/79469622 "df")
+
+```javascript
+/**
+ * 异步调用函数,注意：要求第一个参数回调函数
+ * @static
+ * @param {function} paramFunc 要调用的函数
+ * @param {...args} args 要调用的参数
+ * @return {...args} 返回回调函数的传入参数列表
+ */
+async function WaitFunction(paramFunc, ...args) {
+  return new Promise((resolve) => {
+    paramFunc((...result) => {
+      resolve(result);
+    }, ...args);
+  });
+}
+
+/**
+ * 异步调用函数,注意：
+ * - 要求第一个参数回调函数,要给函数的参数
+ * - 要求以依次存放到数组paramList传入。
+ * 
+ * 这个函数和WaitFuncion主要的区别是：传入函数的回调，是放到最后面的，而WaitFuncion则要求是第一个参数
+ * 
+ * @static
+ * @param {function} paramFunc 要调用的函数
+ * @param {...args} args 要传给函数的参数数组
+ */
+async function WaitFunctionEx(paramFunc, ...args) {
+  return new Promise((resolve) => {
+    paramFunc(...args, (...result) => {
+      resolve(result);
+    });
+  });
+}
+
+/**
+ *  异步调用类成员函数,注意：要求第一个参数回调函数
+ * @static
+ * @param {object} paramObject 要调用函数的对象实例
+ * @param {String} paramFunc 要调用的函数名称
+ * @param {...args} args 要调用的参数
+ * @return {...args} 返回回调函数的传入参数列表
+ */
+async function WaitClassFunction(paramObject, paramFunction, ...args) {
+  return new Promise((resolve) => {
+    paramObject[paramFunction]((...result) => {
+      resolve(result);
+    }, ...args);
+  });
+}
+
+/**
+ *  异步调用类成员函数,注意：要求第一个参数回调函数
+ * @static
+ * @param {object} paramObject 要调用函数的对象实例
+ * @param {String} paramFunc 要调用的函数名称
+ * @param {...args} args 要调用的参数
+ * @return {...args} 返回回调函数的传入参数列表
+ */
+async function WaitClassFunctionEx(paramObject, paramFunction, ...args) {
+  return new Promise((resolve) => {
+    paramObject[paramFunction](...args, (...result) => {
+      resolve(result);
+    });
+  });
 }
 ```
