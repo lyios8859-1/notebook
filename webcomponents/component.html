@@ -1,0 +1,158 @@
+<template>
+  <style>
+    span {
+      color: #ccd6dd;
+      cursor: pointer;
+      display: inline-block;
+
+      transform: scale3d(1, 1, 1);
+      -webkit-transform: scale3d(1, 1, 1);
+      -moz-transform: scale3d(1, 1, 1);
+
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    @-webkit-keyframes star {
+      0% {
+        -webkit-transform: scale3d(1, 1, 1);
+      }
+      50% {
+        -webkit-transform: scale3d(1.4, 1.4, 1);
+      }
+      to {
+        -webkit-transform: scale3d(1, 1, 1);
+      }
+    }
+
+    @-moz-keyframes star {
+      0% {
+        -moz-transform: scale3d(1, 1, 1);
+      }
+      50% {
+        -moz-transform: scale3d(1.4, 1.4, 1);
+      }
+      to {
+        -moz-transform: scale3d(1, 1, 1);
+      }
+    }
+
+    @keyframes star {
+      0% {
+        transform: scale3d(1, 1, 1);
+      }
+      50% {
+        transform: scale3d(1.4, 1.4, 1);
+      }
+      100% {
+        transform: scale3d(1, 1, 1);
+      }
+    }
+
+    span[active] {
+      color: #ffac33;
+      -webkit-animation: star 0.3s ease-in-out;
+      -moz-animation: star 0.3s ease-in-out;
+      animation: star 0.3s ease-in-out;
+    }
+
+    span[hover] {
+      color: #ffac33;
+    }
+  </style>
+  <span>&#x2605;</span>
+</template>
+
+<script>
+  // 导入者文档对象
+  const parentDom = document;
+  // 当前script元素脚本所在文档对象
+  const currentDom =
+    parentDom.currentScript.ownerDocument ||
+    parentDom._currentScript.ownerDocument;
+  // 继承 html 元素对象
+  const htmlDom = Object.create(HTMLElement.prototype);
+  console.log(htmlDom);
+
+  // 通过 document.registerElement 注册成功后回调函数
+  htmlDom.createdCallback = function() {
+    // this 指向 <ly-component></ly-component>
+    console.log(this);
+    debugger;
+    let template = currentDom.querySelector('template');
+    // 包装成一个节点对象,才可以通过appendChild添加, true 表示遍历子节点
+    let clone = parentDom.importNode(template.content, true);
+
+    // 表示处理为局部的,不影响引入者(其他地方)
+    this.shadowRoot = this.createShadowRoot();
+    this.shadowRoot.appendChild(clone);
+
+    // 获取模板的元素
+    this.element = this.shadowRoot.querySelector('span');
+    console.log(this.element); // <span>&#x2605;</span>
+
+    // 创建事件句柄
+    this.boundOnClick = this.onClick.bind(this);
+    this.boundOnMouseover = this.onMouseover.bind(this);
+    this.boundOnMouseout = this.onMouseout.bind(this);
+
+    // 检测是否传递的一些参数
+    if (this.hasAttribute('active')) {
+      this.element.setAttribute('active', '');
+    }
+  };
+
+  // 事件attachedCallback注册和detachedCallback移除
+  htmlDom.attachedCallback = function() {
+    // 获取模板的元素对象
+    const el = this.element;
+    // 注册(监听)事件
+    el.addEventListener('click', this.boundOnClick);
+    el.addEventListener('mouseout', this.boundOnMouseout);
+    el.addEventListener('mouseover', this.boundOnMouseover);
+  };
+
+  htmlDom.toggle = function() {
+    if (this.hasAttribute('active')) {
+      this.removeAttribute('active');
+    } else {
+      this.setAttribute('active', '');
+    }
+  };
+
+  htmlDom.onClick = function() {
+    this.toggle();
+  };
+
+  htmlDom.onMouseover = function() {
+    const el = this.element;
+    if (!el.hasAttribute('active')) {
+      el.setAttribute('hover', '');
+    }
+  };
+
+  htmlDom.onMouseout = function() {
+    const el = this.element;
+    el.removeAttribute('hover');
+  };
+
+  // 元素属性变化
+  htmlDom.attributeChangedCallback = function(attr) {
+    if (attr === 'active') {
+      const el = this.element;
+
+      if (this.hasAttribute('active')) {
+        el.setAttribute('active', '');
+      } else {
+        el.removeAttribute('active');
+        el.removeAttribute('hover');
+      }
+    }
+  };
+
+  // 注册组件 ly-component
+  parentDom.registerElement('ly-component', { prototype: htmlDom });
+</script>
