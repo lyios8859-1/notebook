@@ -238,3 +238,21 @@ const Person = {
   }
 };
 ```
+
+## 把数组转换成对象,数组元素作为对象的属性
+
+```javascript
+['a', 3, 'b', [2, 'a'], { name: 'Tom' }].reduce((res, key) => {
+  res[key] = key;
+  return res;
+}, Object.create(null));
+/**
+ {
+  '3': 3,
+  a: 'a',
+  b: 'b',
+  '2,a': [2, 'a'],
+  '[object Object]': { name: 'Tom' }
+};
+ */
+```
