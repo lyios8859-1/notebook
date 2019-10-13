@@ -71,7 +71,7 @@ class AudioPlayer {
 
   // 是否静音
   setMuted() {
-    return this.audio.muted = !this.audio.muted;
+    return !this.audio.muted;
   }
 
   // 设置播放的音乐文件地址
@@ -89,7 +89,7 @@ class AudioPlayer {
       });
       return;
     }
-    let mp3Count = this.mp3Container.length;
+    const mp3Count = this.mp3Container.length;
 
     if (type === 'prev') {
       console.log('上一首');
@@ -142,11 +142,11 @@ class AudioPlayer {
   // 监听是否音乐加载完成,才获取时间
   loadComplate(callback) {
     try {
-      this.audio.addEventListener('canplaythrough', function (e) {
+      this.audio.addEventListener('canplaythrough', function(e) {
         callback && callback && callback(true);
       }, false);
-      this.audio.addEventListener('error', function (e) {
-        callback && callback(false, this.error)
+      this.audio.addEventListener('error', function(e) {
+        callback && callback(false, this.error);
       }, false);
       this.audio.load();
     } catch (e) {
@@ -158,20 +158,16 @@ class AudioPlayer {
   getDuration() {
     return this.audio.duration;
   }
-
 }
-//生成从minNum到maxNum的随机数
+// 生成从minNum到maxNum的随机数
 function getRandomNum(minNum, maxNum) {
   switch (arguments.length) {
     case 1:
       return parseInt(Math.random() * minNum + 1, 10);
-      break;
     case 2:
       return parseInt(Math.random() * (maxNum - minNum + 1) + minNum, 10);
-      break;
     default:
       return 0;
-      break;
   }
 }
 
