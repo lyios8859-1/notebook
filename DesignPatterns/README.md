@@ -810,6 +810,9 @@ new SatateObj().change(["speak"]).trigger();
 ![发布订阅者模式.png](发布订阅者模式.png '发布订阅者模式')
 PS: 如果所示,发布者和订阅者解偶. 调度中心负责发布者和订阅者的通信,至于怎样通信在调度中心处理,发布者只管在调度中心通知, 订阅者只管在调度中心订阅. 发布-订阅模式是将调度中心挂在了全局，我们只管调用调度中心相应的方法注册和订阅.
 
+通俗理解: 发布者对象中有个容器存放所有的订阅者,当发布者要发布一条消息时,会遍历这个容器中的所有订阅者,为每个订阅者进行消息通知.订阅者对象创建的时候会在发布者对象的容器中添加这个订阅者对象, 此时订阅者有一个监听发布者是否发布消息的方法,已有收到有发布者的通知就会触发执行.
+
+
 ```javascript
 // 发布者和订阅者模式：对程序中某一个对象的进行实时的观察，当该对象状态发生改变的时候进行通知
 // 发布者
@@ -960,7 +963,7 @@ publish1.notify();
 ```
 
 ```javascript
-// 根据数据状态变化自动通知订阅者
+// 根据数据状态变化自动通知订阅者(订阅者的实时监听是否有发布者发布的新通知)
 
 // 发布者(Subject 被实时观察的监听的对象)
 class Publish {
@@ -969,7 +972,6 @@ class Publish {
     // 存储所有的订阅者
     this.subscribers = [];
   }
-
   getState () {
     return this.state;
   }
@@ -1005,8 +1007,9 @@ class Publish {
   // 发布者发布消息(通知已订阅的订阅者)
   notify () {
     this.subscribers.forEach(subscribe => {
-      // 调用订阅者(subscribe)中的更新处理方法
-      subscribe.update();
+      // 调用订阅者(subscribe)中的实时监听更新处理方法
+      // subscribe.update();
+      subscribe.listenerUpdate();
     });
   }
 }
@@ -1022,8 +1025,9 @@ class Subscribe {
     publish.subscribeRegister(this);
   }
 
-  // 更新处理方法
-  update () {
+  // 更新处理方法 listener(监听是否发布者发布新消息)
+  // update () {
+  listenerUpdate () {
     console.log('订阅者获取(更新)发布者的发布的消息');
   }
 }
@@ -1032,6 +1036,7 @@ const publish1 = new Publish('publish1');
 const subscribe1 = new Subscribe('subscribe1');
 const subscribe2 = new Subscribe('subscribe2');
 // subscribe2.update = function () {}; // 修改update方法，实现不同逻辑
+// subscribe2.listenerUpdate = function () {}; // 修改listenerUpdate方法，实现不同逻辑
 
 // 为发布者添加订阅者
 publish1.subscribeRegister(subscribe1);
@@ -1042,4 +1047,29 @@ publish1.setState('Tom');
 publish1.setState('Jerry');
 ```
 
+```javascript
+class Event {
+  constructor () {
+    this.subscribers = new Map([['any', []]]);
+  }
+
+  // 监听
+  on (fn, type = 'any') {
+    const subs = this.subscribers;
+    if (!subs.get(type)) return subs.set(type, [fn]);
+    subs.set(type, (subs.get(type).push(fn)));
+  }
+  // 触发
+  emit (content, type = 'any') {
+    for (const fn of this.subscribers.get(type)) {
+      fn(content);
+    }
+  }
+}
+
+const event = new Event();
+
+event.on((content) => console.log(`get published content: ${content}`), 'myEvent');
+event.emit('Tom', 'myEvent'); // get published content: Tom
+```
 [模式参考](https://segmentfault.com/a/1190000012506631)

@@ -5,7 +5,6 @@ class Publish {
     // 存储所有的订阅者
     this.subscribers = [];
   }
-
   getState () {
     return this.state;
   }
@@ -41,8 +40,9 @@ class Publish {
   // 发布者发布消息(通知已订阅的订阅者)
   notify () {
     this.subscribers.forEach(subscribe => {
-      // 调用订阅者(subscribe)中的更新处理方法
-      subscribe.update();
+      // 调用订阅者(subscribe)中的实时监听更新处理方法
+      // subscribe.update();
+      subscribe.listenerUpdate();
     });
   }
 }
@@ -58,8 +58,9 @@ class Subscribe {
     publish.subscribeRegister(this);
   }
 
-  // 更新处理方法
-  update () {
+  // 更新处理方法 listener(监听是否发布者发布新消息)
+  // update () {
+  listenerUpdate () {
     console.log('订阅者获取(更新)发布者的发布的消息');
   }
 }
@@ -68,6 +69,7 @@ const publish1 = new Publish('publish1');
 const subscribe1 = new Subscribe('subscribe1');
 const subscribe2 = new Subscribe('subscribe2');
 // subscribe2.update = function () {}; // 修改update方法，实现不同逻辑
+// subscribe2.listenerUpdate = function () {}; // 修改listenerUpdate方法，实现不同逻辑
 
 // 为发布者添加订阅者
 publish1.subscribeRegister(subscribe1);
