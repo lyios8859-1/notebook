@@ -885,4 +885,161 @@ sub1.unsubscribe(pub1); //取消订阅
 pub2.deliver(4444444444, pub2);
 ```
 
+第二次理解:
+
+```javascript
+// 手动触发的发布-订阅者模式
+
+// 发布者(Subject 被实时观察的监听的对象)
+class Publish {
+  constructor (name) {
+    this.name = name;
+    // 存储所有的订阅者
+    this.subscribers = [];
+  }
+  // 提供订阅方法(注册)
+  subscribeRegister (subscribe) {
+    // subscribe 是订阅者对象
+    this.subscribers.push(subscribe);
+    console.log('订阅者:', this.subscribers);
+  }
+  // 取消订阅方法
+  removeSubscribe (subscribe) {
+    const index = this.subscribers.findIndex(item => item === subscribe);
+
+    // 如果存在该订阅者,就从subscribers中删除,取消订阅者的订阅
+    if (index !== -1) {
+      this.subscribers.splice(index, 1);
+    } else {
+      console.log('不存在该订阅者');
+      return '不存在该订阅者';
+    }
+  }
+
+  // 发布者发布消息(通知已订阅的订阅者)
+  notify () {
+    this.subscribers.forEach(subscribe => {
+      // 调用订阅者(subscribe)中的更新处理方法
+      subscribe.update();
+    });
+  }
+}
+
+// 订阅者(Observer 观察者)
+class Subscribe {
+  constructor (name) {
+    this.name = name;
+  }
+  // 对发布者的订阅方法代理
+  subscribe (publish) {
+    // publish 是发布者对象
+    publish.subscribeRegister(this);
+  }
+
+  // 更新处理方法
+  update () {
+    console.log('订阅者获取(更新)发布者的发布的消息');
+  }
+}
+const publish1 = new Publish('publish1');
+
+const subscribe1 = new Subscribe('subscribe1');
+const subscribe2 = new Subscribe('subscribe2');
+// subscribe2.update = function () {}; // 修改update方法，实现不同逻辑
+
+// 为发布者添加订阅者
+publish1.subscribeRegister(subscribe1);
+publish1.subscribeRegister(subscribe2);
+
+// 发布者通知通知订阅者新消息更新
+publish1.notify();
+
+// 取消订阅之后就不触发subscribe2的update方法了
+publish1.removeSubscribe(subscribe2);
+publish1.notify();
+```
+
+```javascript
+// 根据数据状态变化自动通知订阅者
+
+// 发布者(Subject 被实时观察的监听的对象)
+class Publish {
+  constructor (state) {
+    this.state = state || ''; // 触发更新的状态
+    // 存储所有的订阅者
+    this.subscribers = [];
+  }
+
+  getState () {
+    return this.state;
+  }
+  setState (state) {
+    if (this.state === state) {
+      console.log('不能设为之前的相同的 state，这个是无效的.');
+      return;
+    }
+    this.state = state;
+    // 有更新，自动触发通知！【原本手动触发通知的，现在根据数据变化来触发】
+    this.notify();
+  }
+
+  // 提供订阅方法(注册)
+  subscribeRegister (subscribe) {
+    // subscribe 是订阅者对象
+    this.subscribers.push(subscribe);
+    // console.log('订阅者:', this.subscribers);
+  }
+  // 取消订阅方法
+  removeSubscribe (subscribe) {
+    const index = this.subscribers.findIndex(item => item === subscribe);
+
+    // 如果存在该订阅者,就从subscribers中删除,取消订阅者的订阅
+    if (index !== -1) {
+      this.subscribers.splice(index, 1);
+    } else {
+      console.log('不存在该订阅者');
+      return '不存在该订阅者';
+    }
+  }
+
+  // 发布者发布消息(通知已订阅的订阅者)
+  notify () {
+    this.subscribers.forEach(subscribe => {
+      // 调用订阅者(subscribe)中的更新处理方法
+      subscribe.update();
+    });
+  }
+}
+
+// 订阅者(Observer 观察者)
+class Subscribe {
+  constructor (name) {
+    this.name = name;
+  }
+  // 对发布者的订阅方法代理
+  subscribe (publish) {
+    // publish 是发布者对象
+    publish.subscribeRegister(this);
+  }
+
+  // 更新处理方法
+  update () {
+    console.log('订阅者获取(更新)发布者的发布的消息');
+  }
+}
+const publish1 = new Publish('publish1');
+
+const subscribe1 = new Subscribe('subscribe1');
+const subscribe2 = new Subscribe('subscribe2');
+// subscribe2.update = function () {}; // 修改update方法，实现不同逻辑
+
+// 为发布者添加订阅者
+publish1.subscribeRegister(subscribe1);
+publish1.subscribeRegister(subscribe2);
+
+// 状态变化就自动触发
+publish1.setState('Tom');
+publish1.setState('Jerry');
+```
+
 [模式参考](https://segmentfault.com/a/1190000012506631)
