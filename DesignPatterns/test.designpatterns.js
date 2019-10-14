@@ -19,10 +19,9 @@ class Publish {
   }
 
   // 提供订阅方法(注册)
-  subscribeRegister (subscribe) {
+  subscribeRegister (subscribe, func) {
     // subscribe 是订阅者对象
-    this.subscribers.push(subscribe);
-    // console.log('订阅者:', this.subscribers);
+    this.subscribers.push({ subscribe: subscribe, subsFunc: func });
   }
   // 取消订阅方法
   removeSubscribe (subscribe) {
@@ -39,10 +38,11 @@ class Publish {
 
   // 发布者发布消息(通知已订阅的订阅者)
   notify () {
-    this.subscribers.forEach(subscribe => {
+    // 收集需要发布的要系
+    this.subscribers.forEach(subs => {
       // 调用订阅者(subscribe)中的实时监听更新处理方法
       // subscribe.update();
-      subscribe.listenerUpdate();
+      subs.subscribe.listenerUpdate(subs.subsFunc);
     });
   }
 }
@@ -60,8 +60,8 @@ class Subscribe {
 
   // 更新处理方法 listener(监听是否发布者发布新消息)
   // update () {
-  listenerUpdate () {
-    console.log('订阅者获取(更新)发布者的发布的消息');
+  listenerUpdate (param) {
+    console.log('订阅者获取(更新)发布者的发布的消息', param());
   }
 }
 const publish1 = new Publish('publish1');
@@ -72,10 +72,14 @@ const subscribe2 = new Subscribe('subscribe2');
 // subscribe2.listenerUpdate = function () {}; // 修改listenerUpdate方法，实现不同逻辑
 
 // 为发布者添加订阅者
-publish1.subscribeRegister(subscribe1);
-publish1.subscribeRegister(subscribe2);
+publish1.subscribeRegister(subscribe1, () => {
+  return 1;
+});
+publish1.subscribeRegister(subscribe2, () => {
+  return 2;
+});
 
 // 状态变化就自动触发
 publish1.setState('Tom');
-publish1.setState('Jerry');
+// publish1.setState('Jerry');
 
