@@ -10,37 +10,21 @@
 ```javascript
 function fetchApi(method, url) {
   return new Promise((resolve, reject) => {
-    let xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function() {
-      if(xhr.readyState === 4) {
-        if(xhr.status >= 200 && xhr.status < 300) {
-          let response;
-          try {
-            response = xhr.responseText;
-          } catch (error) {
-            reject(error);
-          }
-          if(resolve) {
-            resolve({
-              message: response,
-              status: xhr.status
-            });
-          }
-        }
+    let t = setTimeout(() => {
+      if (true) {
+        // 请求正确
+        reject({
+          code: 200,
+          masage: 'Success'
+        });
       } else {
-        reject(xhr);
+        // 请求错误
+        reject({
+          code: 500,
+          masage: 'Server Fail'
+        });
       }
-    };
-
-    if(method.toLocaleLowerCase() === "post") {
-      xhr.open("POST", url, true);
-      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
-      xhr.send();
-    } else {
-      xhr.open('GET', url);
-      xhr.setRequestHeader("Content-Type", "text/plain");
-      xhr.send(data);
-    }
+    });
   });
 }
 
@@ -53,6 +37,55 @@ function fetchApi(method, url) {
     console.log(e);
   }
 })();
+
+
+// 例2
+function fetchApi (options) {
+  return new Promise((resolve, reject) => {
+    let xhr = null;
+    const params = formsParams(options.data);
+    // 创建对象
+    if (window.XMLHttpRequest) {
+      xhr = new XMLHttpRequest();
+    } else {
+      xhr = new ActiveXObject('Microsoft.XMLHTTP');
+    }
+    if (options.type === 'GET') {
+      xhr.open(options.type, options.url + '?' + params, options.async);
+      xhr.send(null);
+    } else if (options.type === 'POST') {
+      xhr.open(options.type, options.url, options.async);
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      xhr.send(params);
+    }
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        // options.success(xhr.responseText);
+        resolve(xhr.responseText);
+      } else {
+        reject();
+      }
+    };
+  });
+
+  function formsParams (data) {
+    const arr = [];
+    for (const prop in data) {
+      arr.push(prop + '=' + data[prop]);
+    }
+    return arr.join('&');
+  }
+}
+
+async function main () {
+  const data1 = await fetchApi({});
+  const data2 = await fetchApi({});
+  console.log(data1);
+  console.log(data2);
+}
+
+main();
+
 ```
 
 ## 同步获取图片的高度,宽度
