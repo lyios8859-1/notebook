@@ -45,10 +45,10 @@ module.exports = {
     new webpack.HotModuleReplacementPlugin(),
     // 确保可以在 chrome 可以使用React调试的插件
     new webpack.DefinePlugin({
-      'process.env':{
+      'process.env': {
         'NODE_ENV': JSON.stringify('production')
       }
-    }),
+    })
   ],
   devServer: {
     port: 8888,

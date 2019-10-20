@@ -1,0 +1,32 @@
+{
+  "name": "react3",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --mode development --config build/webpack.config.client.js",
+    "build:client": "webpack --mode production --config build/webpack.config.client.js",
+    "build:server": "webpack --mode production --config build/webpack.config.server.js",
+    "clear": "rimraf dist",
+    "build": "npm run clear && npm run build:client && npm run build:server",
+    "start": "node serve/serve.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.6.4",
+    "@babel/preset-react": "^7.6.3",
+    "babel-loader": "^8.0.6",
+    "cross-env": "^6.0.3",
+    "html-webpack-plugin": "^3.2.0",
+    "rimraf": "^3.0.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.9",
+    "webpack-dev-server": "^3.8.2"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "react": "^16.10.2",
+    "react-dom": "^16.10.2"
+  }
+}
