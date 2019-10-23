@@ -1,11 +1,13 @@
+
 import React from 'react';
-const a = 2;
-export default class App extends React.Component {
+class App extends React.Component {
   render () {
     return (
       <div>
-        <h1>hello world</h1>
+        <h1>he! </h1>
+          fdf 速度发生地方  
       </div>
     );
   }
 }
+export default App;

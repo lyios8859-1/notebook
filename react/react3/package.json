@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development webpack-dev-server --mode development --config build/webpack.config.client.js",
+    "dev": "cross-env NODE_ENV=development webpack-dev-server --mode development --inline --config build/webpack.config.client.js",
     "build:client": "webpack --mode production --config build/webpack.config.client.js",
     "build:server": "webpack --mode production --config build/webpack.config.server.js",
     "clear": "rimraf dist",
@@ -16,9 +16,11 @@
   "devDependencies": {
     "@babel/core": "^7.6.4",
     "@babel/preset-react": "^7.6.3",
+    "@hot-loader/react-dom": "^16.10.2",
     "babel-loader": "^8.0.6",
     "cross-env": "^6.0.3",
     "html-webpack-plugin": "^3.2.0",
+    "react-hot-loader": "^4.12.15",
     "rimraf": "^3.0.0",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.9",

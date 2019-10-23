@@ -25,7 +25,8 @@ app.get('*', function (req, res) {
 
   // 解决:issue error: Invariant Violation: Objects are not valid as a React child (found: [object Module]). If you meant to render a collection of children, use an array instead.
   const appString = ReactSSR.renderToString(serverEntry.default);
-  res.send(template.replace('<app></app>', appString));
+  // <!-- app --> 这个是生成后的文件模板中的
+  res.send(template.replace('<!-- app -->', appString));
 });
 
 app.listen(3000, function () {
