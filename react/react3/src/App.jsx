@@ -5,7 +5,7 @@ class App extends React.Component {
     return (
       <div>
         <h1>he! </h1>
-          fdf 速度发生地方  
+          fdf  cdd  dfgfdsg
       </div>
     );
   }
