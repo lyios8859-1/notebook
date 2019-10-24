@@ -40,13 +40,12 @@ const config = {
   ]
 };
 
-console.log('isDev>>>', isDev);
+console.log('Environment:', isDev);
 if (isDev) {
   config.entry = {
     // 热替换(局部替换,不用刷新页面)
     app: [
-      // 'react-hot-loader/patch',
-      // 'webpack-dev-server/client?http://0000:8888',
+      'react-hot-loader/patch',
       /** 入口 */
       resovePath('../src/App.js')
     ]
