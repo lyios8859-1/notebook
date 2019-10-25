@@ -10,6 +10,7 @@ const resovePath = function (_path) {
 const isDev = process.env.NODE_ENV === 'development';
 
 const config = {
+  mode: isDev ? 'development' : 'production',
   entry: {
     app: resovePath('../src/App.js')
   },
@@ -40,7 +41,7 @@ const config = {
   ]
 };
 
-console.log('Environment:', isDev);
+console.log('Environment:', process.env.NODE_ENV);
 if (isDev) {
   config.entry = {
     // 热替换(局部替换,不用刷新页面)

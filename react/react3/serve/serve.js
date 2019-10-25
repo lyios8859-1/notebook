@@ -10,9 +10,9 @@ const resovePath = function (_path) {
 };
 
 const isDev = process.env.NODE_ENV === 'development';
-console.log('Environment:', isDev);
+console.log('Environment:', process.env.NODE_ENV);
 if (!isDev) {
-// 获取模板
+  // 获取模板
   const templatePath = resovePath('../dist/index.html');
   const template = fs.readFileSync(templatePath, 'utf8');
 
