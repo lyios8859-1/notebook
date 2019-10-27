@@ -13,19 +13,36 @@ module.exports = {
   output: {
     filename: 'server-entry.js',
     path: resovePath('../dist'),
-    publicPath: '/', // 应用的静态资源之前的路径 src:'/public/app.3434dfsas.js'
-    libraryTarget: 'commonjs2' // umd cmd, commonjs等,表示编译的符合commonjs2规范
+    libraryTarget: 'commonjs2', // umd cmd, commonjs等,表示编译的符合commonjs2规范
+    publicPath: '/public'
   },
   module: {
     rules: [
       {
+        // enforce: 'pre',表示在使用babel-loader编译之前先使用eslint-loader检查一下编码格式,通过则继续编译
+        enforce: 'pre',
+        test: /.(js|jsx)$/,
+        loader: "eslint-loader",
+        exclude: [
+          path.resolve(__dirname, '../node_modules')
+        ]
+      },
+      {
         test: /.jsx$/,
-        loader: 'babel-loader'
+        use: [
+          {
+            loader: 'babel-loader'
+          }
+        ]
       },
       {
         test: /.js$/,
         exclude: /node_modules/,
-        loader: 'babel-loader'
+        use: [
+          {
+            loader: 'babel-loader'
+          }
+        ]
       }
     ]
   }

@@ -17,18 +17,35 @@ const config = {
   output: {
     filename: '[name].[hash:8].js',
     path: resovePath('../dist'),
-    publicPath: '/public' // 应用的静态资源之前的路径 src:'/public/app.3434dfsas.js'
+    libraryTarget: 'umd',
+    publicPath: '/public' // 热更替必须配置,应用的静态资源之前的路径 src:'/public/app.3434dfsas.js'
   },
   module: {
     rules: [
       {
+        enforce: 'pre',// 表示在使用babel-loader编译之前先使用eslint-loader检查一下编码格式,通过则继续编译
+        test: /.(js|jsx)$/,
+        loader: "eslint-loader",
+        exclude: [
+          path.resolve(__dirname, '../node_modules')
+        ]
+      },
+      {
         test: /.jsx$/,
-        loader: 'babel-loader'
+        use: [
+          {
+            loader: 'babel-loader'
+          }
+        ]
       },
       {
         test: /.js$/,
         exclude: /node_modules/,
-        loader: 'babel-loader'
+        use: [
+          {
+            loader: 'babel-loader'
+          }
+        ]
       }
     ]
   },
@@ -50,7 +67,6 @@ if (isDev) {
       /** 入口 */
       resovePath('../src/App.js')
     ]
-
   };
   config.devServer = {
     host: '0.0.0.0', // 任意方式访问,127.0.0.1 或 localhost:
@@ -68,12 +84,15 @@ if (isDev) {
     // .babelr 中配置 "plugins": ["react-hot-loader/babel"]
     hot: true,
     open: true,
-    hotOnly: true
+    hotOnly: true,
     /**
       但是通过日志发现页面先热更新然后又自动刷新，这和自动刷新是一样的。
       如果只需要触发HMR，可以再加个参数 hotOnly:true,这时候只有热更新，禁用了自动刷新功能。
       如果需要自动刷新就不需要设置热更新。
      */
+    headers: {
+      'Access-Control-Allow-Origin': '*'
+    }
   };
   config.resolve = {
     alias: {
@@ -83,6 +102,8 @@ if (isDev) {
   };
   // 热更替没有起作用的原因(contentBase: resovePath('../dist'), 的路径和output.path的路径不一样)
   config.plugins.push(new webpack.HotModuleReplacementPlugin());
+  // 当模块热替换(HMR)时在浏览器控制台输出对用户更友好的模块名字信息
+  config.plugins.push(new webpack.NamedModulesPlugin());
 }
 
 module.exports = config;

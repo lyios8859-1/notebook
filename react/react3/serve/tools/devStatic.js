@@ -29,7 +29,9 @@ const serverCompiler = webapck(serverConfig);
 serverCompiler.outputFileSystem = mfs;
 
 // 监听文件变化处理
-serverCompiler.watch({}, (err, stats) => {
+serverCompiler.watch({
+  publicPath: serverConfig.output.path
+}, (err, stats) => {
   if (err) throw err;
   stats = stats.toJson();
   // 打印提示信息
@@ -40,13 +42,14 @@ serverCompiler.watch({}, (err, stats) => {
     serverConfig.output.path,
     serverConfig.output.filename
   );
+  console.log('..', bundlePath);
   // 不建议把文件写到磁盘,所以使用到插件 memory-fs 模块把文件内容写到内存
   const bundle = mfs.readFileSync(bundlePath, 'utf-8');
   const m = new Module();
   // 解析javascript代码字符串,生成新的模块
   m._compile(bundle, serverConfig.output.filename);
-  // 导出该模块
-  serverBundle = m.default;
+  // 导出该模块,如果没有导出,会使用客户端的渲染,不从服务端获取去渲染
+  serverBundle = m.exports.default;
 });
 
 // issue: Uncaught SyntaxError: Unexpected token '<',
@@ -61,6 +64,7 @@ module.exports = function (app) {
   app.get('*', function (req, res) {
     getTemplate().then(template => {
       const content = ReactDomServer.renderToString(serverBundle);
+      console.log(content);
       res.send(template.replace('<!-- app -->', content));
     });
   });
