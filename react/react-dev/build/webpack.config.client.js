@@ -1,53 +1,18 @@
 const path = require('path');
 const webpack = require('webpack');
-
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-
+const webpackMerge = require('webpack-merge');
+const baseConfig = require('./webpack.config.base.js');
 const resovePath = function (_path) {
   return path.join(__dirname, _path);
 };
 
-const isDev = process.env.NODE_ENV === 'development';
-
-const config = {
-  mode: isDev ? 'development' : 'production',
+const config = webpackMerge(baseConfig, {
   entry: {
     app: resovePath('../src/App.js')
   },
   output: {
     filename: '[name].[hash:8].js',
-    path: resovePath('../dist'),
-    libraryTarget: 'umd',
-    publicPath: '/public/' // 热更替必须配置,应用的静态资源之前的路径 src:'/public/app.3434dfsas.js'
-  },
-  module: {
-    rules: [
-      {
-        enforce: 'pre',// 表示在使用babel-loader编译之前先使用eslint-loader检查一下编码格式,通过则继续编译
-        test: /.(js|jsx)$/,
-        loader: "eslint-loader",
-        exclude: [
-          path.resolve(__dirname, '../node_modules')
-        ]
-      },
-      {
-        test: /.jsx$/,
-        use: [
-          {
-            loader: 'babel-loader'
-          }
-        ]
-      },
-      {
-        test: /.js$/,
-        exclude: /node_modules/,
-        use: [
-          {
-            loader: 'babel-loader'
-          }
-        ]
-      }
-    ]
   },
   plugins: [
     new HtmlWebpackPlugin({
@@ -56,9 +21,8 @@ const config = {
       inject: 'body' // true, body, head, false----true:默认值，script标签位于html文件的 body 底部 body:同true head:插入的js文件位于head标签内 false:不插入生成的js文件，只生成一个纯html
     })
   ]
-};
-
-console.log('Environment:', process.env.NODE_ENV);
+});
+const isDev = process.env.NODE_ENV === 'development';
 if (isDev) {
   config.entry = {
     // 热替换(局部替换,不用刷新页面)
