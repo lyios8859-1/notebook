@@ -25,6 +25,8 @@
     "gulp": "^4.0.2",
     "less": "^3.10.3",
     "less-loader": "^5.0.0",
+    "nodemon": "^1.19.4",
+    "serve-favicon": "^2.5.0",
     "vue-class-component": "^7.1.0",
     "vue-style-loader": "^4.1.2",
     "webpack": "^4.41.2"

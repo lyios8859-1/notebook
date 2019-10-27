@@ -1,9 +1,13 @@
 const express = require('express');
 const app = express();
 const ReactSSR = require('react-dom/server');
-
 const fs = require('fs');
 const path = require('path');
+
+
+// 项目图标
+const servefavicon = require('serve-favicon');
+app.use(servefavicon(path.join(__dirname, '../favicon.ico')));
 
 const resovePath = function (_path) {
   return path.join(__dirname, _path);
@@ -13,13 +17,13 @@ const isDev = process.env.NODE_ENV === 'development';
 console.log('Environment:', process.env.NODE_ENV);
 if (!isDev) {
   // 获取模板
-  const templatePath = resovePath('../../dist/index.html');
+  const templatePath = resovePath('../dist/index.html');
   const template = fs.readFileSync(templatePath, 'utf8');
 
   // 获取服务端需要渲染的vue编译后的html
-  const serverEntry = require('../../dist/app.server.min.js');
+  const serverEntry = require('../dist/app.server.min.js');
 
-  app.use('/public', express.static(resovePath('../../dist')));
+  app.use('/public', express.static(resovePath('../dist')));
 
   // * 表示客户端搜有请求
   app.get('*', function (req, res) {
