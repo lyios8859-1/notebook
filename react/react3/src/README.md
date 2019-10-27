@@ -24,3 +24,7 @@
   }
 }
 ```
+
+## git commit 时自动检测
+
+> git 提交到远程仓库是会自动调用 `paceage.json` 中的 `"precommit": "npm run lint"` 运行检测指定的文件是否通过 `eslint` 检测
