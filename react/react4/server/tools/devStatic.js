@@ -42,6 +42,7 @@ serverCompiler.watch({
     serverConfig.output.path,
     serverConfig.output.filename
   );
+  console.log('..', bundlePath);
   // 不建议把文件写到磁盘,所以使用到插件 memory-fs 模块把文件内容写到内存
   const bundle = mfs.readFileSync(bundlePath, 'utf-8');
   const m = new Module();
@@ -63,6 +64,7 @@ module.exports = function (app) {
   app.get('*', function (req, res) {
     getTemplate().then(template => {
       const content = ReactDomServer.renderToString(serverBundle);
+      console.log(content);
       res.send(template.replace('<!-- app -->', content));
     });
   });
