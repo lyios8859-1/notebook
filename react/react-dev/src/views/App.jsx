@@ -1,12 +1,31 @@
 
 import React from 'react';
+import { Link } from 'react-router-dom';
+import Routes from '../router/router.jsx';
 
-const App = () => (
-  <div>
-    <h1>d</h1>
-  </div>
-);
-export default App;
+export default class App extends React.Component {
+  componentDidMount () {
+    // TODO
+  }
+
+  render () {
+    return [
+      <div>
+        <Link to="/">首页</Link>
+        <Link to="/detail">详情</Link>
+      </div>,
+      <Routes />
+    ];
+  }
+}
+
+/*
+// const App = () => (
+//   <div>
+//     <h1>d</h1>
+//   </div>
+// );
+// export default App;
 
 // eslint issue:  error  Component should be written as a pure function
 // react/prefer-stateless-function
@@ -21,3 +40,4 @@ export default App;
 //   }
 // }
 // export default App;
+*/

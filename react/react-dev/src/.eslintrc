@@ -15,6 +15,10 @@
     "no-console": [0],
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     "react/jsx-tag-spacing": [0],
-    "import/extensions": 0
+    "import/extensions": 0,
+    "space-before-function-paren": 0,
+    "react/jsx-wrap-multilines": 0,
+    "react/jsx-closing-tag-location": 0,
+    "comma-dangle": 0
   }
 }
