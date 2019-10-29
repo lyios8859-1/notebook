@@ -1,22 +1,21 @@
-
-// eslint-disable-next-line no-unused-vars
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
-// eslint-disable-next-line no-unused-vars
-import App from './views/App.jsx';
-
-// eslint-disable-next-line no-unused-vars
 import { AppContainer } from 'react-hot-loader'; // eslint-disable-line
+import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'mobx-react';
+import App from './views/App.jsx';
+import appState from './store/app-store.js';
 
 const root = document.querySelector('#root');
 const render = (Component) => {
   // ReactDOM.hydrate( // 服务端渲染使用
   ReactDOM.render(
     <AppContainer>
-      <BrowserRouter>
-        <Component/>
-      </BrowserRouter>
+      <Provider appState={appState}>
+        <BrowserRouter>
+          <Component/>
+        </BrowserRouter>
+      </Provider>
     </AppContainer>,
     root
   );

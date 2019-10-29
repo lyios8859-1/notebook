@@ -8,7 +8,7 @@ export default () => [
   // exact={true} 表示严格匹配路径
 
   // 访问 '/' 重定向到 '/list'
-  <Route path="/" render={() => <Redirect to="/list" />} exact />,
-  <Route path="/list" component={TopicList} />,
-  <Route path="/detail" component={TopicDeail} />
+  <Route key="0" path="/" render={() => <Redirect to="/list" />} exact />,
+  <Route key="1" path="/list" component={TopicList} />,
+  <Route key="2" path="/detail" component={TopicDeail} />
 ];

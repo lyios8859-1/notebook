@@ -28,3 +28,21 @@
 ## git commit 时自动检测
 
 > git 提交到远程仓库是会自动调用 `paceage.json` 中的 `"precommit": "npm run lint"` 运行检测指定的文件是否通过 `eslint` 检测
+
+## issue, mobx 使用到装饰器,需要配置 .babelrc 如下信息
+
+```json
+{
+  "presets": [
+    "react-app"
+  ],
+  "plugins": [
+    [
+      "@babel/plugin-proposal-decorators",
+      {
+        "legacy": true
+      }
+    ]
+  ]
+}
+```

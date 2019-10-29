@@ -10,11 +10,11 @@ export default class App extends React.Component {
 
   render () {
     return [
-      <div>
+      <div key="0">
         <Link to="/">首页</Link>
         <Link to="/detail">详情</Link>
       </div>,
-      <Routes />
+      <Routes key="1"/>
     ];
   }
 }
