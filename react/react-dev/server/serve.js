@@ -3,8 +3,8 @@ const app = express();
 const ReactSSR = require('react-dom/server');
 const fs = require('fs');
 const path = require('path');
-
-
+const bodyParser = require('body-parser');
+const session = require('express-session');
 // 项目图标
 const servefavicon = require('serve-favicon');
 app.use(servefavicon(path.join(__dirname, '../favicon.ico')));
@@ -12,6 +12,19 @@ app.use(servefavicon(path.join(__dirname, '../favicon.ico')));
 const resovePath = function (_path) {
   return path.join(__dirname, _path);
 };
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(session({
+  maxAge: 10 * 60 * 1000,
+  name: 'uid',
+  resave: false, // 是否每次请求都重新生成cookieId
+  saveUninitialized: false,
+  secret: '0123456789mnbvcxzlkjhgfdsapoiuytrewq'
+}));
+
+app.use('/api/user', require('./tools/handle-login.js'));
+app.use('/api', require('./tools/proxy.js'));
 
 const isDev = process.env.NODE_ENV === 'development';
 console.log('Environment:', process.env.NODE_ENV);

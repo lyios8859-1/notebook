@@ -25,7 +25,6 @@ class TopicList extends React.Component {
   setName (ev) {
     const prop = this.props;
     prop.appState.setName(ev.target.value);
-    console.log('>>>', ev.target.value);
   }
 
   render () {

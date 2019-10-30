@@ -1,4 +1,4 @@
-# webpack react
+# webpack react mobx
 
 ## eslint 常用介绍
 
