@@ -21,5 +21,3 @@
 [参考](https://blog.csdn.net/lzghxjt/article/details/51458540 "http请求和响应的过程")
 
 ### 浏览器根据域名解析IP地址
-
-
