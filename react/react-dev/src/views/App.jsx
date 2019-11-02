@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Routes from '../router/router.jsx';
@@ -9,13 +8,13 @@ export default class App extends React.Component {
   }
 
   render () {
-    return [
-      <div key="0">
+    return (
+      <React.Fragment>
         <Link to="/">首页</Link>
         <Link to="/detail">详情</Link>
-      </div>,
-      <Routes key="1"/>
-    ];
+        <Routes />
+      </React.Fragment>
+    );
   }
 }
 
