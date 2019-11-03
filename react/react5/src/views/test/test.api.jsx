@@ -9,32 +9,31 @@ export default class TestApi extends React.Component {
     this.markAll = this.markAll.bind(this);
   }
 
-  getTopics () {
-    axios.get('/api/topics').then((resp) => {
-      console.log(resp);
-    });
-  }
-
   login () {
     axios.post('/api/user/login', {
       accessToken: '504de8ee-2093-4e05-829b-5b99e6457155'
-    }).then((resp) => {
-      console.log(resp);
+    }).then(resp => {
+      console.log(resp)
+    });
+  }
+  getTopics () {
+    axios.get('/api/topics').then(resp => {
+      console.log(resp)
     });
   }
 
   markAll () {
-    axios.post('/api/message/mark_all').then((resp) => {
-      console.log(resp);
+    axios.post('/api/message/mark_all').then(resp => {
+      console.log(resp)
     });
   }
 
   render () {
     return (
       <div>
-        <button type="button" onClick={this.getTopics}>topics</button>
-        <button type="button" onClick={this.login}>login</button>
-        <button type="button" onClick={this.markAll}>markAll</button>
+        <button onClick={this.getTopics}>topics</button>
+        <button onClick={this.login}>login</button>
+        <button onClick={this.markAll}>markAll</button>
       </div>
     );
   }

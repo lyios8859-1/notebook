@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Routes from '../router/router.jsx';
@@ -8,6 +9,17 @@ export default class App extends React.Component {
   }
 
   render () {
+    // 这种写法报错:
+    // Error: Invariant failed: You should not use <Link> outside a <Router>
+    // 您不应在<Router>外使用<Link>
+    // return [
+    //   <div key="0">
+    //     <Link to="/">首页</Link>
+    //     <Link to="/detail">详情</Link>
+    //   </div>,
+    //   <Routes key="1"/>
+    // ];
+    
     return (
       <React.Fragment>
         <Link to="/">首页</Link>
@@ -18,14 +30,13 @@ export default class App extends React.Component {
   }
 }
 
-
 /*
-const App = () => (
-  <div>
-    <h1>d</h1>
-  </div>
-);
-export default App;
+// const App = () => (
+//   <div>
+//     <h1>d</h1>
+//   </div>
+// );
+// export default App;
 
 // eslint issue:  error  Component should be written as a pure function
 // react/prefer-stateless-function

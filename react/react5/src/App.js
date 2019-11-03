@@ -2,30 +2,18 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader'; // eslint-disable-line
 import { BrowserRouter } from 'react-router-dom';
-import { autorun } from 'mobx';
 import { Provider } from 'mobx-react';
 import App from './views/App.jsx';
-
-import AppState from './store/app-store.js';
-
-const appState = new AppState();
-
-autorun(() => {
-  console.log('>>', appState.msg);
-});
-
-setInterval(() => {
-  appState.add();
-}, 1000);
+import appState from './store/app-store.js';
 
 const root = document.querySelector('#root');
-const render = (MyComponent) => {
+const render = (Component) => {
   // ReactDOM.hydrate( // 服务端渲染使用
   ReactDOM.render(
     <AppContainer>
       <Provider appState={appState}>
         <BrowserRouter>
-          <MyComponent/>
+          <Component/>
         </BrowserRouter>
       </Provider>
     </AppContainer>,

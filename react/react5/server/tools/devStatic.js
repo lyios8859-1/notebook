@@ -20,10 +20,6 @@ const getTemplate = () => {
 
 // 存放读取的内容
 let serverBundle = '';
-
-// 数据控制中心
-let createStoreMap = '';
-
 // 获取 module 模块的构造函数
 const Module = module.constructor;
 
@@ -49,12 +45,10 @@ serverCompiler.watch({
   // 不建议把文件写到磁盘,所以使用到插件 memory-fs 模块把文件内容写到内存
   const bundle = mfs.readFileSync(bundlePath, 'utf-8');
   const m = new Module();
-  // 解析javascript代码字符串,生成新的模块 server-entry-app.js 默认导出的
+  // 解析javascript代码字符串,生成新的模块
   m._compile(bundle, serverConfig.output.filename);
   // 导出该模块,如果没有导出,会使用客户端的渲染,不从服务端获取去渲染
   serverBundle = m.exports.default;
-  // 导出数据控制中心 server-entry-app.js 中 createStoreMap() 函数返回的new AppState()对象
-  createStoreMap = m.exports.createStoreMap;
 });
 
 // issue: Uncaught SyntaxError: Unexpected token '<',
@@ -68,31 +62,7 @@ module.exports = function (app) {
   }));
   app.get('*', function (req, res) {
     getTemplate().then(template => {
-      // 路由上下文
-      const routerContext = {};
-      /**
-        staticHtml 就是如下这个函数信息(返回的服务断的组件)
-        const app = (stores, routerContext, url) => {
-          console.log(stores, routerContext, url);
-          return (
-            <Provider {...stores}>
-              <StaticRouter context={routerContext} location={url}>
-                <App />
-              </StaticRouter>
-            </Provider>
-          );
-        };
-       */
-      const staticHtml = serverBundle(createStoreMap(), routerContext, req.url);
-      const content = ReactDomServer.renderToString(staticHtml);
-      if (routerContext.url) {
-        // issue: 解决访问 '/' 根路径可以获取重定向指定的路由页面静态代码(注意: 会使用客户端渲染的代码麻痹开发者哦), 如果没有这个判断的话,
-        // 在页面访问是是没有重定向的指定的路由页面的这里是重定向到 /list 路由的,
-        // 这样的话 '/' 就会返回302, Respons eHeaders中的Locations: /list
-        res.status(302).setHeader('Location', routerContext.url);
-        res.end();
-        return;
-      }
+      const content = ReactDomServer.renderToString(serverBundle);
       res.send(template.replace('<!-- app -->', content));
     });
   });
