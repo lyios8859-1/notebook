@@ -59,17 +59,13 @@ serverCompiler.watch({
   createStoreMap = m.exports.createStoreMap;
 });
 
-const request = require('./util.js');
 
-
-async function initialState(stores, req) {
-  console.log('.................', result);
-  const result = await Promise.all([
-    request(`/topics`),
-    request(`/message/mark_all`)
-  ]);
+const baseUrl = 'http://cnodejs.org/api/v1';
+async function initialState(stores, url) {
+  const result = await axios.get(`${baseUrl}/topics`);
   return Promise.resolve({result: result, status: 200});
 }
+
 // issue: Uncaught SyntaxError: Unexpected token '<',
 // 原因: 是页面index.html的引用这个便以后的app.[hash].js文件问题,它引用的磁盘上的文件,我们把该js文件写到了内存,
 // 解决: 因此借助插件处理一下, http-proxy-middleware
@@ -98,9 +94,10 @@ module.exports = function (app) {
        */
       const stores = createStoreMap();
       const staticHtml = serverBundle(stores, routerContext, req.url);
+
       console.log('stores...1', stores.appState.count);
-      const t = setTimeout(() => {
-        console.log('stores...2', stores.appState.count);
+      // 等数据请求回来才渲染页面返回给客户端
+      initialState(stores, req.url).then(() => {
         const content = ReactDomServer.renderToString(staticHtml);
         if (routerContext.url) {
           // issue: 解决访问 '/' 根路径可以获取重定向指定的路由页面静态代码(注意: 会使用客户端渲染的代码麻痹开发者哦), 如果没有这个判断的话,
@@ -111,10 +108,7 @@ module.exports = function (app) {
           return;
         }
         res.send(template.replace('<!-- app -->', content));
-        clearTimeout(t);
-      }, 9000);
-
-      
+      });
     });
   });
 };
