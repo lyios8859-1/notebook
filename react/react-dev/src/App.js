@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { AppContainer } from 'react-hot-loader'; // eslint-disable-line
 import { BrowserRouter } from 'react-router-dom';
-import { autorun } from 'mobx';
+// import { autorun } from 'mobx';
 import { Provider } from 'mobx-react';
 import App from './views/App.jsx';
 
@@ -10,9 +10,9 @@ import AppState from './store/app-store.js';
 
 const appState = new AppState();
 
-autorun(() => {
-  console.log('>>', appState.msg);
-});
+// autorun(() => {
+//   console.log('>>', appState.msg);
+// });
 
 setInterval(() => {
   appState.add();
@@ -38,7 +38,7 @@ render(App);
 if (module.hot) {
   module.hot.accept('./views/App.jsx', () => {
     const NextApp = require('./views/App.jsx').default; // eslint-disable-line
-    console.log('热更替');
+    // console.log('热更替');
     render(NextApp);
   });
 }

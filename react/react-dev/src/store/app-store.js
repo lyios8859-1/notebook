@@ -5,7 +5,7 @@ import {
 } from 'mobx';
 
 export default class AppState {
-  @observable count = 0;
+  @observable count = 44;
 
   @observable name = 'Tom';
 

@@ -19,11 +19,24 @@ class TopicList extends React.Component {
 
   componentDidMount () {
     // TODO
+    this.getDataInfo();
   }
 
   setName (ev) {
     const prop = this.props;
     prop.appState.setName(ev.target.value);
+  }
+
+  // 获取数据
+  getDataInfo () {
+    const prop = this.props;
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        prop.appState.count = 11222;
+        console.log('ddddddddddddd', prop.appState.count);
+        resolve(true);
+      }, 1000);
+    });
   }
 
   render () {
