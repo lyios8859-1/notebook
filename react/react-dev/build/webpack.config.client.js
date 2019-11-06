@@ -19,7 +19,11 @@ const config = webpackMerge(baseConfig, {
       filename: './index.html', // 生成的入口文件的名字，默认就是index.html
       template: resovePath('../tpl.html'), // 有时候，插件自动生成的html文件，并不是我们需要结构，我们需要给它指定一个模板，让插件根据我们给的模板生成html
       inject: 'body' // true, body, head, false----true:默认值，script标签位于html文件的 body 底部 body:同true head:插入的js文件位于head标签内 false:不插入生成的js文件，只生成一个纯html
-    })
+    }),
+    new HtmlWebpackPlugin({
+      filename: './server.ejs',
+      template: '!!ejs-compiled-loader!' + resovePath('../src/server_tpl.ejs') // 有时候，插件自动生成的html文件，并不是我们需要结构，我们需要给它指定一个模板，让插件根据我们给的模板生成html
+    }),
   ]
 });
 const isDev = process.env.NODE_ENV === 'development';

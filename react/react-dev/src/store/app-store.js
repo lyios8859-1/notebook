@@ -20,4 +20,11 @@ export default class AppState {
   @action setName (name) {
     this.name = name;
   }
+
+  toJson () {
+    return {
+      count: this.count,
+      name: this.name
+    };
+  }
 }
