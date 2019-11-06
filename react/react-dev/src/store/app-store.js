@@ -5,9 +5,14 @@ import {
 } from 'mobx';
 
 export default class AppState {
-  @observable count = 44;
+  constructor ({ count, name } = { count: 1, name: 'Tom' }) {
+    this.count = count;
+    this.name = name;
+  }
 
-  @observable name = 'Tom';
+  @observable count;
+
+  @observable name;
 
   @computed get msg () {
     return `${this.name}===${this.count}`;

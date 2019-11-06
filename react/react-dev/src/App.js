@@ -8,15 +8,16 @@ import App from './views/App.jsx';
 
 import AppState from './store/app-store.js';
 
-const appState = new AppState();
-
 // autorun(() => {
 //   console.log('>>', appState.msg);
 // });
 
-setInterval(() => {
-  appState.add();
-}, 1000);
+const initialState = window.INITIAL_STATE || {};
+const appState = new AppState(initialState.appState);
+
+// setInterval(() => {
+//   appState.add();
+// }, 1000);
 
 const root = document.querySelector('#root');
 const render = (MyComponent) => {

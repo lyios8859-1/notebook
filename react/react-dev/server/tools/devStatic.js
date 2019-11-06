@@ -7,6 +7,7 @@ const ReactDomServer = require('react-dom/server');
 // http-proxy-middleware 代理插件
 const proxy = require('http-proxy-middleware');
 const ejs = require('ejs');
+const serialize = require('serialize-javascript');
 
 const serverConfig = require('../../build/webpack.config.server.js');
 
@@ -65,7 +66,7 @@ const baseUrl = 'http://cnodejs.org/api/v1';
 async function initialState(stores, url) {
 
   // if (url === '/list') {}
-  const re = getDataInfo(stores);
+  const res = await getDataInfo(stores);
   const result = await axios.get(`${baseUrl}/topics`);
   console.log('count: ', stores.appState.count);
   return result.data;
@@ -76,17 +77,19 @@ function getDataInfo (stores) {
   const prop = this.props;
   return new Promise((resolve) => {
     setTimeout(() => {
-      stores.appState.count = 11222;
+      stores.appState.count = 100;
       resolve(true);
-    }, 1000);
+    }, 5000);
   });
 }
 
 const getStoreState = (stores) => {
   console.log('异步更新后的mobx的state数据:', stores.appState.toJson());
-  return stores.appState.toJson();
-}; 
-
+  return Object.keys(stores).reduce((result, storeName) => {
+    result[storeName] = stores[storeName].toJson();
+    return result;
+  }, {});
+}
 // issue: Uncaught SyntaxError: Unexpected token '<',
 // 原因: 是页面index.html的引用这个便以后的app.[hash].js文件问题,它引用的磁盘上的文件,我们把该js文件写到了内存,
 // 解决: 因此借助插件处理一下, http-proxy-middleware
@@ -126,17 +129,20 @@ module.exports = function (app) {
 
       // // 等数据请求回来才渲染页面返回给客户端
       initialState(stores, req.url).then((resq) => {
-        const res = resq.data;
-        if (Array.isArray(res)){
-          console.log('id:', res[0]['id'])
+        const resText = resq.data;
+        if (Array.isArray(resText)){
+          console.log('id:', resText[0]['id'])
         }
 
         const stateData = getStoreState(stores);
         console.log('stateData: ', stateData);
+        const content = ReactDomServer.renderToString(staticHtml);
+        const html = ejs.render(template, {
+          appString: content,
+          initialState: serialize(stateData)
+        })
+        res.send(html);
       });
-      
-      const content = ReactDomServer.renderToString(staticHtml);
-      res.send(template.replace('<!-- app -->', content));
     });
   });
 };
