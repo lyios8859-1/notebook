@@ -1,7 +1,7 @@
 import React from 'react';
 import { observer, inject } from 'mobx-react';
 import PropTypes from 'prop-types';
-
+import Helmet from 'react-helmet';
 import appState from '../../store/app-store.js';
 
 /**
@@ -11,10 +11,10 @@ import appState from '../../store/app-store.js';
  */
 @inject('appState') @observer
 class TopicList extends React.Component {
-  constructor () {
-    super();
-
+  constructor (props) {
+    super(props);
     this.setName = this.setName.bind(this);
+    this.html = '';
   }
 
   componentDidMount () {
@@ -30,6 +30,19 @@ class TopicList extends React.Component {
     const prop = this.props;
     return (
       <div>
+        {/*
+          Helmet SEO 优化的一些处理
+          会警告:
+          Warning: componentWillMount has been renamed, and is not recommended for use.
+           See https://fb.me/react-unsafe-component-lifecycles for details.
+          * Move code from componentWillMount to componentDidMount
+            (preferred in most cases) or the constructor.
+          Please update the following components: SideEffect(NullComponent)
+        */}
+        <Helmet>
+          <title>TopicList Page</title>
+          <meta name="description" content="TopicList Page Description"/>
+        </Helmet>
         <h1>
           TopicList
           <input type="text" onChange={this.setName} />

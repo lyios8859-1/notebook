@@ -11,6 +11,8 @@ module.exports = webpackMerge(baseConfig, {
   entry: {
     app: resovePath('../src/server-entry-app.js')
   },
+  // 不需要打包处理的模块(服务端很多库是不需要打包的,可直接require引入)
+  externals: Object.keys(require('../package.json').dependencies),
   output: {
     filename: 'server-entry.js',
     libraryTarget: 'commonjs2', // umd cmd, commonjs等,表示编译的符合commonjs2规范

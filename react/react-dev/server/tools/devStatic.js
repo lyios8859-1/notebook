@@ -9,6 +9,9 @@ const proxy = require('http-proxy-middleware');
 const ejs = require('ejs');
 const serialize = require('serialize-javascript');
 
+// 页面SEO优化的一些处理
+const Helmet = require('react-helmet').default;
+const helmet = Helmet.rewind();
 const serverConfig = require('../../build/webpack.config.server.js');
 
 const getTemplate = () => {
@@ -28,8 +31,32 @@ let serverBundle = '';
 // 数据控制中心
 let createStoreMap = '';
 
+
+
+/**
+ // 不需要打包处理的模块(服务端很多库是不需要打包的,可直接require引入)
+  externals: Object.keys(require('../package.json').dependencies),
+  webpack.config.server.js 这个externals配置,需要如下方法 getModuleFromString 处理模块
+ */
 // 获取 module 模块的构造函数
-const Module = module.constructor;
+// const Module = module.constructor; 改成 require 方式
+const NativeModule = require('module');
+const vm = require('vm');
+
+// 很 hooks 懵 ^?^ (function(exports, require, module, __filename, __dirname){ //...boundle code })();
+const getModuleFromString = (bundle, filename) => {
+  const m = { exports: {} };
+  const wrapper = NativeModule.wrap(bundle);
+  // 把javascript的字符串代码解析可以在执行环境下运行的代码
+  const script = new vm.Script(wrapper, {
+    filename: filename,
+     displayErrors: true // 显示错误信息
+  });
+  // 指定解析好的代码的执行环境开始执行
+  const result = script.runInThisContext();
+  result.call(m.exports, m.exports, require, m);
+  return m;
+};
 
 // 启动一个webpack的编译
 const serverCompiler = webapck(serverConfig);
@@ -52,9 +79,19 @@ serverCompiler.watch({
   );
   // 不建议把文件写到磁盘,所以使用到插件 memory-fs 模块把文件内容写到内存
   const bundle = mfs.readFileSync(bundlePath, 'utf-8');
+  
+  /*
   const m = new Module();
   // 解析javascript代码字符串,生成新的模块 server-entry-app.js 默认导出的
   m._compile(bundle, serverConfig.output.filename);
+  */
+  /**
+   // 不需要打包处理的模块(服务端很多库是不需要打包的,可直接require引入)
+    externals: Object.keys(require('../package.json').dependencies),
+    webpack.config.server.js 这个externals配置,需要如下方法 getModuleFromString 处理模块
+  */
+  const m = getModuleFromString(bundle, serverConfig.output.filename);
+
   // 导出该模块,如果没有导出,会使用客户端的渲染,不从服务端获取去渲染
   serverBundle = m.exports.default;
   // 导出数据控制中心 server-entry-app.js 中 createStoreMap() 函数返回的new AppState()对象
@@ -72,14 +109,14 @@ async function initialState(stores, url) {
   return result.data;
 }
 
-// 获取数据
+// 获取数据 模拟异步获取数据
 function getDataInfo (stores) {
   const prop = this.props;
   return new Promise((resolve) => {
     setTimeout(() => {
       stores.appState.count = 100;
       resolve(true);
-    }, 5000);
+    }, 1000);
   });
 }
 
@@ -139,7 +176,11 @@ module.exports = function (app) {
         const content = ReactDomServer.renderToString(staticHtml);
         const html = ejs.render(template, {
           appString: content,
-          initialState: serialize(stateData)
+          initialState: serialize(stateData),
+          meta: helmet.meta.toString(),
+          title: helmet.title.toString(),
+          style: helmet.style.toString(),
+          link: helmet.link.toString()
         })
         res.send(html);
       });
