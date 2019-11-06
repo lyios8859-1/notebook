@@ -10,8 +10,9 @@ const ejs = require('ejs');
 const serialize = require('serialize-javascript');
 
 // 页面SEO优化的一些处理
-const Helmet = require('react-helmet').default;
-const helmet = Helmet.rewind();
+const { Helmet } = require('react-helmet');
+const helmet = Helmet.renderStatic();
+
 const serverConfig = require('../../build/webpack.config.server.js');
 
 const getTemplate = () => {
@@ -174,6 +175,7 @@ module.exports = function (app) {
         const stateData = getStoreState(stores);
         console.log('stateData: ', stateData);
         const content = ReactDomServer.renderToString(staticHtml);
+        
         const html = ejs.render(template, {
           appString: content,
           initialState: serialize(stateData),

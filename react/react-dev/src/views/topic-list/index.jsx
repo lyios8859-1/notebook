@@ -1,7 +1,7 @@
 import React from 'react';
 import { observer, inject } from 'mobx-react';
 import PropTypes from 'prop-types';
-import Helmet from 'react-helmet';
+import { Helmet } from 'react-helmet';
 import appState from '../../store/app-store.js';
 
 /**
@@ -31,7 +31,7 @@ class TopicList extends React.Component {
     return (
       <div>
         {/*
-          Helmet SEO 优化的一些处理
+          Helmet SEO 优化的一些处理(服务端会警告)
           会警告:
           Warning: componentWillMount has been renamed, and is not recommended for use.
            See https://fb.me/react-unsafe-component-lifecycles for details.
