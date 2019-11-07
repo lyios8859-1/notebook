@@ -28,7 +28,7 @@ const data2 = [
   { id: 1, name: '办公管理', pid: 0,
     children: [
       { id: 2, name: '请假申请', pid: 1,
-        hildren: [
+        children: [
           { id: 4, name: '请假记录', pid: 2 }
         ]
       },
@@ -38,7 +38,7 @@ const data2 = [
   { id: 5, name: '系统设置', pid: 0,
     children: [
       { id: 6, name: '权限管理', pid: 5,
-        hildren: [
+        children: [
           { id: 7, name: '用户角色', pid: 6 },
           { id: 8, name: '菜单设置', pid: 6 }
         ]
@@ -48,20 +48,20 @@ const data2 = [
 ];
 
 // 数据递归
-function toTree(data) {
+function toTree (data) {
   // 删除 所有 children,以防止多次调用
-  data.forEach(function(item) {
+  data.forEach(function (item) {
     delete item.children;
   });
 
   // 将数据存储为 以 id 为 KEY 的 map 索引数据列
   const map = {};
-  data.forEach(function(item) {
+  data.forEach(function (item) {
     map[item.id] = item;
   });
   //        console.log(map);
   const val = [];
-  data.forEach(function(item) {
+  data.forEach(function (item) {
     // 以当前遍历项，的pid,去map对象中找到索引的id
     const parent = map[item.pid];
     // 好绕啊，如果找到索引，那么说明此项不在顶级当中,那么需要把此项添加到，他对应的父级中
@@ -83,11 +83,11 @@ let menus = '';
 // 根据菜单主键id生成菜单列表html
 // id：菜单主键id
 // arry：菜单数组信息
-function GetData(id, arry) {
+function GetData (id, arry) {
   const childArry = GetParentArry(id, arry);
   console.log(childArry);
   if (childArry.length > 0) {
-    menus += '<ul style="margin-left:' + 20 + 'px">';
+    menus += '<ul style="padding-left:' + 20 + 'px">';
     for (const i in childArry) {
       menus += '<li>' + childArry[i].name;
       GetData(childArry[i].id, arry);
@@ -100,7 +100,7 @@ function GetData(id, arry) {
 // 根据菜单主键id获取下级菜单
 // id：菜单主键id
 // arry：菜单数组信息
-function GetParentArry(id, arry) {
+function GetParentArry (id, arry) {
   const newArry = [];
   for (const i in arry) {
     if (arry[i].pid === id) { newArry.push(arry[i]); }

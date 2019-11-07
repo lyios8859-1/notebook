@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <script>
+   // 一位数组中每一个元素必须要包含以下属性：
+    // 拥有一个唯一的id
+    // 拥有一个parent_id, 这个parent_id指向它父级的id (如果相等它们属于父子关系)
+
+    // 扁平数组
+    let source = [
+      {id:1,parent_id:0,lable:"一级菜单A",level:1},
+      {id:2,parent_id:0,lable:"一级菜单B",level:1},
+      {id:3,parent_id:0,lable:"一级菜单C",level:1},
+
+      {id:4,parent_id:1,lable:"二级菜单A-A",level:2},
+      {id:5,parent_id:1,lable:"二级菜单A-B",level:2},
+
+      {id:6,parent_id:2,lable:"二级菜单B-A",level:2},
+
+      {id:7,parent_id:4,lable:"三级菜单A-A-A",level:3},
+      {id:8,parent_id:7,lable:"四级菜单A-A-A-A",level:4},
+      {id:9,parent_id:8,lable:"五级菜单A-A-A-A-A",level:5},
+      {id:10,parent_id:9,lable:"六级菜单A-A-A-A-A-A",level:6},
+      {id:11,parent_id:10,lable:"七级菜单A-A-A-A-A-A-A",level:7},
+      {id:12,parent_id:11,lable:"八级菜单A-A-A-A-A-A-A-A",level:8},
+      {id:13,parent_id:12,lable:"九级菜单A-A-A-A-A-A-A-A-A",level:9},
+      {id:14,parent_id:13,lable:"十级菜单A-A-A-A-A-A-A-A-A-A",level:10},
+    ];
+
+    /**
+     * source: 数据源
+     * id, parentId: 关联的ID
+     * children: (可选)指定是否使用这个为下级菜单属性名
+     * 效率最滴就这几个数据来看
+     */
+    function formatTreeData (source, id, parentId, children='children') {
+      if (!Array.isArray(source) || !id || !parentId) return;
+      let cloneData = JSON.parse(JSON.stringify(source));
+      return cloneData.filter(father => {
+        let branchArr = cloneData.filter(child => father[id] === child[parentId]);
+        if (branchArr.length) {
+          father[children] = branchArr;
+        }
+        return father[parentId] === 0;
+      })
+    }
+    // 调用
+    console.time('1');
+    const treeData = formatTreeData(source,'id','parent_id');
+    console.log(treeData);
+    console.timeEnd('1');
+
+
+/**
+ * 将一维的扁平数组转换为多层级对象
+ * @param  {[type]} list 一维数组，数组中每一个元素需包含id和parent_id两个属性 
+ * @return {[type]} tree 多层级树状结构
+ * 效率最高
+ */
+function buildTree(list, id, parent_id){
+	let temp = {};
+	let tree = {};
+	for(let i in list){
+		temp[list[i][id]] = list[i];
+	}
+	for(let i in temp){
+		if(temp[i][parent_id]) {
+			if(!temp[temp[i][parent_id]].children) {
+				temp[temp[i][parent_id]].children = new Object();
+			}
+			temp[temp[i][parent_id]].children[temp[i][id]] = temp[i];
+		} else {
+			tree[temp[i][id]] = temp[i];
+		}
+  }
+	return tree;
+}
+console.time('2');
+const treeData2 = buildTree(source,'id','parent_id');
+console.log(treeData2);
+console.timeEnd('2');
+
+
+// 效率第二
+function buildTree2(list, id, parent_id){
+	let temp = {};
+	let tree = [];
+	for(let i in list){
+		temp[list[i][id]] = list[i];
+	}
+	for(let i in temp){
+		if(temp[i][parent_id]) {
+			if(!temp[temp[i][parent_id]].children) {
+				temp[temp[i][parent_id]].children = new Object();
+			}
+			temp[temp[i][parent_id]].children[temp[i][id]] = temp[i];
+		} else {
+			tree.push(temp[i]);
+		}
+	}
+	return tree;
+}
+console.time('3');
+const treeData3 = buildTree2(source,'id','parent_id');
+console.log(treeData3);
+console.timeEnd('3');
+
+
+
+  </script>
+</body>
+</html>
