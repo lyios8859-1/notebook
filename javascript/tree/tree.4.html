@@ -63,7 +63,7 @@
     for(let i in temp){
       if(temp[i][parent_id]) {
         if(!temp[temp[i][parent_id]].children) {
-          temp[temp[i][parent_id]].children = new Object();
+          temp[temp[i][parent_id]].children = {};
         }
         temp[temp[i][parent_id]].children[temp[i][id]] = temp[i];
       } else {
