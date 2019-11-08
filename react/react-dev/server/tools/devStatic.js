@@ -117,7 +117,7 @@ function getDataInfo (stores) {
     setTimeout(() => {
       stores.appState.count = 100;
       resolve(true);
-    }, 1000);
+    }, 0);
   });
 }
 

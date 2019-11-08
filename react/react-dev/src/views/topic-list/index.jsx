@@ -28,6 +28,7 @@ class TopicList extends React.Component {
 
   render () {
     const prop = this.props;
+    const mark = true;
     return (
       <div>
         {/*
@@ -39,7 +40,7 @@ class TopicList extends React.Component {
             (preferred in most cases) or the constructor.
           Please update the following components: SideEffect(NullComponent)
         */}
-        <Helmet>
+        <Helmet encodeSpecialCharacters={mark}>
           <title>TopicList Page</title>
           <meta name="description" content="TopicList Page Description"/>
         </Helmet>
