@@ -5,14 +5,15 @@ let filtered = []; // 对输入的过滤
 let searching = false; // 对面板的展开控制
 let preSearching = false;
 const multiple = true; // 是否支持多选
-const oldValue = []; // 多选是存储旧值
-function key(value) {
+// const oldValue = []; // 多选是存储旧值
+let _value = '';
+function key (value) {
   return /(?:.*,)*(.*)$/.exec(value)[1];
 }
-function listLength() {
+function listLength () {
   return filtered.length;
 }
-function init() {
+function init () {
   // 展开面板
   searching = true;
 
@@ -22,7 +23,7 @@ function init() {
 }
 
 // 点击选中
-function checkItem(data) {
+function checkItem (data) {
   const inputText = document.querySelector('#smartItem').previousElementSibling;
   if (multiple) {
     // 多选
@@ -40,7 +41,7 @@ function checkItem(data) {
     inputText.value = data + ';';
   }
 }
-window.onload = function() {
+window.onload = function () {
   // 点击其他区域，隐藏指定区域
   document.addEventListener(
     'click',
@@ -67,7 +68,7 @@ window.onload = function() {
   init();
 
   // 获取焦点, 显示选项面板
-  input.onfocus = function() {
+  input.onfocus = function () {
     if (searching) {
       let html = '';
       for (let i = 0; i < filtered.length; i++) {
@@ -79,7 +80,7 @@ window.onload = function() {
   };
 
   // 键盘输入
-  input.oninput = function() {
+  input.oninput = function () {
     // 如果输入框为空
     if (!input.value) {
       filtered = list;
@@ -100,7 +101,7 @@ window.onload = function() {
   };
 
   // 联想搜索的主体功能函数，这里使用keydown是为了保证持续性的上下键能够保证执行
-  input.onkeydown = function(event) {
+  input.onkeydown = function (event) {
     preSearching = searching;
     // 非搜索状态进行点击，则呼出面板
     if (!searching) {
@@ -126,20 +127,20 @@ window.onload = function() {
         if (timer) {
           clearTimeout(timer);
         }
-        let _v = '';
+
         if (multiple) {
           // 多选 主要截取最后一个字符处理
           const inValue = input.value;
           const _i = inValue.lastIndexOf(';');
-          _v = inValue.substring(_i + 1, inValue.length - 1);
+          _value = inValue.substring(_i + 1, inValue.length - 1);
         } else {
           // 单选
-          _v = input.value;
+          _value = input.value;
         }
         timer = setTimeout(() => {
           // 进行可选项过滤
           filtered = list.filter(item => {
-            return item.toLowerCase().includes(key(_v).toLowerCase());
+            return item.toLowerCase().includes(key(_value).toLowerCase());
           });
           if (filtered.length < 0) {
             console.log('没有匹配的数据......');
@@ -160,7 +161,7 @@ window.onload = function() {
   };
 
   // 键盘按下
-  function keyUpDown(code, scrollContainer) {
+  function keyUpDown (code, scrollContainer) {
     const isScroll = hasScrolled(scrollContainer, 'vertical');
     const itemChildren = scrollContainer.children;
     const len = itemChildren.length;
@@ -222,6 +223,13 @@ window.onload = function() {
     }
     if (Object.is(code, 13)) {
       if (preSearching && index < listLength()) {
+        // 默认选中第一一个
+        if (!itemChildren[index]) {
+          index = 0;
+          itemChildren[index].style.backgroundColor = '#ccc';
+          itemChildren[index].style.color = 'red';
+          return;
+        }
         if (multiple) {
           // 多选
 
@@ -266,7 +274,7 @@ window.onload = function() {
  * @param {显示滚动条的元素} el
  * @param {滚动条的方向} direction
  */
-function hasScrolled(el, direction = 'vertical') {
+function hasScrolled (el, direction = 'vertical') {
   if (Object.is(direction, 'vertical')) {
     return el.scrollHeight > el.clientHeight;
   } else if (Object.is(direction, 'horizontal')) {

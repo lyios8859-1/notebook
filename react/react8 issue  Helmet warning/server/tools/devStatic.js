@@ -1,0 +1,191 @@
+const axios = require('axios');
+const webapck = require('webpack');
+const path = require('path');
+const MemoryFileSystem = require('memory-fs');
+const mfs = new MemoryFileSystem();
+const ReactDomServer = require('react-dom/server');
+// http-proxy-middleware 代理插件
+const proxy = require('http-proxy-middleware');
+const ejs = require('ejs');
+const serialize = require('serialize-javascript');
+
+// 页面SEO优化的一些处理
+const { Helmet } = require('react-helmet');
+const helmet = Helmet.renderStatic();
+
+const serverConfig = require('../../build/webpack.config.server.js');
+
+const getTemplate = () => {
+  return new Promise((resolve, reject) => {
+    // webpack开发的静态文件
+    axios.get('http://127.0.0.1:8888/public/server.ejs').then((res) => {
+      resolve(res.data);
+    }).catch(err => {
+      reject(new Error(err));
+    });
+  });
+};
+
+// 存放读取的内容
+let serverBundle = '';
+
+// 数据控制中心
+let createStoreMap = '';
+
+
+
+/**
+ // 不需要打包处理的模块(服务端很多库是不需要打包的,可直接require引入)
+  externals: Object.keys(require('../package.json').dependencies),
+  webpack.config.server.js 这个externals配置,需要如下方法 getModuleFromString 处理模块
+ */
+// 获取 module 模块的构造函数
+// const Module = module.constructor; 改成 require 方式
+const NativeModule = require('module');
+const vm = require('vm');
+
+// 很 hooks 懵 ^?^ (function(exports, require, module, __filename, __dirname){ //...boundle code })();
+const getModuleFromString = (bundle, filename) => {
+  const m = { exports: {} };
+  const wrapper = NativeModule.wrap(bundle);
+  // 把javascript的字符串代码解析可以在执行环境下运行的代码
+  const script = new vm.Script(wrapper, {
+    filename: filename,
+     displayErrors: true // 显示错误信息
+  });
+  // 指定解析好的代码的执行环境开始执行
+  const result = script.runInThisContext();
+  result.call(m.exports, m.exports, require, m);
+  return m;
+};
+
+// 启动一个webpack的编译
+const serverCompiler = webapck(serverConfig);
+// 这个绝对不能写错,否在会吧文件写到磁盘
+serverCompiler.outputFileSystem = mfs;
+
+// 监听文件变化处理
+serverCompiler.watch({
+  publicPath: serverConfig.output.path
+}, (err, stats) => {
+  if (err) throw err;
+  stats = stats.toJson();
+  // 打印提示信息
+  stats.errors.forEach(err => console.error(err));
+  stats.warnings.forEach(err => console.error(err));
+  // 获取编译好的文件路径
+  const bundlePath = path.join(
+    serverConfig.output.path,
+    serverConfig.output.filename
+  );
+  // 不建议把文件写到磁盘,所以使用到插件 memory-fs 模块把文件内容写到内存
+  const bundle = mfs.readFileSync(bundlePath, 'utf-8');
+  
+  /*
+  const m = new Module();
+  // 解析javascript代码字符串,生成新的模块 server-entry-app.js 默认导出的
+  m._compile(bundle, serverConfig.output.filename);
+  */
+  /**
+   // 不需要打包处理的模块(服务端很多库是不需要打包的,可直接require引入)
+    externals: Object.keys(require('../package.json').dependencies),
+    webpack.config.server.js 这个externals配置,需要如下方法 getModuleFromString 处理模块
+  */
+  const m = getModuleFromString(bundle, serverConfig.output.filename);
+
+  // 导出该模块,如果没有导出,会使用客户端的渲染,不从服务端获取去渲染
+  serverBundle = m.exports.default;
+  // 导出数据控制中心 server-entry-app.js 中 createStoreMap() 函数返回的new AppState()对象
+  createStoreMap = m.exports.createStoreMap;
+});
+
+
+const baseUrl = 'http://cnodejs.org/api/v1';
+async function initialState(stores, url) {
+
+  // if (url === '/list') {}
+  const res = await getDataInfo(stores);
+  const result = await axios.get(`${baseUrl}/topics`);
+  console.log('count: ', stores.appState.count);
+  return result.data;
+}
+
+// 获取数据 模拟异步获取数据
+function getDataInfo (stores) {
+  const prop = this.props;
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      stores.appState.count = 100;
+      resolve(true);
+    }, 0);
+  });
+}
+
+const getStoreState = (stores) => {
+  console.log('异步更新后的mobx的state数据:', stores.appState.toJson());
+  return Object.keys(stores).reduce((result, storeName) => {
+    result[storeName] = stores[storeName].toJson();
+    return result;
+  }, {});
+}
+// issue: Uncaught SyntaxError: Unexpected token '<',
+// 原因: 是页面index.html的引用这个便以后的app.[hash].js文件问题,它引用的磁盘上的文件,我们把该js文件写到了内存,
+// 解决: 因此借助插件处理一下, http-proxy-middleware
+module.exports = function (app) {
+  // 通过代理到npm run dev:client 启动的服务里
+  app.use('/public', proxy({
+    target: 'http://localhost:8888'
+  }));
+  app.get('*', function (req, res) {
+    getTemplate().then(template => {
+      // 路由上下文
+      const routerContext = {};
+      /**
+        staticHtml 就是如下这个函数信息(返回的服务断的组件)
+        const app = (stores, routerContext, url) => {
+          console.log(stores, routerContext, url);
+          return (
+            <Provider {...stores}>
+              <StaticRouter context={routerContext} location={url}>
+                <App />
+              </StaticRouter>
+            </Provider>
+          );
+        };
+       */
+      const stores = createStoreMap();
+      const staticHtml = serverBundle(stores, routerContext, req.url);
+         
+      if (routerContext.url) {
+        // issue: 解决访问 '/' 根路径可以获取重定向指定的路由页面静态代码(注意: 会使用客户端渲染的代码麻痹开发者哦), 如果没有这个判断的话,
+        // 在页面访问是是没有重定向的指定的路由页面的这里是重定向到 /list 路由的,
+        // 这样的话 '/' 就会返回302, Respons eHeaders中的Locations: /list
+        res.status(302).setHeader('Location', routerContext.url);
+        res.end();
+        return;
+      }
+
+      // // 等数据请求回来才渲染页面返回给客户端
+      initialState(stores, req.url).then((resq) => {
+        const resText = resq.data;
+        if (Array.isArray(resText)){
+          console.log('id:', resText[0]['id'])
+        }
+
+        const stateData = getStoreState(stores);
+        console.log('stateData: ', stateData);
+        const content = ReactDomServer.renderToString(staticHtml);
+        
+        const html = ejs.render(template, {
+          appString: content,
+          initialState: serialize(stateData),
+          meta: helmet.meta.toString(),
+          title: helmet.title.toString(),
+          style: helmet.style.toString(),
+          link: helmet.link.toString()
+        })
+        res.send(html);
+      });
+    });
+  });
+};
