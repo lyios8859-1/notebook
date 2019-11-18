@@ -124,10 +124,7 @@ window.onload = function () {
         break;
       default:
         // 延时搜索，降低卡顿, 还解决了最有一次删除不处理全部的问题
-        if (timer) {
-          clearTimeout(timer);
-        }
-
+        if (timer) clearTimeout(timer);
         if (multiple) {
           // 多选 主要截取最后一个字符处理
           const inValue = input.value;
