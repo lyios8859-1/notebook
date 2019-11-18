@@ -51,7 +51,7 @@ window.onload = function () {
       const cDom = document.querySelector('.smartcontainer');
       // 非操作区域
       const tDom = ev.target;
-      if (cDom == tDom || cDom.contains(tDom)) {
+      if (cDom === tDom || cDom.contains(tDom)) {
         // 操作区域的代码
         console.log(cDom, tDom, cDom.contains(tDom));
       } else {
@@ -220,16 +220,14 @@ window.onload = function () {
     }
     if (Object.is(code, 13)) {
       if (preSearching && index < listLength()) {
-        // 默认选中第一一个
+        // 如果没有选中, Enter 默认选中第一个
         if (!itemChildren[index]) {
           index = 0;
           itemChildren[index].style.backgroundColor = '#ccc';
           itemChildren[index].style.color = 'red';
           return;
         }
-        if (multiple) {
-          // 多选
-
+        if (multiple) { // 多选
           // 添加多个 方案一
           // if (oldValue.includes(itemChildren[index].innerText)) {
           //   inputText.value = oldValue.join(";");
@@ -254,7 +252,6 @@ window.onload = function () {
         } else {
           // 单选
           inputText.value = itemChildren[index].innerText + ';';
-
           // 关闭面板
           searching = false;
           // 以后优化时，调用函数关闭面板
