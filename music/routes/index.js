@@ -14,9 +14,9 @@ const readeFileCon = async(filePath) => {
 };
 
 // /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+// router.get('/', function(req, res, next) {
+//   res.render('index', { title: 'Express' });
+// });
 router.post('/getLrc', function(req, res, next) {
   const lrcName = req.body.lrcFile;
   let filePath = '';
