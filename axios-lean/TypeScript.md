@@ -58,7 +58,6 @@ function inifiniteLoop (): never {
   }
 }
 
-
 // Object 类型
 declare function create(o: object | null): void;
 
@@ -72,6 +71,121 @@ someValue = 3;
 // 类型断言
 let someValue: any = 'String';
 let strLength: number = (someValue as string).length;
+```
+
+## 泛型
+
+```javascript
+// 泛型函数
+function indentity<T>(arg: T): T {
+  return arg;
+}
+
+function indentity<T>(arg: T[]): T[] {
+  // 是 T[] 否则编译时候报错：类型“T”上不存在属性“length”。 （所以需要有泛型约束）
+  console.log(arg.length);
+  return arg;
+}
+
+// 泛型约束1
+interface LengthInterface {
+  length: number
+}
+function indentity<T extends LengthInterface>(arg: T): T {
+  // 是 T extends LengthInterface 否则编译时候报错：类型“T”上不存在属性“length”。 （所以需要有泛型约束）
+  console.log(arg.length);
+  return arg;
+}
+indentity({ length: 2 }); // 编译通过
+indentity(2); // 编译报错：类型“2”的参数不能赋给类型“LengthInterface”的参数。
+
+// 泛型约束2
+// K 受到 T 的类型约束
+function  getProperty<T, K extends keyof T>(obj: T, key: K) {
+  return obj[key];
+}
+
+let obj = {a: 1, b: 2, c: 3};
+getProperty(obj, 'a');
+// 编译报错：类型“"d"”的参数不能赋给类型“"a" | "b" | "c"”的参数。
+getProperty(obj, 'd');
+
+/ 泛型约束3
+// 泛型的工厂函数的构造器
+function create<T>(c: {new(): T}): T{
+  return new c();
+}
+// 实例
+class BeeKeeper {
+  hasMask: boolean;
+}
+class LionKeeper {
+  nameTag: string;
+}
+class Animal {
+  nameLengs: number;
+}
+
+class Bee extends Animal {
+  name: BeeKeeper;
+}
+class Lion extends Animal {
+  keeper: LionKeeper;
+}
+
+// 工厂函数（接收构造器）
+function createInstance<T extends Animal>(c: {new(): T} /*构造器类型*/): T /*实例类型*/ {
+  return new c();
+}
+
+let bee = createInstance(Bee);
+console.log('bee', bee.name);
+let lion = createInstance(Lion);
+console.log('lion', lion.name); // 编译报错：类型“Lion”上不存在属性“name”。
 
 
+// 泛型类型接口
+function love<T>(arg: T): T {
+  return arg;
+}
+
+let myLove1: <T>(arg: T) => T = love; // 使用泛型类型接口
+
+// 等价于如下这个对象字面量的形式定义
+let myLove2: { <T>(arg: T) } = love; // 使用泛型类型接口
+
+// 等价于
+interface Other1 {
+  <T>(arg: T): T // 泛型函数
+}
+let myLove3: Other1 = love; // 使用泛型类型接口
+
+// 等价于(这种方式在使用时必须指定类型) （***** 推荐的写法）
+interface Other2<T> {
+  (arg: T): T // 非泛型函数
+}
+let myLove4: Other2<string> = love; // 使用泛型类型接口
+
+// 泛型类
+class WorldInfo <T> {
+  country: T;
+  findWoldPositon: (x: T, y: T) => T
+}
+
+// 使用泛型类
+let myWorld1 = new WorldInfo<number>();
+myWorld1.country = 0;
+myWorld1.findWoldPositon = function (x: number, y: number) {
+  return x + y;
+}
+
+console.log(myWorld1.findWoldPositon(myWorld1.country, 3));
+
+// 使用泛型类
+let myWorld2 = new WorldInfo<string>();
+myWorld2.country = 'China';
+myWorld2.findWoldPositon = function (x: string, y: string) {
+  return x + y;
+}
+console.log(myWorld2.findWoldPositon('Helle ', myWorld2.country));
 ```
