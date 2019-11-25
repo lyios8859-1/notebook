@@ -1,29 +1,23 @@
-abstract class Department {
-  name: string = 'Tom';
-  constructor (name: string) {
-    this.name = name;
+class Greeter {
+  static standarGreeting: string = 'Hello, Tom!!!';
+  greeting: string = '';
+  constructor (msg?: string) {
+    this.greeting = msg;
   }
-  abstract printMeeting (): void ;
-  printName (): void {
-    console.log('Department name ' + this.name);
-  }
-}
-
-class AccountingDepartment extends Department {
-  constructor () {
-    super('Accouting ad Auditiong');
-  }
-  printMeeting(): void {
-    console.log('The Department meets!');
-  }
-  genterteReports (): void {
-    console.log('genterteReports');
+  getGreeting () {
+    return this.greeting ? `Hello, ${this.greeting}!!!` : Greeter.standarGreeting;
   }
 }
 
-let department: Department = new AccountingDepartment();
-department.printMeeting();
-department.printName();
- // 因为我们规定了AccountingDepartment实例是一个抽象的Department，
- // 因此department.genterteReports();会编译报错
-// department.genterteReports();
+let greeter1: Greeter = new Greeter('Jerry');
+console.log(greeter1.getGreeting()); // Hello, Jerry!!!
+
+let greeter2: Greeter = new Greeter();
+console.log(greeter2.getGreeting()); // Hello, Tom!!!
+
+// 修改静态属性
+let greeterMaker: typeof Greeter = Greeter;
+greeterMaker.standarGreeting = 'Hi Tom.'
+
+let greeter: Greeter = new greeterMaker();
+console.log(greeter.getGreeting());
