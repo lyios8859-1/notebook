@@ -2,7 +2,7 @@
 
 ## 基础类型
 
-```javascript
+```typescript
 // Blooean类型
 const isMark: boolean = false;
 // String类型
@@ -73,9 +73,55 @@ let someValue: any = 'String';
 let strLength: number = (someValue as string).length;
 ```
 
+## 抽象类
+
+> 不可以直接实例化，通常作为其他派生类（子类）的基类（父类）
+> abstract 标识
+
+```typescript
+abstract class Animal {
+  abstract makeSoun(): void;
+  run () {
+    console.log('The animal run...');
+  }
+}
+
+// 例
+abstract class Department {
+  name: string = 'Tom';
+  constructor (name: string) {
+    this.name = name;
+  }
+  abstract printMeeting (): void ;
+  printName (): void {
+    console.log('Department name ' + this.name);
+  }
+}
+
+class AccountingDepartment extends Department {
+  constructor () {
+    super('Accouting ad Auditiong');
+  }
+  printMeeting(): void {
+    console.log('The Department meets!');
+  }
+  genterteReports (): void {
+    console.log('genterteReports');
+  }
+}
+
+let department: Department = new AccountingDepartment();
+department.printMeeting();
+department.printName();
+// 因为我们规定了AccountingDepartment实例是一个抽象的Department，
+// 因此department.genterteReports();会编译报错
+// department.genterteReports();
+```
+
+
 ## 泛型
 
-```javascript
+```typescript
 // 泛型函数
 function indentity<T>(arg: T): T {
   return arg;
