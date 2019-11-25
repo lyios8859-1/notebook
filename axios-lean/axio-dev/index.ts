@@ -1,23 +1,10 @@
-class Greeter {
-  static standarGreeting: string = 'Hello, Tom!!!';
-  greeting: string = '';
-  constructor (msg?: string) {
-    this.greeting = msg;
-  }
-  getGreeting () {
-    return this.greeting ? `Hello, ${this.greeting}!!!` : Greeter.standarGreeting;
-  }
+function getInfo (id: number = 0, name: string, ...restInfo: string[] ): string {
+  return `序号： ${id}, 名字： ${name}, 剩余信息: ${restInfo}`; 
 }
+console.log(getInfo(undefined, 'Tom', '女', '游泳'));
+console.log(getInfo(undefined, 'Jerry', '跑步'));
+console.log(getInfo(1, 'Cat', '吃鱼'));
 
-let greeter1: Greeter = new Greeter('Jerry');
-console.log(greeter1.getGreeting()); // Hello, Jerry!!!
-
-let greeter2: Greeter = new Greeter();
-console.log(greeter2.getGreeting()); // Hello, Tom!!!
-
-// 修改静态属性
-let greeterMaker: typeof Greeter = Greeter;
-greeterMaker.standarGreeting = 'Hi Tom.'
-
-let greeter: Greeter = new greeterMaker();
-console.log(greeter.getGreeting());
+// 使用该函数类型
+let getMessage: (id: number, name: string, ...rest) => string = getInfo;
+console.log(getMessage(3, 'Tiger', '吃人'));

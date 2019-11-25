@@ -260,3 +260,61 @@ myWorld2.findWoldPositon = function (x: string, y: string) {
 }
 console.log(myWorld2.findWoldPositon('Helle ', myWorld2.country));
 ```
+
+## 函数
+
+```typescript
+// a: 表达式, 有3种方式
+// 参数类型, 箭头后面的是返回值类型
+// 方式一
+let add1: (value1: number, value2: number) => number = function (x, y) {
+  return x + y;
+};
+
+// 方式二
+let add2: (value1: number, value2: number) => number = function (x: number, y: number): number {
+  return x + y;
+};
+
+// 方式三
+let add3 = function (x: number, y: number): number {
+  return x + y;
+};
+
+// 声明式
+function getName (x: number, y: number): number {
+  return x + y;
+}
+```
+
+## 可选参数
+
+> 参数可选，
+> 1, 必须是最后一个参数，才是可选
+> 2, 最好对可选参数判断，或者默认设置
+> 3, 对于使用默认非可选参数，显示传递 undefined 才可以
+
+```typescript
+function getInfo (id: number = 0, name: string, sex?: string): string {
+ return `序号： ${id}, 名字： ${name}, 性别： ${sex ? sex : '男'}`; 
+}
+
+console.log(getInfo(undefined, 'Tom', '女')); // 序号： 0, 名字： Tom, 性别： 女
+console.log(getInfo(undefined, 'Jerry')); // 序号： 0, 名字： Jerry, 性别： 男
+console.log(getInfo(1, 'Cat')); // 序号： 1, 名字： Cat, 性别： 男
+```
+
+## 剩余参数
+
+```typescript
+function getInfo (id: number = 0, name: string, ...restInfo: string[] ): string {
+  return `序号： ${id}, 名字： ${name}, 剩余信息: ${restInfo}`; 
+}
+console.log(getInfo(undefined, 'Tom', '女', '游泳'));
+console.log(getInfo(undefined, 'Jerry', '跑步'));
+console.log(getInfo(1, 'Cat', '吃鱼'));
+
+// 使用该函数类型
+let getMessage: (id: number, name: string, ...rest) => string = getInfo;
+console.log(getMessage(3, 'Tiger', '吃人'));
+```
