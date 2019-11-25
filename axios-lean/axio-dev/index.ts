@@ -5,20 +5,20 @@ function create<T>(c: {new(): T}): T{
 }
 // 实例
 class BeeKeeper {
-  hasMask: boolean;
+  hasMask: boolean = true;
 }
 class LionKeeper {
-  nameTag: string;
+  nameTag: string = 'Tom';
 }
 class Animal {
-  nameLengs: number;
+  nameLengs: number = 998;
 }
 
 class Bee extends Animal {
-  name: BeeKeeper;
+  keeper: BeeKeeper = new BeeKeeper();
 }
 class Lion extends Animal {
-  keeper: LionKeeper;
+  keeper: LionKeeper = new LionKeeper();
 }
 
 // 工厂函数（接收构造器）
@@ -27,6 +27,7 @@ function createInstance<T extends Animal>(c: {new(): T} /*构造器类型*/): T 
 }
 
 let bee = createInstance(Bee);
-console.log('bee', bee.name);
+console.log('bee: ', bee.keeper.hasMask);
 let lion = createInstance(Lion);
-console.log('lion', lion.name); // 编译报错：类型“Lion”上不存在属性“name”。
+console.log('lion: ', lion.keeper.nameTag);
+// console.log('lion', lion.name); // 编译报错：类型“Lion”上不存在属性“name”。
