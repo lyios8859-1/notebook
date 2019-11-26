@@ -1,10 +1,10 @@
-function getInfo (id: number = 0, name: string, ...restInfo: string[] ): string {
-  return `序号： ${id}, 名字： ${name}, 剩余信息: ${restInfo}`; 
-}
-console.log(getInfo(undefined, 'Tom', '女', '游泳'));
-console.log(getInfo(undefined, 'Jerry', '跑步'));
-console.log(getInfo(1, 'Cat', '吃鱼'));
+function broken(name: string | null): string {
+  function postfix (epithet: string) {
+    // 这里明确调用时不可能为null，所以使用 ’!‘ 类型断言
+    // 否则 tsc index.ts --strictNullChecks 编译时就报错：Object is possibly 'null'.
+    return name.charAt(0) + '. The ' + epithet;
+  }
 
-// 使用该函数类型
-let getMessage: (id: number, name: string, ...rest) => string = getInfo;
-console.log(getMessage(3, 'Tiger', '吃人'));
+  name = name || 'Tom';
+  return postfix(name);
+}

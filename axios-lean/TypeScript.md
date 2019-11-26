@@ -292,7 +292,7 @@ function getName (x: number, y: number): number {
 > 参数可选，
 > 1, 必须是最后一个参数，才是可选
 > 2, 最好对可选参数判断，或者默认设置
-> 3, 对于使用默认非可选参数，显示传递 undefined 才可以
+> 3, 对于使用默认非可选参数，显示传递 `undefined` 才可以
 
 ```typescript
 function getInfo (id: number = 0, name: string, sex?: string): string {
@@ -317,4 +317,184 @@ console.log(getInfo(1, 'Cat', '吃鱼'));
 // 使用该函数类型
 let getMessage: (id: number, name: string, ...rest) => string = getInfo;
 console.log(getMessage(3, 'Tiger', '吃人'));
+```
+
+## 交叉类型
+
+```typescript
+// 交叉类型
+function extend<T, U>(first: T, second: U): T & U {
+  let result = {} as T & U;
+  for (let key in first) {
+    result[key] = first[key] as any;
+  }  
+  for (let key in second) {
+    if (!result.hasOwnProperty(key))
+    result[key] = second[key] as any;
+  }  
+  return result;
+}
+
+class Person {
+  name: string = '';
+  constructor (name: string) {
+    this.name = name;
+  }
+}
+
+interface Loggable {
+  log(): void;
+}
+class ConsoleLooger implements Loggable {
+  log () {
+    // TODO
+  }
+}
+ty
+// 交叉类型
+let tom = extend(new Person('Tom'), new ConsoleLooger());
+tom.name; // 可以访问 Person 的相关属性、方法
+tom.log(); // 可以访问 ConsoleLooger 的相关属性、方法
+```
+
+## 联合类型
+
+```typescript
+function  padingLeft(value: string, padding: string | number) {
+  if (typeof padding === 'number') {
+    return Array(padding + 1).join(' ') + value;
+  }
+  if (typeof padding === 'string') {
+    return padding + value;
+  }
+
+  throw new Error('Expected string or nubmer got' + padding);
+}
+
+interface Bird {
+  fly(): void;
+  layEggs(): void;
+}
+
+interface Fish {
+  swim(): void;
+  layEggs(): void;
+}
+
+function getSmallPet(): Fish | Bird {
+  // TODO
+  let type: Fish | Bird;
+  return type;
+}
+
+let pet = getSmallPet();
+pet.layEggs();
+// pet.swim(); //编译报错， 只能是调用共有的属性或方法
+```
+
+## 类型保护
+
+```typescript
+function  padingLeft(value: string, padding: string | number) {
+  if (typeof padding === 'number') {
+    return Array(padding + 1).join(' ') + value;
+  }
+  if (typeof padding === 'string') {
+    return padding + value;
+  }
+
+  throw new Error('Expected string or nubmer got' + padding);
+}
+
+interface Bird {
+  fly(): void;
+  layEggs(): void;
+}
+
+interface Fish {
+  swim(): void;
+  layEggs(): void;
+}
+
+function getSmallPet(): Fish | Bird {
+  // TODO
+  let type: Fish | Bird;
+  return type;
+}
+
+let pet = getSmallPet();
+// 断言, 如下使用时不太友好
+if ((pet as Fish).swim) {
+  (pet as Fish).swim();
+} else if ((pet as Bird).fly) {
+  (pet as Bird).fly();
+}
+// 解决方案一：
+if (isFish1(pet)) {
+  pet.swim();
+} else {
+  pet.fly();
+}
+
+// 类型保护之谓词 is
+function isFish1 (pet: Fish | Bird): pet is Fish{
+  return (pet as Fish).swim !== undefined;
+}
+
+// 解决方案二：
+// 类型保护之 typeof： （typeof === '基础类型'， typeof ！== '基础类型'）
+function isNumber (x: any): x is number {
+  return typeof x === 'number';
+}
+
+function isString(x: any): x is string {
+  return typeof x === 'string';
+}
+
+// 解决方案三：
+// 类型保护之 instanceof
+class Bird1 {
+  fly(): void {
+    console.log('Brid Fly');
+  };
+  layEggs(): void {
+    console.log('Brid Lay Eggs.')
+  };
+}
+```
+
+## null 与 undefined
+
+> 编译时 `--strictNullChecks` 参数的影响
+
+```typescript
+// 如下代码，执行 tsc index.ts直接编译没问题
+let s1 = 'foo';
+s1 = null;
+let s2: string | null = 'bar';
+s2 = undefined;
+
+// 如果使用 --strictNullChecks 就会编译报错
+let s3 = 'foo'; // Type 'null' is not assignable to type 'string'.
+s3 = null;
+let s4: string | null = 'bar';
+s4 = undefined; // Type 'undefined' is not assignable to type 'string | null'.
+```
+
+PS：
+
+- 1, `null` 不能赋值给联合类型变量，或 `undefinde`
+- 2, 闭包里明确确保不会为 `null`
+
+```typescript
+function broken(name: string | null): string {
+  function postfix (epithet: string) {
+    // 这里明确调用时不可能为null，所以使用 ’!‘ 类型断言
+    // 否则 tsc index.ts --strictNullChecks 编译时就报错：Object is possibly 'null'.
+    return name.charAt(0) + '. The ' + epithet;
+  }
+
+  name = name || 'Tom';
+  return postfix(name);
+}
 ```
