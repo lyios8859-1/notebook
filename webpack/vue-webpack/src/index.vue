@@ -31,13 +31,14 @@
     </div>
     <!-- <div v-time="timeNow" />
     <div v-time="timeBefore" /> -->
+    <ItemList></ItemList>
   </div>
 </template>
 
 <script>
 import parent from "./parent.vue";
 import testSmartInput from "./SmartInput/testSmartInput.vue";
-
+import ItemList from './elementui-infinity-load/ItemList.vue';
 export default {
   name: "App",
   data() {
@@ -68,7 +69,8 @@ export default {
   },
   components: {
     parent,
-    testSmartInput
+    testSmartInput,
+    ItemList
   }
 };
 </script>
