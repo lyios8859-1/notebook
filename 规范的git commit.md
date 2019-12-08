@@ -53,3 +53,6 @@ template = ~/.gitmessage
 # - BREAKING CHANGE
 #
 ```
+
+认真是一种态度
+让优秀成为一种习惯
