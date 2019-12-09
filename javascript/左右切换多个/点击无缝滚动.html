@@ -1,0 +1,99 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <title>无缝滚动——左右</title>
+  <style type="text/css">
+  #scroll{width:698px;height:108px;margin:50px auto 0;position:relative;overflow:hidden;}
+  .btn_left{display:block;width:68px;height:68px;position:absolute;top:20px;left:1px;z-index:1;}
+  .btn_right{display:block;width:68px;height:68px;position:absolute;top:20px;right:0;z-index:1;}
+  #scroll .content{width:546px;height:108px;position:absolute;overflow:hidden;margin:0 auto;}
+ .content img{float:left;width:182px;height:108px;text-align:center;position:relative;}
+  </style>
+</head>
+<body>
+  <div id="scroll">
+    <a href="javascript:;" class="btn_left"><</a>
+    <a href="javascript:;" class="btn_right">></a>
+    <div class="content" id="content">
+       <img src="1.jpeg" width="178" height="108" alt=""/>
+       <img src="2.jpeg" width="178" height="108" alt=""/>
+       <img src="2.jpeg" width="178" height="108" alt=""/>
+       <img src="1.jpeg" width="178" height="108" alt=""/>
+    </div>
+  </div>
+</body>
+</html>
+<script type="text/javascript">
+window.onload = function(){
+  var oDiv = document.getElementById('scroll');
+  var content = document.getElementById("content");
+  var img = oDiv.getElementsByTagName("img");
+  var aBtn = oDiv.getElementsByTagName('a');
+  var speed = -1;
+  var timer = null;
+  content.innerHTML += content.innerHTML;
+  content.style.width = img[0].offsetWidth * img.length + 'px';
+  aBtn[0].onclick = function(){
+    speed = -100;
+    content.style.left = content.offsetLeft + speed + 'px';
+    if(content.offsetLeft < - content.offsetWidth / 2){
+      content.style.left = '0';
+    }else if(content.offsetLeft > 0){
+      content.style.left = - content.offsetWidth / 2 + 'px';
+    }
+  };
+  aBtn[1].onclick = function(){
+    speed = 100;
+    content.style.left = content.offsetLeft + speed + 'px';
+    if(content.offsetLeft < - content.offsetWidth / 2){
+      content.style.left = '0';
+    }else if(content.offsetLeft > 0){
+      content.style.left = - content.offsetWidth / 2 + 'px';
+    }
+  };
+};
+
+// 自动滚动
+// window.onload = function(){
+//   var oDiv = document.getElementById('scroll');
+//   var content = document.getElementById("content");
+//   var img = oDiv.getElementsByTagName("img");
+//   var aBtn = oDiv.getElementsByTagName('a');
+//   var speed = -1;
+//   var timer = null;
+//   content.innerHTML += content.innerHTML;
+//  content.style.width = img[0].offsetWidth * img.length + 'px';
+//   timer = setInterval(function(){
+//     content.style.left = content.offsetLeft + speed + 'px';
+//     if(content.offsetLeft < - content.offsetWidth / 2){
+//       clearInterval(timer);
+//       content.style.left = '0';
+//     }else if(content.offsetLeft > 0){
+//       clearInterval(timer);
+//       content.style.left = - content.offsetWidth / 2 + 'px';
+//     }
+//   },10);
+//   aBtn[0].onclick = function(){
+//     speed = -1;
+//   };
+//   aBtn[1].onclick = function(){
+//     speed = 1;
+//   };
+//   content.onmouseover = function(){
+//     clearInterval(timer);
+//   };
+//   content.onmouseout = function(){
+//     timer = setInterval(function(){
+//       content.style.left = content.offsetLeft + speed + 'px';
+//       if(content.offsetLeft < -content.offsetWidth / 2){
+//       clearInterval(timer);
+//         content.style.left = '0';
+//       }else if(content.offsetLeft > 0){
+//       clearInterval(timer);
+//         content.style.left = - content.offsetWidth / 2 + 'px';
+//       }
+//     },10);
+//   };
+// };
+</script>
