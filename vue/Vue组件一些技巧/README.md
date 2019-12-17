@@ -1,4 +1,15 @@
-# 了解一下 props 
+# Vue 组件
+
+- 智能组件原理
+
+>智能组件可以称为第三方通用组件，也可以称之为业务型公用组件，与父组件之间的关系是完全解耦的，只能通过 props 进行数据传递，event 进行事件传递，不依赖于任何环境，只需要传递相应的数据和事件，就能得到你想要的操作。
+
+- 木偶组件原理
+
+> 木偶组件是为了业务页面进行拆分而形成的组件模式。比如一个页面，可以分多个模块，而每一个模块与其余页面并没有公用性，只是纯粹拆分。
+
+## 了解一下 props
+
 > Vue 是单向数据流的，父级 prop 的更新会向下流动到子组件中，但是反过来则不行。
 > 因此不应该在子组件中直接修改props的值
 
@@ -104,18 +115,120 @@ export default {
 <counter v-model="counerVal"/>
 
 <!-- 在2.2之后的版本中，可以自定义v-model指令的prop和event名称 -->
+<!-- 子组件, Children.vue -->
+<template>
+  <div v-show="show">
+    <div>
+      <p>这是一个Model框</p>
+      <input type="text" v-model="value">
+      {{value}}
+        <button @click="closeModel">关闭model</button>
+    </div>
+  </div>
+</template>
 <script>
 export default {
+  // 通过 model 选项的改变，把 props 从原本的value换成了show，input触发的事件换成了close
   model: {
-    prop: 'value',
-    event: 'input'
+    prop: 'show',
+    event: 'close'
   },
+  data () {
+    return {
+      value: 10
+     }
+  },
+  props: ['show'],
+  methods: {
+    closeModel () {
+      this.$emit('close',false)
+    }
+  }
   // Other Code
  }
 </script>
+
+<!-- 父组件 -->
+<template>
+  <div class="hello">
+    <button @click="show=true">打开model</button>
+    <Children v-model="show" ></Children>
+  </div>
+</template>
+
+<script>
+import Demo from './Children.vue'
+export default {
+  name: 'hello',
+  components: {
+    Children
+  },
+  data () {
+    return {
+      show: false
+    }
+  }
+}
+</script>
 ```
 
-[参考](https://juejin.im/post/5cb3eed65188251b0351f2c4#heading-2)
+- 王者回归 .sync (数据双向流动)
+> `<demo :foo.sync="something"></demo>` <==> 语法糖的扩展 `<demo :foo="something" @update:foo="val => something = val"></demo>`
+
+- foo 则是 demo 子组件需要从父组件 props 接收的数据
+- 通过事件显示监听 update:foo (foo则是 props 显示监听的数据)，通过箭头函数执行回调，把参数传给 something，则就形成了一种双向绑定的循环链条
+
+> 当子组件需要更新 foo 的值时，它需要显式地触发一个更新事件： `this.$emit('update:foo', newValue)`
+
+第一个参数则是 update 是显示更新的事件，跟在后面的：foo则是需要改变对应的props值。
+
+第二个参数传入的是你希望父组件foo数据里将要变化的值，以用于父组件接收update时更新数据。
+
+```html
+<!-- 子组件 -->
+<template>
+   <div v-show="show">
+      <p>这是一个Model框</p>
+      <button @click="closeModel">关闭model</button>
+   </div>
+</template>
+<script>
+export default {
+  props: ['show'],
+  methods: {
+    closeModel () {
+      this.$emit('update:show',false)
+    }
+  }
+}
+</script>
+<!-- 父组件 -->
+
+<template>
+  <div class="hello">
+    <button @click="show=true">打开model</button>
+    <demo :show.sync="show" ></demo>
+  </div>
+</template>
+
+<script>
+  import Demo from './Demo.vue'
+  export default {
+    name: 'hello',
+    components: {
+      Demo
+    },
+    data () {
+      return {
+        show: false
+      }
+    }
+  }
+</script>
+```
+
+[参考1](https://juejin.im/post/5cb3eed65188251b0351f2c4#heading-2)
+[参考2](https://juejin.im/post/5bd97e7c6fb9a022852a71cf#heading-53)
 
 ## 封装API组件
 
