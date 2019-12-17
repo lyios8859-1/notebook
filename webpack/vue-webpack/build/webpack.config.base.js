@@ -2,6 +2,7 @@ const path = require("path");
 //const VueLoaderPlugin = require("vue-loader/lib/plugin");
 const { VueLoaderPlugin } = require("vue-loader");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const webpack = require('webpack');
 
 // 多线程处理
 const HappyPack = require("happypack");
@@ -94,6 +95,8 @@ const config = {
       threadPool: happyThreadPool,
       //允许 HappyPack 输出日志
       verbose: true
+    }),
+    new webpack.ProvidePlugin({
     })
   ],
   optimization: {
