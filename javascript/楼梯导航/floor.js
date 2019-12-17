@@ -1,5 +1,7 @@
 
-const ulHeight = document.getElementsByClassName('menuDoc')[0].offsetHeight;
+
+const menuDocDom = document.getElementsByClassName('menuDoc')[0];
+const ulHeight = menuDocDom.offsetHeight;
 const menuDom = document.getElementsByClassName('menu')[0];
 const contentDom = document.getElementsByClassName('content')[0];
 const contentHeight = contentDom.offsetHeight;
@@ -29,4 +31,19 @@ window.document.onkeydown = function(e) {
   } else if (e.keyCode === 40) {
     index = (index - 1 + len) % len;
   }
+  console.log(index);
 };
+
+
+let conHeight = 0;
+let h = document.getElementsByClassName('content')[0].children[0].clientHeight;
+menuDocDom.onclick = function (ev) {
+  ev = ev || window.event;
+  const target = ev.target;
+  if (target.tagName === 'SPAN') {
+    conHeight = target.dataset.index * h +  target.dataset.index * 10;
+    console.log(target.dataset.index , conHeight);
+    document.documentElement.scrollTo(0, conHeight);
+    // style="scroll-behavior: smooth;"  平滑滚动， 产生滚动条的容器添加
+  }
+}

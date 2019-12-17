@@ -21,6 +21,12 @@ a {
   transform: translate(0, -50%);
 }
 
+.menu .menuDoc li span{
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+}
+
 ul {
   background: #ccc;
 }

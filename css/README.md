@@ -334,7 +334,9 @@ css
 ![单个元素实现三条杠](./单个元素实现三条杠.png "单个元素实现三条杠")
 
 ```html
+
 <style>
+  /*方案一*/
   .icon {
     display: inline-block;
     width: 50px;
@@ -345,14 +347,35 @@ css
     border-bottom: 5px solid blue;
     background-clip: content-box;
   }
-</style>
-<div class="icon"></div>
+
+  /*方案二*/
+  .icon {
+    display: inline-block;
+    width: 20px;
+    border-top: 12px double;
+    border-bottom: 4px solid;
+    padding: 2px;display: inline-block;
+    width: 20px;
+    border-top: 12px double;
+    border-bottom: 4px solid;
+    padding: 2px;
+  }
+
+  /*方案三*/
+  .icon {
+    display: inline-block;
+    width: 20px;
+    height: 4px;
+    border-top: 12px double;
+    border-bottom: 4px solid;
+  }
+
 ```
 
 ## 单个元素实现实心园
 
 效果：
-![单个元素实现三条杠](./单个元素实现实心圆.png "单个元素实现三条杠")
+![单个元素实现实现实心圆](./单个元素实现实心圆.png "单个元素实现实现实心圆")
 
 ```html
 <style>
@@ -440,4 +463,79 @@ body:before {
   z-index: 100;
 }
 </style>
+```
+
+
+## 三条杠和叉叉的切换
+
+```html
+<style>
+.father {
+  position: relative;
+  width: 600px;
+  height: 400px;
+  background: #ccc;
+}
+.son {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 200px;
+  height: 100px;
+  background: red;
+  margin: auto;
+}
+
+.icon-menu {
+  display: inline-block;
+  width: 24px;
+  height: 4px;
+  border-top: 14px double;
+  border-bottom: 5px solid;
+}
+.icon-close {
+  position: relative;
+  width: 24px;
+  height: 24px;
+}
+/* .icon-close::before, .icon-close::after {
+  position: absolute;
+  left: 10px;
+  content: ' ';
+  height: 25px;
+  width: 4px;
+  background: black;
+}
+.icon-close::before {
+  transform: rotate(45deg);
+}
+.icon-close::after {
+  transform: rotate(-45deg);
+} */
+.icon-close::after {
+  content: '\2716';
+  font-size: 26px;
+  text-align: center;
+  line-height: 24px;
+  color: black;
+}
+</style>
+<div class="father">
+<div class="son">
+</div>
+</div>
+
+<span class="icon-close" id="icon"></span>
+<script>
+const iconDom = document.querySelector('#icon');
+iconDom.onclick = function (ev) {
+if (ev.target.classList.contains('icon-close')) {
+  ev.target.classList.replace('icon-close', 'icon-menu');
+} else if (ev.target.classList.contains('icon-menu')) {
+  ev.target.classList.replace('icon-menu', 'icon-close');
+}
+}
+</script>
 ```
