@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <ul class="nav">
+      <li class="navLi">1F</li>
+      <li class="navLi">2F</li>
+      <li class="navLi">3F</li>
+      <li class="navLi">4F</li>
+      <li class="navLi">5F</li>
+      <li class="navLi">6F</li>
+      <li class="navLi">7F</li>
+      <li class="toTop">置顶</li>
+    </ul>
+    <div class="header">我是header</div>
+    <div class="main">
+      <div class="stair one">女装</div>
+      <div class="stair two">鞋靴</div>
+      <div class="stair three">童装玩具</div>
+      <div class="stair four">家电</div>
+      <div class="stair five">美妆</div>
+      <div class="stair six">珠宝</div>
+      <div class="stair seven">百货</div>
+    </div>
+    CSS：
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      .nav {
+        /* 绝对定位，相对于浏览器窗口进行定位 */
+        position: fixed;
+        top: 100px;
+        left: 20px;
+        display: none;
+      }
+      ul li {
+        width: 50px;
+        height: 50px;
+        border: 3px solid #aaaaaa;
+        border-bottom: none;
+        line-height: 50px;
+        text-align: center;
+        background-color: rgb(255, 174, 127);
+        font-size: 30px;
+        cursor: pointer;
+        list-style: none;
+        opacity: 0.6;
+      }
+      ul li:hover {
+        background-color: #cccccc;
+        opacity: 0.9;
+      }
+      ul li:last-child {
+        border: 3px solid #aaaaaa;
+        font-size: 25px;
+      }
+      .header {
+        width: 100%;
+        height: 500px;
+        background-color: red;
+        font-size: 200px;
+        text-align: center;
+      }
+      .main div {
+        width: 100%;
+        height: 800px;
+        font-size: 100px;
+        text-align: center;
+      }
+      .main .one {
+        background-color: royalblue;
+      }
+      .main .two {
+        background-color: yellow;
+      }
+      .main .three {
+        background-color: blue;
+      }
+      .main .four {
+        background-color: green;
+      }
+      .main .five {
+        background-color: purple;
+      }
+      .main .six {
+        background-color: orange;
+      }
+      .main .seven {
+        background-color: aquamarine;
+      }
+      .active {
+        background: red;
+        color: #fff;
+      }
+    </style>
+    <script>
+      $(function() {
+        var sc=$(document);//得到document文档对象。
+        window.onscroll = function() {
+          // document.documentElement.scrollTop 当前页面的滚动条纵坐标位置
+          if (document.documentElement.scrollTop >= $(".main").offset().top) {
+            $(".nav").show();
+            // 获取滚动元素对应的索引!!!重难点
+            var index = Math.floor(sc.scrollTop() / 800);
+            $(".navLi")
+              .eq(index - 1)
+              .addClass("active")
+              .siblings()
+              .removeClass("active");
+          } else {
+            $(".nav").hide();
+          }
+        };
+        $(".nav")
+          .find(".navLi")
+          .click(function() {
+            var index = $(this).index();
+            var H = $(".main .stair")
+              .eq(index)
+              .offset().top;
+            $("html,body").animate(
+              {
+                scrollTop: H
+              },
+              300
+            );
+          });
+        $(".toTop").click(function() {
+          $("html,body").animate(
+            {
+              scrollTop: 0
+            },
+            200
+          );
+        });
+      });
+    </script>
+  </body>
+</html>

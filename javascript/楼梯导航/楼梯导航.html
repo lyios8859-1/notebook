@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>楼梯导航</title>
+    <style type="text/css">
+      * {
+        padding: 0px;
+        margin: 0px;
+      }
+
+      ul > li {
+        list-style: none;
+      }
+
+      #content {
+        margin: 100px auto;
+        width: 1000px;
+        overflow: hidden;
+        text-align: center;
+      }
+
+      #content .item {
+        width: 1000px;
+        height: 600px;
+        margin-bottom: 30px;
+        background: #66ccff;
+      }
+
+      #left-nav {
+        display: block;
+        top: 250px;
+        left: 80px;
+        width: 50px;
+        background: #3399ff;
+        position: fixed;
+        text-align: center;
+        font-size: 20px;
+      }
+
+      #left-nav ul > li {
+        padding: 5px 5px;
+        background: #918888;
+        border-bottom: 2px solid #aaa;
+      }
+
+      #left-nav .top {
+        background-color: #666;
+      }
+
+      #left-nav li:hover {
+        background: red;
+      }
+
+      #left-nav ul > li.active {
+        background: red;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="content">
+      <div class="item">没有名字的框框*1</div>
+      <div class="item">没有名字的框框*2</div>
+      <div class="item">没有名字的框框*3</div>
+      <div class="item">没有名字的框框*4</div>
+      <div class="item">没有名字的框框*5</div>
+    </div>
+
+    <div id="left-nav">
+      <ul>
+        <li>一</li>
+        <li>二</li>
+        <li>三</li>
+        <li>四</li>
+        <li>五</li>
+        <li class="top">↑</li>
+        <!-- <li id="test"> </li> -->
+      </ul>
+    </div>
+
+    <p id="see"></p>
+    <script src="./js/jquery-3.2.1.min.js"></script>
+
+    <script>
+      $("#left-nav ul > li").click(function() {
+        var index = $(this).index(); //获取li下标
+
+        if (index != 5) {
+          var height = $(".item")
+            .eq(index)
+            .offset().top; //元素与文档顶部之间的距离
+          $("html,body").animate({ scrollTop: height + "px" }, 500); //以动画的形式改变这个值
+        } else {
+          $("html,body").animate({ scrollTop: 0 }, 700);
+        }
+        $(this)
+          .addClass("active")
+          .siblings()
+          .removeClass("active");
+      });
+
+      var indexx = $("#left-nav ul > li").index();
+
+      $(document).ready(function() {
+        $(document).scroll(function() {
+          var result = document.getElementById("test");
+          //用于测试的句子    result.innerHTML = $("html, body").scrollTop();
+          if ($("html, body").scrollTop() <= 730) {
+            $("body")
+              .find("#left-nav ul > li")
+              .eq(0)
+              .addClass("active")
+              .siblings()
+              .removeClass("active");
+          } else if ($("html, body").scrollTop() < 1330) {
+            $("body")
+              .find("#left-nav ul > li")
+              .eq(1)
+              .addClass("active")
+              .siblings()
+              .removeClass("active");
+          } else if ($("html, body").scrollTop() < 1930) {
+            $("body")
+              .find("#left-nav ul > li")
+              .eq(2)
+              .addClass("active")
+              .siblings()
+              .removeClass("active");
+          } else if ($("html, body").scrollTop() < 2580) {
+            $("body")
+              .find("#left-nav ul > li")
+              .eq(3)
+              .addClass("active")
+              .siblings()
+              .removeClass("active");
+          } else {
+            $("body")
+              .find("#left-nav ul > li")
+              .eq(4)
+              .addClass("active")
+              .siblings()
+              .removeClass("active");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
