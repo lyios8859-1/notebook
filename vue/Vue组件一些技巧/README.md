@@ -77,8 +77,9 @@ export default {
 </script>
 ```
 
-- v-model语法糖
-  拆解为 props: value 和 events: input。通俗说组件只要提供一个名为 value 的 prop，以及名为 input 的自定义事件。
+- v-model语法糖:
+
+> 拆解为 `props: value` 和 `events: input`。通俗说组件只要提供一个名为 `value` 的 `prop`，以及名为 `input` 的自定义事件。
 
 ```html
 <!-- 子组建 -->
