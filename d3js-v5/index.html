@@ -31,19 +31,19 @@
             'value': '0',
             'children':
             [
-              {'name': '杭州', 'value': '90'},
+              {'name': '杭州', 'value': '90', bar: [23, 343]},
               {'name': '宁波', 'value': '90'},
               {'name': '温州', 'value': '90'},
-              {'name': '绍兴', 'value': '90'}
+              {'name': '绍兴', 'value': '90',  bar: [23, 343]}
             ]
           },
           {
             'name': '广西',
             'value': '0',
             'children': [
-              {'name': '桂林', 'value': '90'},
+              {'name': '桂林', 'value': '90', bar: [23, 343]},
               {'name': '南宁', 'value': '90'},
-              {'name': '柳州', 'value': '90'},
+              {'name': '柳州', 'value': '90', bar: [23, 343]},
               {'name': '防城港', 'value': '90'}
             ]
           },
@@ -52,7 +52,7 @@
             'value': '0',
             'children': [
               {'name': '哈尔滨', 'value': '90'},
-              {'name': '齐齐哈尔', 'value': '90'},
+              {'name': '齐齐哈尔', 'value': '90',  bar: [23, 343]},
               {'name': '牡丹江', 'value': '90'},
               {'name': '大庆', 'value': '90'}
             ]
@@ -64,7 +64,7 @@
               [
                 {'name': '乌鲁木齐', 'value': '90'},
                 {'name': '克拉玛依', 'value': '90'},
-                {'name': '吐鲁番', 'value': '90'},
+                {'name': '吐鲁番', 'value': '90', bar: [23, 343]},
                 {'name': '哈密', 'value': '90'}
               ]
           }
@@ -84,7 +84,7 @@
     const format = d3.format(',d');
     
     // 控制圆环大小,半径
-    const radius = svgHeight / 2;
+    const radius = 140;// svgHeight / 2;
 
    // 处理成分区数据
    const partition = data => d3.partition()
@@ -128,7 +128,7 @@
       })
       .attr('d', arc)
       .append('title')
-      .text(d => `${d.ancestors().map(d => d.data.name).reverse().join('/')}\n${format(d.value)}`);
+      .text(d => `${d.ancestors().map(d => d.data.name).reverse().join('/')}-${format(d.value)}`);
 
       svg.append('g')
         .attr('transform', `translate(${svgWidth/2}, ${svgHeight/2})`)
@@ -136,7 +136,8 @@
         .attr('text-anchor', 'middle')
         .selectAll('text')
         .data(partitionData.filter(d => d.depth && (d.y0 + d.y1) / 2 * (d.x1 - d.x0) > 10))
-        .enter().append('text')
+        .enter()
+        .append('text')
         .attr('transform', d => {
           const x = (d.x0 + d.x1) / 2 * 180 / Math.PI;
           const y = (d.y0 + d.y1) / 2;
@@ -144,6 +145,21 @@
         })
         .attr('dy', '0.35em')
         .text(d => d.data.name);
+
+      svg.append('g')
+        .attr('transform', `translate(${svgWidth/2}, ${svgHeight/2})`)
+        .selectAll('rect')
+        .data(partitionData.filter((d, i)=> d.data.bar && Array.isArray(d.data.bar)))
+        .enter()
+        .append('rect')
+        .attr('transform', d => {
+          const x = (d.x0 + d.x1) / 2 * 180 / Math.PI;
+          const y = (d.y0 + d.y1) / 2;
+          return `rotate(${x - 90}) translate(${radius + 100}, 0) rotate(90)`; /*100 是柱子高度*/
+        })
+        .attr('height', 100)
+        .attr('width', 30)
+        .attr('fill', 'red')
 
     // 添加画布到页面
     rootSvg.el.append(svg.node());
