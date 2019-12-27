@@ -31,17 +31,17 @@
             'value': '0',
             'children':
             [
-              // {'name': '杭州', 'value': '90', bar: [23, 343, 565]},
+              {'name': '杭州', 'value': '90', bar: [23, 343, 565]},
               {'name': '宁波', 'value': '90'},
               {'name': '温州', 'value': '90'},
-              // {'name': '绍兴', 'value': '90', bar: [23, 343]}
+              {'name': '绍兴', 'value': '90', bar: [23, 343]}
             ]
           },
           {
             'name': '广西',
             'value': '0',
             'children': [
-              // {'name': '桂林', 'value': '90', bar: [23]},
+              {'name': '桂林', 'value': '90', bar: [23]},
               {'name': '南宁', 'value': '90'},
               {'name': '柳州', 'value': '90',},
               {'name': '防城港', 'value': '90'}
@@ -52,7 +52,7 @@
             'value': '0',
             'children': [
               {'name': '哈尔滨', 'value': '90'},
-              // {'name': '齐齐哈尔', 'value': '90', bar: [23, 343]},
+              {'name': '齐齐哈尔', 'value': '90',  bar: [23, 343]},
               {'name': '牡丹江', 'value': '90'},
               {'name': '大庆', 'value': '90'}
             ]
@@ -64,8 +64,8 @@
               [
                 {'name': '乌鲁木齐', 'value': '90'},
                 {'name': '克拉玛依', 'value': '90'},
-                {'name': '吐鲁番', 'value': '90', bar: [500, 343]},
-                {'name': '哈密', 'value': '90', bar: [10, 12, 45]},
+                {'name': '吐鲁番', 'value': '90', bar: [23]},
+                {'name': '哈密', 'value': '90'}
               ]
           }
         ]
@@ -87,26 +87,10 @@
     const radius = 160;// svgHeight / 2;
 
     // 柱子宽度
-    const barW = 8;
+    const barW = 10;
     // 柱子的缩放比例
-    const scaleRatio = 5;
-    
-    // 计算柱子底边紧挨扇形的弧度
-    const getAngle = ({ x: x1, y: y1 }, { x: x2, y: y2 }) => {
-      const dot = x1 * x2 + y1 * y2;
-      const det = x1 * y2 - y1 * x2;
-      return Math.atan2(det, dot);
-    };
-    // (x0, y0) 表示两条直线相交的点坐标(一般作为坐标原点)
-    const x0 = y0 = 0;
-    const angle = getAngle({
-          x: 0 - x0,
-          y: radius - y0,
-        }, {
-          x: barW - x0,
-          y: radius - y0,
-        });
-  
+    const scaleRatio = 20;
+
    // 处理成分区数据
    const partition = data => d3.partition()
           .size([2 * Math.PI, radius])(d3.hierarchy(data) // 注意size参数
@@ -192,40 +176,25 @@
 
     // 画柱子
     g.selectAll('rect')
-      .data((d, index) => {
+      .data((d, i) => {
         let data = [];
         const bar = d.data.bar;
-        // 弧度
-        let radians = (d.x0 + d.x1) / 2;
-        // 角度
-        let degrees = 0;
-
-        
-        console.log(angle)
 
         if (bar && Array.isArray(bar)) {
-          const len = bar.length;
-          degrees = (radians - len * Math.abs(angle) / 2) * (180 / Math.PI);
-          for (let i = 0; i < len; i++) {
-            data.push({
-              barValue: bar[i],
-              degrees: degrees
-            });
-          }
+          data = bar;
         }
+
         return data;
       })
       .enter()
       .append('rect')
       .attr('transform', d => {
-        console.log(d)
-        return `rotate(${d.degrees})`;
+        return `translate(0, 0)`;
       })
-      .attr('y', d => -radius - d.degrees / scaleRatio)
+      .attr('y', d => -radius - d / scaleRatio)
       .attr('width', barW)
-      .attr('height', d => d.degrees / scaleRatio)
-      .attr('fill', d => color(d.barValue))
-      .attr('title', d => d.barValue);
+      .attr('height', d => d / scaleRatio)
+      .attr('fill', d => color(d));
 
 
     // 添加画布到页面
