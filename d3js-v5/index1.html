@@ -31,19 +31,19 @@
             'value': '0',
             'children':
             [
-              {'name': '杭州', 'value': '90', bar: [23, 343, 565]},
+              {'name': '杭州', 'value': '90', bar: [23, 343]},
               {'name': '宁波', 'value': '90'},
               {'name': '温州', 'value': '90'},
-              {'name': '绍兴', 'value': '90', bar: [23, 343]}
+              {'name': '绍兴', 'value': '90',  bar: [23, 343]}
             ]
           },
           {
             'name': '广西',
             'value': '0',
             'children': [
-              {'name': '桂林', 'value': '90', bar: [23]},
+              {'name': '桂林', 'value': '90', bar: [23, 343]},
               {'name': '南宁', 'value': '90'},
-              {'name': '柳州', 'value': '90',},
+              {'name': '柳州', 'value': '90', bar: [23, 343]},
               {'name': '防城港', 'value': '90'}
             ]
           },
@@ -64,7 +64,7 @@
               [
                 {'name': '乌鲁木齐', 'value': '90'},
                 {'name': '克拉玛依', 'value': '90'},
-                {'name': '吐鲁番', 'value': '90', bar: [23]},
+                {'name': '吐鲁番', 'value': '90', bar: [23, 343]},
                 {'name': '哈密', 'value': '90'}
               ]
           }
@@ -84,12 +84,7 @@
     const format = d3.format(',d');
     
     // 控制圆环大小,半径
-    const radius = 160;// svgHeight / 2;
-
-    // 柱子宽度
-    const barW = 10;
-    // 柱子的缩放比例
-    const scaleRatio = 20;
+    const radius = 140;// svgHeight / 2;
 
    // 处理成分区数据
    const partition = data => d3.partition()
@@ -119,80 +114,52 @@
             .style('font', '12px sans-serif')
             .style('background-color', svgBg);
     // 添加元素
-    const g = svg.selectAll('g')
-      // .data(partitionData.filter(d => d.depth)) // 排除掉中心点, 就不能显示中心文字信息
-      .data(partitionData) // 不排除掉中心点 配合 disable:none使用
+    svg.append('g')
+      .attr('transform', `translate(${svgWidth/2}, ${svgHeight/2})`)
+      .selectAll('path')
+      .data(partitionData.filter(d => d.depth))
       .enter()
-      .append('g')
-      .attr('transform', `translate(${svgWidth/2}, ${svgHeight/2})`);
-      
-    g.append('path')
-      .attr('fill', d => {
-        // 排除掉中心点, 还可以保持颜色一致
+      .append('path')
+      .attr('fill', d => { 
         while (d.depth > 1) {
-          d = d.parent;
+          d = d.parent; // 为中心填充白色
         }
         return color(d.data.name);
-      })
-      .attr('display', function (d) {
-        return d.depth ? null : 'none'; // 中心白色背景
       })
       .attr('d', arc)
       .append('title')
       .text(d => `${d.ancestors().map(d => d.data.name).reverse().join('/')}-${format(d.value)}`);
-    
-    g.append('text')
-      .text(d => d.data.name)
-      .attr('pointer-events', 'none')
-      .attr('font-size', function (d) { return 14 - d.depth + 'px' }) // 文字按深度缩小
-      .attr('dy', '.3em')
-      .attr('text-anchor', 'middle') // 文字居中
-      // .attr('dx', function (d) { return -d.data.name.length / 2 + 'em' }) // 文字居中
-      .attr('transform', d => {
-        /*
-        // 方法一
-        if (d.depth) { // 排除中心
-          // 计算x的角度
+
+      svg.append('g')
+        .attr('transform', `translate(${svgWidth/2}, ${svgHeight/2})`)
+        .attr('pointer-events', 'none')
+        .attr('text-anchor', 'middle')
+        .selectAll('text')
+        .data(partitionData.filter(d => d.depth && (d.y0 + d.y1) / 2 * (d.x1 - d.x0) > 10))
+        .enter()
+        .append('text')
+        .attr('transform', d => {
           const x = (d.x0 + d.x1) / 2 * 180 / Math.PI;
-          // 计算y的弧度,在中心
           const y = (d.y0 + d.y1) / 2;
           return `rotate(${x - 90}) translate(${y}, 0) rotate(${x < 180 ? 0 : 180})`;
-        }
-        */
+        })
+        .attr('dy', '0.35em')
+        .text(d => d.data.name);
 
-        // 方法二
-        if (d.depth) { // 排除中心
-          let r = (d.x0 + d.x1) / 2;
-          let angle = Math.PI / 2;
-          r += r < Math.PI ? (angle - Math.PI) : angle;
-          r *= 180 / Math.PI;
-          return `translate(${arc.centroid(d)}) rotate(${r})`;
-        }
-
-      })
-
-
-    g.selectAll('rect')
-      .data((d, i) => {
-        let data = [];
-        const bar = d.data.bar;
-
-        if (bar && Array.isArray(bar)) {
-          data = bar;
-        }
-
-        return data;
-      })
-      .enter()
-      .append('rect')
-      .attr('transform', d => {
-        return `translate(0, 0)`;
-      })
-      .attr('y', d => -radius - d / scaleRatio)
-      .attr('width', barW)
-      .attr('height', d => d / scaleRatio)
-      .attr('fill', d => color(d));
-
+      svg.append('g')
+        .attr('transform', `translate(${svgWidth/2}, ${svgHeight/2})`)
+        .selectAll('rect')
+        .data(partitionData.filter((d, i)=> d.data.bar && Array.isArray(d.data.bar)))
+        .enter()
+        .append('rect')
+        .attr('transform', d => {
+          const x = (d.x0 + d.x1) / 2 * 180 / Math.PI;
+          const y = (d.y0 + d.y1) / 2;
+          return `rotate(${x - 90}) translate(${radius + 100}, 0) rotate(90)`; /*100 是柱子高度*/
+        })
+        .attr('height', 100)
+        .attr('width', 30)
+        .attr('fill', 'red')
 
     // 添加画布到页面
     rootSvg.el.append(svg.node());
