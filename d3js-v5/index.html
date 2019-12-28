@@ -197,22 +197,18 @@
       .data((d, index) => {
         let data = [];
         const bar = d.data.bar;
-        // 弧度
-        let radians = (d.x0 + d.x1) / 2;
-        // 角度
-        let degrees = 0;
-
-        
-        console.log(angle)
-
         if (bar && Array.isArray(bar)) {
-          let barBadians = Math.atan2(0, radius) - Math.atan2(barW, radius) - barSpancing;
+          // 每个柱子的底边的宽度所需要的弧度 减去 柱子的间隔
+          const barBadians = Math.atan2(0, radius) - Math.atan2(barW, radius) - barSpancing;
           const len = bar.length;
-          // degrees = (i * radians - len * Math.abs(angle) / 2) * (180 / Math.PI);
+          // 扇形中心弧度位置
+          const radians = (d.x0 + d.x1) / 2;
+          // 柱子的总共弧度
+          const totaleBadins = len * barBadians;
           for (let i = 0, j = 1; i < len; i++, j++) {
             data.push({
               barValue: bar[i],
-              degrees: (radians + j * barBadians - len * barBadians / 2) * (180 / Math.PI) // 角度
+              degrees: (radians + j * barBadians - totaleBadins / 2) * (180 / Math.PI) // 角度
             });
           }
         }
