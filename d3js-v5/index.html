@@ -31,17 +31,17 @@
             'value': '0',
             'children':
             [
-              // {'name': '杭州', 'value': '90', bar: [23, 343, 565]},
+              {'name': '杭州', 'value': '90', bar: [23, 343, 565]},
               {'name': '宁波', 'value': '90'},
               {'name': '温州', 'value': '90'},
-              // {'name': '绍兴', 'value': '90', bar: [23, 343]}
+              {'name': '绍兴', 'value': '90', bar: [23, 343]}
             ]
           },
           {
             'name': '广西',
             'value': '0',
             'children': [
-              // {'name': '桂林', 'value': '90', bar: [23]},
+              {'name': '桂林', 'value': '90', bar: [203]},
               {'name': '南宁', 'value': '90'},
               {'name': '柳州', 'value': '90',},
               {'name': '防城港', 'value': '90'}
@@ -52,7 +52,7 @@
             'value': '0',
             'children': [
               {'name': '哈尔滨', 'value': '90'},
-              // {'name': '齐齐哈尔', 'value': '90', bar: [23, 343]},
+              {'name': '齐齐哈尔', 'value': '90', bar: [23, 343]},
               {'name': '牡丹江', 'value': '90'},
               {'name': '大庆', 'value': '90'}
             ]
@@ -65,7 +65,7 @@
                 {'name': '乌鲁木齐', 'value': '90'},
                 {'name': '克拉玛依', 'value': '90'},
                 {'name': '吐鲁番', 'value': '90', bar: [500, 343]},
-                {'name': '哈密', 'value': '90', bar: [10, 12, 45]},
+                {'name': '哈密', 'value': '90', bar: [104, 132, 45]},
               ]
           }
         ]
@@ -87,9 +87,11 @@
     const radius = 160;// svgHeight / 2;
 
     // 柱子宽度
-    const barW = 8;
+    const barW = 5;
     // 柱子的缩放比例
-    const scaleRatio = 5;
+    const scaleRatio = 10;
+    // 柱子间隔
+    const barSpancing = 0.009;
     
     // 计算柱子底边紧挨扇形的弧度
     const getAngle = ({ x: x1, y: y1 }, { x: x2, y: y2 }) => {
@@ -204,12 +206,13 @@
         console.log(angle)
 
         if (bar && Array.isArray(bar)) {
+          let barBadians = Math.atan2(0, radius) - Math.atan2(barW, radius) - barSpancing;
           const len = bar.length;
-          degrees = (radians - len * Math.abs(angle) / 2) * (180 / Math.PI);
-          for (let i = 0; i < len; i++) {
+          // degrees = (i * radians - len * Math.abs(angle) / 2) * (180 / Math.PI);
+          for (let i = 0, j = 1; i < len; i++, j++) {
             data.push({
               barValue: bar[i],
-              degrees: degrees
+              degrees: (radians + j * barBadians - len * barBadians / 2) * (180 / Math.PI) // 角度
             });
           }
         }
@@ -218,12 +221,11 @@
       .enter()
       .append('rect')
       .attr('transform', d => {
-        console.log(d)
         return `rotate(${d.degrees})`;
       })
-      .attr('y', d => -radius - d.degrees / scaleRatio)
+      .attr('y', d => -radius - d.barValue / scaleRatio)
       .attr('width', barW)
-      .attr('height', d => d.degrees / scaleRatio)
+      .attr('height', d => d.barValue / scaleRatio)
       .attr('fill', d => color(d.barValue))
       .attr('title', d => d.barValue);
 
