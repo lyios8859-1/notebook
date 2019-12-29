@@ -9,6 +9,56 @@
 </head>
 <body>
 <div id="svg-root" style="margin: 20px;padding: 0px;width: 800px;height: 500px;border: 2px solid #ccc;background: red;"></div>
+<svg>
+
+
+<defs>
+  <path id="curvepath"
+      d="M30 40 C 50 10, 70 10, 120 40 S 150 0, 200 40"
+      style="stroke: gray; fill: none;"/>
+   
+  <path id="round-corner"
+      d="M250 30 L 300 30 A 30 30 0 0 1 330 60 L 330 110"
+      style="stroke: gray; fill: none;"/>
+   
+  <path id="sharp-corner"
+      d="M 30 110 100 110 100 160"
+      style="stroke: gray; fill: none;"/>
+      
+  <path id="discontinuous" 
+      d="M 150 110 A 40 30 0 1 0 230 110 M 250 110 270 140"
+      style="stroke: gray; fill: none;"/>
+  </defs>
+   
+   
+  <use xlink:href="#curvepath"/>
+  <text style="font-size: 12;">
+      <textPath xlink:href="#curvepath">
+      Following a cubic Bézier curve.
+      </textPath>
+  </text>
+   
+  <use xlink:href="#round-corner"/>
+  <text style="font-size: 12;">
+      <textPath xlink:href="#round-corner">
+      Going 'round the bend
+      </textPath>
+  </text>
+   
+  <use xlink:href="#sharp-corner"/>
+  <text style="font-size: 12;">
+      <textPath xlink:href="#sharp-corner">
+      Making a quick turn
+      </textPath>
+  </text>
+   
+  <use xlink:href="#discontinuous"/>
+  <text style="font-size: 12;">
+      <textPath xlink:href="#discontinuous">
+      Text along a broken path
+      </textPath>
+  </text>
+</svg>
   <script>
     console.log(`Versioin: ${d3.version}`);
     const getDom = id => {
@@ -94,14 +144,14 @@
     const barSpancing = 0.009;
     
     // 计算柱子底边紧挨扇形的弧度
-    const getAngle = ({ x: x1, y: y1 }, { x: x2, y: y2 }) => {
+    const getRadian = ({ x: x1, y: y1 }, { x: x2, y: y2 }) => {
       const dot = x1 * x2 + y1 * y2;
       const det = x1 * y2 - y1 * x2;
       return Math.atan2(det, dot);
     };
     // (x0, y0) 表示两条直线相交的点坐标(一般作为坐标原点)
     const x0 = y0 = 0;
-    const angle = getAngle({
+    const findRadian = getRadian({
           x: 0 - x0,
           y: radius - y0,
         }, {
@@ -120,6 +170,14 @@
     let partitionData = hierarchyData.descendants();
     console.log('分区数据转化数组:', partitionData);
 
+     // 创建弧生成器
+     const arcs = d3.arc()
+          .startAngle(d => d.x0)
+          .endAngle(d => d.x1)
+          .padAngle(d => Math.min((d.x1 - d.x0) / 2, 0.005))
+          .padRadius(radius / 2)
+          .innerRadius(d => d.y0)
+          .outerRadius(d => d.y1 - 30) // 30 控制基线上文字在圆弧上位置
 
     // 创建弧生成器
     const arc = d3.arc()
@@ -128,7 +186,7 @@
           .padAngle(d => Math.min((d.x1 - d.x0) / 2, 0.005))
           .padRadius(radius / 2)
           .innerRadius(d => d.y0)
-          .outerRadius(d => d.y1 - 1)
+          .outerRadius(d => d.y1 - 1);
 
     // 创建 svg 画布
     const svg = d3.create('svg')
@@ -144,6 +202,12 @@
       .enter()
       .append('g')
       .attr('transform', `translate(${svgWidth/2}, ${svgHeight/2})`);
+
+    // defs 隐藏不显示，给画弧形文字使用
+    g.append('defs')
+      .append('path')
+      .attr('id', (d, i) => `path_${i}`)
+      .attr('d', arcs)
     
     // 画圆弧
     g.append('path')
@@ -158,39 +222,39 @@
         return d.depth ? null : 'none'; // 中心白色背景
       })
       .attr('d', arc)
+      .on("mouseover", function (d) {
+        d3.select(this)
+          .style("fill","yellow")
+      })
+      .on("mouseout",function(d){
+        d3.select(this)
+          .transition()
+          .duration(200)
+          .style("fill", function (d) {
+              return color((d.children?d: d.parent).name)
+          })
+      })
       .append('title')
       .text(d => `${d.ancestors().map(d => d.data.name).reverse().join('/')}-${format(d.value)}`);
     
     // 画文字
     g.append('text')
-      .text(d => d.data.name)
       .attr('pointer-events', 'none')
-      .attr('font-size', function (d) { return 14 - d.depth + 'px' }) // 文字按深度缩小
-      .attr('text-anchor', 'middle') // 文字居中
-      // .attr('dx', function (d) { return -d.data.name.length / 2 + 'em' }) // 文字居中
-      .attr('dy', '.3em')
       .attr('transform', d => {
-        /*
-        // 方法一
-        if (d.depth) { // 排除中心
-          // 计算x的角度
-          const x = (d.x0 + d.x1) / 2 * 180 / Math.PI;
-          // 计算y的弧度,在中心
-          const y = (d.y0 + d.y1) / 2;
-          return `rotate(${x - 90}) translate(${y}, 0) rotate(${x < 180 ? 0 : 180})`;
+        if (d.depth === 0) {
+          return 'rotate(0), translate(-6, 20)'
+        } else if (d.depth === 1) {
+          return 'rotate(30)'
+        } if (d.depth === 2) {
+          return 'rotate(1)'
         }
-        */
-
-        // 方法二
-        if (d.depth) { // 排除中心
-          let r = (d.x0 + d.x1) / 2;
-          let angle = Math.PI / 2;
-          r += r < Math.PI ? (angle - Math.PI) : angle;
-          r *= 180 / Math.PI;
-          return `translate(${arc.centroid(d)}) rotate(${r})`;
-        }
-
       })
+      .attr('font-size', function (d) { return 14 - d.depth + 'px' }) // 文字按深度缩小
+      .append('textPath')
+      .attr('xlink:href', (d, i) => `#path_${i}`)
+      .append('tspan')
+      .text(d => d.data.name)
+
 
     // 画柱子
     g.selectAll('rect')
@@ -199,7 +263,9 @@
         const bar = d.data.bar;
         if (bar && Array.isArray(bar)) {
           // 每个柱子的底边的宽度所需要的弧度 减去 柱子的间隔
-          const barBadians = Math.atan2(0, radius) - Math.atan2(barW, radius) - barSpancing;
+          // const barBadians = Math.atan2(0, radius) - Math.atan2(barW, radius) - barSpancing;
+          const barBadians = findRadian - barSpancing;
+
           const len = bar.length;
           // 扇形中心弧度位置
           const radians = (d.x0 + d.x1) / 2;
@@ -225,9 +291,26 @@
       .attr('fill', d => color(d.barValue))
       .attr('title', d => d.barValue);
 
+      
 
+      
     // 添加画布到页面
     rootSvg.el.append(svg.node());
+
+
+    // 确定文本何时超出路径宽度方法
+    // for (let i = 0; i < partitionData.length; i++) {
+    //   var fontsize = 20;
+    //   var textpath = document.getElementById(`textPath_${i}`);
+    //   var path = document.getElementById(`path_${i}`);
+      
+    //   while (textpath.getComputedTextLength() > path.getTotalLength()) {
+    //     console.log(33)
+    //     fontsize -= 0.01;
+    //     textpath.setAttribute('font-size', fontsize);
+    //   }
+    // }
+  
   </script>
 </body>
 </html>

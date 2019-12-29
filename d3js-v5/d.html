@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="./d3.v3.js"></script>
+</head>
+<body>
+<script>
+var width = 1000,
+    height = 700,
+    radius = Math.min(width, height) / 2;
+padding = 5,
+    duration = 1000;
+
+var xo = d3.scale.linear()
+    .range([0, 2 * Math.PI]);
+var x = d3.scale.linear()
+    .range([0, 2 * Math.PI]);
+var x_b = d3.scale.linear()
+    .range([0, 2 * Math.PI]);
+var x_s = d3.scale.linear()
+    .range([0, 2 * Math.PI]);
+
+var ddd = d3.scale.linear()
+    .domain([0, 1])
+    .range([0, 10]);
+
+var dx = 0,
+    ddx = 1;
+dx_pi = 0,
+    ddx_pi = 2 * Math.PI,
+    odx_pi = 0,
+    oddx_pi = 2 * Math.PI;
+
+var y = d3.scale.pow().exponent(1.1)
+    .domain([0, 1])
+    .range([0, radius]);
+
+var color = d3.scale.category20c();
+
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + padding * 2)
+    .attr("height", height + padding * 2)
+    .append("g")
+    .attr("transform", "translate(" + [radius + padding, radius + padding] + ")");
+
+var partition = d3.layout.partition()
+    .value(function(d) {
+        return 1;
+    })
+    .sort(null);
+
+var arc = d3.svg.arc()
+    .startAngle(function(d) {
+        return angleX(d.x);
+    })
+    .endAngle(function(d) {
+        return angleX(d.x + d.dx);
+    })
+    .innerRadius(function(d) {
+        return Math.max(0, y(d.y));
+    })
+    .outerRadius(function(d) {
+        return Math.max(0, y(d.y + d.dy));
+    });
+
+d3.json("./test2.json", function(error, json) {
+
+
+    var nodes = partition.nodes(json);
+    var path = svg.selectAll("path").data(nodes);
+    path.enter().append("path")
+        .attr("id", function(d, i) {
+            return "path-" + i;
+        })
+        .attr("d", arc)
+        .attr("fill-rule", "evenodd")
+        .style("fill", function(d) {
+            return color((d.children ? d : d.parent).id);
+        })
+        .style("stroke", "#000")
+        .style("stroke-width", 1.5)
+        .style("cursor", "pointer")
+        .on("click", click)
+
+
+    var text = svg.selectAll("text").data(nodes);
+    var textEnter = text.enter().append("text")
+        .attr("transform", function(d) {
+            return "translate(" + arc.centroid(d) + ")";
+        })
+        .style("font-size", "11px")
+        .style("font-family", "simsun")
+        .style("cursor", "pointer")
+        .style("fill-opacity", 1)
+        .style("fill", function(d) {
+            return brightness(d3.rgb(colour(d))) < 125 ? "#eee" : "#000";
+        })
+        .attr("text-anchor", function(d) {
+            //return x(d.x + d.dx/2) > Math.PI ? "end" : "start";
+            return angleX(d.x + d.dx / 2) > Math.PI ? "end" : "start";
+        })
+        .attr("dy", "0.2em")
+        .attr("transform", function(d) {
+            var multiline = (d.id || "").split(" ").length > 1,
+                angle = angleX(d.x + d.dx / 2) * 180 / Math.PI - 90,
+                rotate = angle + (multiline ? -0.5 : 0);
+            return "rotate(" + rotate + ")translate(" + (y(d.y) + padding) + ")rotate(" + (angle > 90 ? -180 : 0) + ")";
+        })
+        .on("click", click);
+
+
+    textEnter.append("tspan")
+        .attr("x", 0)
+        .text(function(d, i) {
+            return d.id + "  ";
+        });
+
+    /*textEnter.append("tspan")
+                .attr("x", 0)
+                .text(function(d,i) {return d.depth? d.id.split(" ")[0] : "";});
+            textEnter.append("tspan")
+                .attr("x", 0)
+                .attr("dy", "lem")
+                .text(function(d, i) {return d.depth? d.id.split(" ")[1] : "";});*/
+
+    function click(d) {
+
+            path.transition()
+                .duration(750)
+                .attrTween("d", arcTween(d))
+                .style("fill-opacity", function(e) {
+                    return isParentOf(d, e) ? 1 : 0.05;
+                });
+
+            //text.style("visibility", function(e) {
+            //	return isParentOf(d, e) ? null : d3.select(this).style("visibility");
+            //	})
+            text.transition()
+                .duration(duration)
+                .attrTween("text-anchor", function(d) {
+                    return function() {
+                        return angleX(d.x + d.dx / 2) > Math.PI ? "end" : "start";
+                    };
+                })
+                .attrTween("transform", function(d) {
+                    var multiline = (d.name || "").split(" ").length > 1;
+                    return function() {
+                        var angle = angleX(d.x + d.dx / 2) * 180 / Math.PI - 90,
+                            rotate = angle + (multiline ? -.5 : 0);
+                        return "rotate(" + rotate + ")translate(" + (y(d.y) + padding) + ")rotate(" + (angle > 90 ? -180 : 0) + ")";
+                    };
+                })
+                .style("fill-opacity", function(e) {
+                    return isParentOf(d, e) ? 1 : 0.5;
+                })
+                .each("end", function(e) {
+                    //d3.select(this).style("visibility", isParentOf(d, e) ? null : "hidden");
+                });
+
+        }
+        //-----------------------------------------------------------
+
+});
+
+function isParentOf(p, c) {
+    if (p == c) return true;
+    if (p.children) {
+        return p.children.some(function(d) {
+            return isParentOf(d, c);
+        });
+    }
+    return false;
+}
+
+function colour(d) {
+    if (d.children) {
+        var colours = d.children.map(colour),
+            a = d3.hsl(colours[0]);
+        b = d3.hsl(colours[1]);
+        return d3.hsl((a.h + b.h) / 2, a.s * 1.2, a.l / 1.2);
+    }
+    return d.colour || "#fff";
+}
+
+d3.select(self.frameElement).style("height", height + "px");
+
+// Interpolate the scales!
+function arcTween(d) {
+
+    /*var dx_inter = d3.interpolate(dx, d.x),
+            ddx_inter =  d3.interpolate(ddx, d.x + d.dx),
+            dx_pi_inter = d3.interpolate(dx_pi, xo(d.x)),
+            ddx_pi_inter = d3.interpolate(ddx_pi, xo(d.x + d.dx + d.dx/2));*/
+
+    if (d.x == 0 && d.x + d.dx == 1) {
+        dx = 0;
+        ddx = 1;
+        dx_pi = 0;
+        ddx_pi = 2 * Math.PI;
+        odx_pi = 0;
+        oddx_pi = 2 * Math.PI;
+    } else if (d.x + d.dx + d.dx / 2 >= 1 && d.x - d.dx / 2 <= 0) {
+        dx = 0;
+        ddx = 1;
+        dx_pi = 0;
+        ddx_pi = 2 * Math.PI;
+        odx_pi = 0;
+        oddx_pi = 2 * Math.PI;
+    } else if (d.x + d.dx + d.dx / 2 >= 1) {
+        dx = d.x;
+        ddx = d.x + d.dx;
+        dx_pi = xo(d.x - d.dx / 2);
+        ddx_pi = xo(d.x + d.dx);
+        odx_pi = xo(d.x);
+        oddx_pi = xo(d.x + d.dx);
+    } else {
+        dx = d.x;
+        ddx = d.x + d.dx;
+        dx_pi = xo(d.x);
+        ddx_pi = xo(d.x + d.dx + d.dx / 2);
+        odx_pi = xo(d.x);
+        oddx_pi = xo(d.x + d.dx);
+    }
+
+
+
+
+
+    /*var xd = d3.interpolate(x.domain(), [d.x, d.x + d.dx]),
+          xr = d3.interpolate(x.range(), [Math.PI/4.0, 3*Math.PI/4.0]),
+          x_sd = d3.interpolate(x_s.domain(), [0, d.x]),
+          x_sr = d3.interpolate(x_s.range(), [0, Math.PI/4.0]),
+          x_bd = d3.interpolate(x_s.domain(), [d.x+d.dx, 1]),
+          x_br = d3.interpolate(x_s.range(), [3*Math.PI/4.0, 2*Math.PI]),
+          yd = d3.interpolate(y.domain(), [d.y, 1]),
+          yr = d3.interpolate(y.range(), [d.y ? 50 : 0, radius]);*/
+
+    var xr = d3.interpolate([odx_pi, oddx_pi], [dx_pi, ddx_pi]),
+        x_sr = d3.interpolate([0, odx_pi], [0, dx_pi]),
+        x_br = d3.interpolate([oddx_pi, 2 * Math.PI], [ddx_pi, 2 * Math.PI]);
+
+    /*var xr = d3.interpolate([angleX(d.x), angleX(d.x + d.dx)], [angleX(d.x), angleX(d.x + d.dx + d.dx/2)]),
+            x_sr = d3.interpolate([0, angleX(d.x)], [0, angleX(d.x)]),
+            x_br = d3.interpolate([angleX(d.x + d.dx), 2*Math.PI], [angleX(d.x + d.dx + d.dx/2), 2*Math.PI]);*/
+
+
+    return function(d, i) {
+        // return i
+        //    ? function(t) { return arc(d); }
+        //    : function(t) { x.domain(xd(t)); y.domain(yd(t)).range(yr(t)); return arc(d); };
+        return i ? function(t) {
+            return arc(d);
+        } : function(t) {
+
+            x.domain([dx, ddx]);
+            x_s.domain([0, dx]);
+            x_b.domain([ddx, 1]);
+
+            x.range(xr(t));
+            x_s.range(x_sr(t));
+            x_b.range(x_br(t));
+            return arc(d);
+        };
+    };
+}
+
+function maxY(d) {
+    return d.children ? Math.max.apply(Math, d.children.map(maxY)) : d.y + d.dy;
+}
+
+function brightness(rgb) {
+    return rgb.r * 0.299 + rgb.g * 0.587 + rgb.b * 0.114;
+}
+
+function angleX(angleA) {
+    if (angleA < dx) {
+        return x_s(angleA);
+    }
+    if (angleA > ddx) {
+        return x_b(angleA);
+    }
+    return x(angleA);
+}
+</script>
+</body>
+</html>

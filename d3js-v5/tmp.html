@@ -199,6 +199,49 @@ export default {
     this.partitionR()
   }
 }
+
+
+// each 简洁的书写方式
+
+/*
+var color=[
+"POWDERBLUE","AQUAMARINE","LIMEGREEN","SEASHELL","MEDIUMPURPLE","LIGHTGOLDENRODYELLOW","LAVENDERBLUSH","skyblue"];
+ 
+var svg=d3.select("#chart")
+	.append("svg")
+	.attr("width",400) 
+	.attr("height",400)
+ 
+	var g=svg.append("g")
+	.attr("transform","translate(200,200)")
+var data = [1, 1, 2, 3, 5, 8, 13, 21];
+var arcs = d3.pie()(data);
+var arc = d3.arc().innerRadius([0]).outerRadius([90]).cornerRadius([3]);
+ 
+g.selectAll("path")
+	.data(arcs)
+	.enter()
+	.append("path")
+	.attr("d",arc)
+	.style("fill",function(d,i){return color[i%8];})
+d3.select('g')
+    .selectAll('text')
+    .data(arcs)
+    .enter()
+    .append('text')
+    .each(function(d) {
+	console.log(d);
+       var centroid = arc.centroid(d);
+        d3.select(this)
+            .attr('x', centroid[0])
+            .attr('y', centroid[1])
+            .attr('dy', '0.33em')
+            .text(d.data)
+			.style("fill","#001");
+    });
+ 
+
+*/
 </script>
 <style lang="less">
 #svgContainer{

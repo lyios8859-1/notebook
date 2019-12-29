@@ -94,14 +94,14 @@
     const barSpancing = 0.009;
     
     // 计算柱子底边紧挨扇形的弧度
-    const getAngle = ({ x: x1, y: y1 }, { x: x2, y: y2 }) => {
+    const getRadian = ({ x: x1, y: y1 }, { x: x2, y: y2 }) => {
       const dot = x1 * x2 + y1 * y2;
       const det = x1 * y2 - y1 * x2;
       return Math.atan2(det, dot);
     };
     // (x0, y0) 表示两条直线相交的点坐标(一般作为坐标原点)
     const x0 = y0 = 0;
-    const angle = getAngle({
+    const findRadian = getRadian({
           x: 0 - x0,
           y: radius - y0,
         }, {
@@ -184,7 +184,7 @@
         // 方法二
         if (d.depth) { // 排除中心
           let r = (d.x0 + d.x1) / 2;
-          let angle = Math.PI / 2;
+          const angle = Math.PI / 2;
           r += r < Math.PI ? (angle - Math.PI) : angle;
           r *= 180 / Math.PI;
           return `translate(${arc.centroid(d)}) rotate(${r})`;
@@ -197,22 +197,20 @@
       .data((d, index) => {
         let data = [];
         const bar = d.data.bar;
-        // 弧度
-        let radians = (d.x0 + d.x1) / 2;
-        // 角度
-        let degrees = 0;
-
-        
-        console.log(angle)
-
         if (bar && Array.isArray(bar)) {
-          let barBadians = Math.atan2(0, radius) - Math.atan2(barW, radius) - barSpancing;
+          // 每个柱子的底边的宽度所需要的弧度 减去 柱子的间隔
+          // const barBadians = Math.atan2(0, radius) - Math.atan2(barW, radius) - barSpancing;
+          const barBadians = findRadian - barSpancing;
+
           const len = bar.length;
-          // degrees = (i * radians - len * Math.abs(angle) / 2) * (180 / Math.PI);
+          // 扇形中心弧度位置
+          const radians = (d.x0 + d.x1) / 2;
+          // 柱子的总共弧度
+          const totaleBadins = len * barBadians;
           for (let i = 0, j = 1; i < len; i++, j++) {
             data.push({
               barValue: bar[i],
-              degrees: (radians + j * barBadians - len * barBadians / 2) * (180 / Math.PI) // 角度
+              degrees: (radians + j * barBadians - totaleBadins / 2) * (180 / Math.PI) // 角度
             });
           }
         }
