@@ -178,7 +178,7 @@
           .padAngle(d => Math.min((d.x1 - d.x0) / 2, 0.005))
           .padRadius(radius / 2)
           .innerRadius(d => d.y0)
-          .outerRadius(d => d.y1 - 30) // 30 控制基线上文字在圆弧上位置
+          .outerRadius(d => d.y1 - 25) // 25 控制基线上文字在圆弧上位置
 
     // 创建弧生成器
     const arc = d3.arc()
@@ -255,7 +255,7 @@
       .attr('pointer-events', 'none')
       .attr('transform', d => {
         if (d.depth === 1) {
-          return 'rotate(-25.6)'
+          return 'rotate(-20)'
         }
       })
       .attr('text-anchor', 'middle')
@@ -265,16 +265,18 @@
     const textPath1 = text.append('textPath')
       .attr('xlink:href', (d, i) => `#path_${i}`)
       .append('tspan')
+      .attr('x', (d) => d.depth ? (d.x1 - d.x0) * 180 / Math.PI + 2.5 : null)
       .text(d => {
         return d.data.name
       });
-    // const textPath2 = text.append('textPath')
-    //   .attr('xlink:href', (d, i) => `#path_${i}`)
-    //   .append('tspan')
-    //   .text(d => {
-    //     return d.data.name
-    //   });
-
+    const textPath2 = text.append('textPath')
+      .attr('xlink:href', (d, i) => `#path_${i}`)
+      .append('tspan')
+      .attr('x', (d) => d.depth ? (d.x1 - d.x0) * 180 / Math.PI + 2.5 : null)
+      .attr('dy', 14)
+      .text(d => {
+        return d.data.name;
+      });
 
     // 画柱子
     g.selectAll('rect')
