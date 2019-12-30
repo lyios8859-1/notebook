@@ -231,7 +231,11 @@
           .transition()
           .duration(200)
           .style("fill", function (d) {
-              return color((d.children?d: d.parent).name)
+              // 排除掉中心点, 还可以保持颜色一致
+              while (d.depth > 1) {
+                d = d.parent;
+              }
+              return color(d.data.name);
           })
       })
       .append('title')
