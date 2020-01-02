@@ -370,4 +370,200 @@ nth(10px 20px 30px, 1) === 10px
 nth((Helvetica,Arial,sans-serif),2) === "Arial"
 ```
 
+## append()函数
+>` append()` 函数是用来将某个值插入到列表中，并且处于最末位
+
+```scss
+append(10px 20px ,30px) === (10px 20px 30px)
+append((10px,20px),30px) === (10px, 20px, 30px)
+append(green,red) === (#008000 #ff0000)
+append(red,(green,blue)) === (#ff0000 (#008000, #0000ff))
+```
+
+- 在 append() 函数中，可以显示的设置 $separator 参数，
+  - 如果取值为 comma 将会以逗号分隔列表项
+  - 如果取值为 space 将会以空格分隔列表项
+
+```scss
+append((blue green),red,comma) === (#0000ff, #008000, #ff0000)
+append((blue green),red,space) === (#0000ff #008000 #ff0000)
+append((blue, green),red,comma) === (#0000ff, #008000, #ff0000)
+append((blue, green),red,space) === (#0000ff #008000 #ff0000)
+append(blue,red,comma) === (#0000ff, #ff0000)
+append(blue,red,space) === (#0000ff #ff0000)
+```
+
+
+## zip()函数
+> zip()函数将多个列表值转成一个多维的列表
+
+```scss
+zip(1px 2px 3px,solid dashed dotted,green blue red) === ((1px "solid" #008000), (2px "dashed" #0000ff), (3px "dotted" #ff0000))
+```
+
+## index()函数
+
+> `index()` 函数类似于索引一样，找到某个值在列表中所处的位置, 没有返回 `false`
+
+```scss
+index(1px solid red, 1px) === 1
+index(1px solid red, solid) === 2
+index(1px solid red, red) === 3
+index(1px solid red,dotted) === false //列表中没有找到 dotted
+```
+
+## Introspection函数
+
+- Introspection 函数包括了几个判断型函数：
+  - type-of($value)：返回一个值的类型
+  - unit($number)：返回一个值的单位
+  - unitless($number)：判断一个值是否带有单位
+  - comparable($number-1, $number-2)：判断两个值是否可以做加、减和合并
+
+
+- type-of() 函数主要用来判断一个值是属于什么类型，返回值：
+  - number 为数值型。
+  - string 为字符串型。
+  - bool 为布尔型。
+  - color 为颜色型。
+
+```scss
+type-of(100) === "number"
+type-of(100px) === "number"
+type-of("asdf") === "string"
+type-of(asdf) === "string"
+type-of(true) === "bool"
+type-of(false) === "bool"
+type-of(#fff) === "color"
+type-of(blue) === "color"
+type-of(1 / 2 = 1) === "string"
+```
+
+### unit()函数
+> `unit()` 函数主要是用来获取一个值所使用的单位，碰到复杂的计算时，其能根据运算得到一个“多单位组合”的值，不过只充许乘、除运算：
+
+```scss
+unit(100) === ""
+unit(100px) === "px"
+unit(20%) === "%"
+unit(1em) === "em"
+unit(10px * 3em) === "em*px"
+unit(10px / 3em) === "px/em"
+unit(10px * 2em / 3cm / 1rem) === "em/rem"
+```
+
+PS:但加、减碰到不同单位时，unit() 函数将会报错，除 px 与 cm、mm 运算之外
+
+```scss
+unit(1px + 1cm) === "px"
+unit(1px - 1cm) === "px"
+unit(1px + 1mm) === "px"
+
+// 报错
+unit(10px * 2em - 3cm / 1rem)  => SyntaxError: Incompatible units: 'cm' and 'px*em'.
+unit(10px * 2em - 1px / 1rem)  => SyntaxError: Incompatible units: '' and 'em'.
+unit(1px - 1em)  => SyntaxError: Incompatible units: 'em' and 'px'.
+unit(1px - 1rem)  => SyntaxError: Incompatible units: 'rem' and 'px'.
+unit(1px - 1%)  => SyntaxError: Incompatible units: '%' and 'px'.
+unit(1cm + 1em) =>  SyntaxError: Incompatible units: 'em' and 'cm'.
+```
+
+### unitless()函数
+
+> `unitless()` 函数判断一个值是否带有单位，如果不带单位返回的值为 `true`，带单位返回的值为 `false`
+
+```scss
+@mixin adjust-location($x, $y) {
+  @if unitless($x) {    
+    $x: 1px * $x;
+  }
+  @if unitless($y) {    
+    $y: 1px * $y;
+  }
+  position: relative; 
+  left: $x; 
+  top: $y;
+}
+
+.botton{
+    @include adjust-location(20px, 30);
+}
+```
+
+
+### comparable()函数
+
+> `comparable()` 函数判断两个数是否可以进行“加，减”以及“合并”。如果可以返回的值 `true`，如果不可以返回的值 `false`
+
+```scss
+comparable(2px,1px) === true
+comparable(2px,1%) === false
+comparable(2px,1em) === false
+comparable(2rem,1em) === false
+comparable(2px,1cm) === true
+comparable(2px,1mm) === true
+comparable(2px,1rem) === false
+comparable(2cm,1mm) === true
+```
+
+## 三元条件函数: Miscellaneous
+
+> `if($condition,$if-true,$if-false)`
+
+当 `$condition` 条件成立时，返回的值为 `$if-true`，否则返回的是 `$if-false` 值。
+
+```scss
+if(true,1px,2px) === 1px
+if(false,1px,2px) === 2px
+```
+
+
+## 使用 map 来管理变量
+
+> 用个 `$` 加上命名空间来声明 `map`。后面紧接是一个小括号 ()，将数据以 `key:value` 的形式赋予，其中 `key` 和 `value` 是成对出现，**并且每对之间使用逗号 (,) 分隔，其中最后一组后面没有逗号**。
+
+```scss
+// 变量的定义
+$default-color: #fff !default;
+$primary-color: #22ae39 !default;
+
+// Map 的定义
+$color: (
+  default: #fff,
+  primary: #22ae39
+);
+
+// 嵌套的 Map
+$theme-color: (
+  default: (
+    bgcolor: #fff,
+    text-color: #444,
+    link-color: #39f
+  ),
+  primary:(
+    bgcolor: #000,
+    text-color:#fff,
+    link-color: #93f
+  ),
+  negative: (
+    bgcolor: #f36,
+    text-color: #fefefe,
+    link-color: #d4e
+  )
+);
+```
+
+## 获取 Map 管理的变量属性值
+
+- map-get($map,$key)：根据给定的 key 值，返回 map 中相关的值。
+- map-merge($map1,$map2)：将两个 map 合并成一个新的 map。
+- map-remove($map,$key)：从 map 中删除一个 key，返回一个新 map。
+- map-keys($map)：返回 map 中所有的 key。
+- map-values($map)：返回 map 中所有的 value。
+- map-has-key($map,$key)：根据给定的 key 值判断 map 是否有对应的 value 值，如果有返回 true，否则返回 false。
+- keywords($args)：返回一个函数的参数，这个参数可以动态的设置 key 和 value。
+
+
+
+
 [参考](https://www.imooc.com/learn/436)
