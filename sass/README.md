@@ -555,15 +555,236 @@ $theme-color: (
 
 ## 获取 Map 管理的变量属性值
 
-- map-get($map,$key)：根据给定的 key 值，返回 map 中相关的值。
-- map-merge($map1,$map2)：将两个 map 合并成一个新的 map。
-- map-remove($map,$key)：从 map 中删除一个 key，返回一个新 map。
-- map-keys($map)：返回 map 中所有的 key。
-- map-values($map)：返回 map 中所有的 value。
-- map-has-key($map,$key)：根据给定的 key 值判断 map 是否有对应的 value 值，如果有返回 true，否则返回 false。
-- keywords($args)：返回一个函数的参数，这个参数可以动态的设置 key 和 value。
+- `map-get($map,$key)`：根据给定的 key 值，返回 map 中相关的值。
+- `map-merge($map1,$map2)`：将两个 map 合并成一个新的 map。
+- `map-remove($map,$key)`：从 map 中删除一个 key，返回一个新 map。
+- `map-keys($map)`：返回 map 中所有的 key。
+- `map-values($map)`：返回 map 中所有的 value。
+- `map-has-key($map,$key)`：根据给定的 key 值判断 map 是否有对应的 value 值，如果有返回 true，否则返回 false。
+- `keywords($args)`：返回一个函数的参数，这个参数可以动态的设置 key 和 value。
+
+### map-get(\$map,$key) 函数
+
+> 是根据 `$key `参数，返回 `$key` 在 `$map` 中对应的 value 值。如果 `$key` 不存在 `$map` 中，将返回 `null` 值。
+
+```scss
+// 定义 map 的数据结构管理变量
+$social-colors: (
+  dribble: #ea4c89,
+  facebook: #3b5998,
+  github: #171515,
+  google: #db4437,
+  twitter: #55acee
+);
+
+// 获取 map 的属性对应的值
+.btn-dribble{
+  color: map-get($social-colors,facebook);
+}
+```
+
+### map-has-key(\$map,$key) 函数
+
+> 返回一个布尔值。当 `$map` 中有这个 `$key`，则函数返回 `true`，否则返回 `false`。
+
+```scss
+$social-colors: (
+  dribble: #ea4c89,
+  facebook: #3b5998,
+  github: #171515,
+  google: #db4437,
+  twitter: #55acee
+);
+@function colors($color){
+  @if not map-has-key($social-colors,$color){
+    @warn "No color found for `#{$color}` in $social-colors map. Property omitted.";
+  }
+  @return map-get($social-colors,$color);
+}
+.btn-dribble {
+  color: colors(dribble);
+}
+.btn-facebook {
+  color: colors(facebook);
+}
+.btn-github {
+  color: colors(github);
+}
+.btn-google {
+  color: colors(google);
+}
+.btn-twitter {
+  color: colors(twitter);
+}
+.btn-weibo {
+  color: colors(weibo);
+}
+```
+
+优化：
+
+```scss
+@each $social-network,$social-color in $social-colors {
+  .btn-#{$social-network} {
+    color: colors($social-network);
+  }
+}
+```
 
 
+### map-keys($map) 函数
+
+> 返回 $map 中的所有 key, 这些值赋予给一个变量，那他就是一个列表
+
+```scss
+$social-colors: (
+  dribble: #ea4c89,
+  facebook: #3b5998,
+  github: #171515,
+  google: #db4437,
+  twitter: #55acee
+);
+
+$list: map-keys($social-colors);
+// 等价于
+$list: "dribble","facebook","github","google","twitter";
+
+// 重新实现上一个实例（进一步优化）
+@function colors($color){
+  $names: map-keys($social-colors);
+  @if not index($names,$color){
+    @warn "Waring: `#{$color} is not a valid color name.`";
+  }
+  @return map-get($social-colors,$color);
+}
+
+// @each
+@each $name in map-keys($social-colors){
+  .btn-#{$name}{
+    color: colors($name);
+  }
+}
+
+// @for
+@for $i from 1 through length(map-keys($social-colors)){
+  .btn-#{nth(map-keys($social-colors),$i)} {
+    color: colors(nth(map-keys($social-colors),$i));
+  }
+}
+```
+
+### map-values(\$map )
+
+> 获取的是 `$map` 的所有 `value` 值
+
+```scss
+map-values($social-colors) === #ea4c89,#3b5998,#171515,#db4437,#55acee
+```
+
+### map-merge(\$map1,$map2)
+
+> 将 `$map1` 和 `$map2` 合并，然后得到一个新的 `$map`
+
+```scss
+// scss
+$color: (
+  text: #f36,
+  link: #f63,
+  border: #ddd,
+  backround: #fff
+);
+$typo:(
+  font-size: 12px,
+  line-height: 1.6,
+  border: #ccc,
+  background: #000
+);
+
+$newmap: map-merge($color,$typo);
+
+// 新的$newmap
+$newmap:(
+  text: #f36,
+  link: #f63,
+  font-size: 12px,
+  line-height: 1.6,
+  border: #ccc,
+  background: #000
+);
+
+// 用map-merge将两个maps合为一起传入一个tag中
+$newMap:map-merge($color, $typo);
+body{  
+  @each $Prop,$val in $newMap{    
+    #{$Prop}: #{$val};  
+  }
+}
+```
+
+PS：注意，如果 `$map1` 和 `$map2` 中有相同的 `$key` 名，那么将 `$map2` 中的 `$key` 会取代 `$map1` 中的
+
+### map-remove(\$map,$key) 函数
+
+> 用来删除当前 `$map` 中的某一个 `$key`，从而得到一个新的 map。其返回的值还是一个 map。
+> 不能直接从一个 map 中删除另一个 map，仅能通过删除 map 中的某个 key 得到新 map。
+
+```scss
+$map:map-remove($social-colors,dribble);
+
+// 返回的是一个新 map
+$map:(
+  facebook: #3b5998,
+  github: #171515,
+  google: #db4437,
+  twitter: #55acee
+);
+```
+
+PS: 如果删除的 key 并不存在于 `$map` 中，那么 `map-remove()` 函数返回的新 map 和以前的 map 一样
+
+### keywords(\$args) 函数
+
+> 类似动态创建 map 的函数。可以通过混合宏或函数的参数变创建 map。
+> 参数也是成对出现，其中 `$args` 变成 key(会自动去掉$符号)，而 `$args` 对应的值就是 value
+
+```scss
+@mixin map($args...){
+  @debug keywords($args);
+}
+@include map(
+  $dribble: #ea4c89,
+  $facebook: #3b5998,
+  $github: #171515,
+  $google: #db4437,
+  $twitter: #55acee
+);
+// 命令终端可以看到一个输入的 @debug 信息：
+ DEBUG: (dribble: #ea4c89, facebook: #3b5998, github: #171515, google: #db4437, twitter: #55acee)
+```
+
+## @import 
+
+- `@import` 引入多个文件。例如：`@import "rounded-corners", "text-shadow";`
+
+- 嵌套 `@import`
+
+```scss
+.example {
+  color: red;
+}
+
+// 引用
+#main {
+  @import "example";
+}
+
+// 编译后的 css
+#main .example {
+  color: red;
+}
+```
+
+## @extend
 
 
 [参考](https://www.imooc.com/learn/436)
