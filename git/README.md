@@ -326,3 +326,24 @@ git push origin --tags
 git tag -d v0.9
 git push origin :refs/tags/v0.9
 ```
+
+
+## git 的一些 配置
+
+**配置git永久保存账号密码，免去git重复输入账号密码操作**
+
+- 方法一
+
+一般windows会在C盘的C:\Users\Administator(Linux在/home/用户名/)目录下生成 .gitconfig配置文件。用文档编辑工具打开该文件
+
+添加：
+
+[user]
+	name = wb-ly409739  //你的用户名
+	email = wb-ly409739@alibaba-inc.com  //你的git邮箱账号
+[credential]
+    helper = store
+
+- 方法二
+
+> git config --global credential.helper store
