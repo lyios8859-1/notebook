@@ -784,7 +784,84 @@ PS: 如果删除的 key 并不存在于 `$map` 中，那么 `map-remove()` 函�
 }
 ```
 
-## @extend
+## @extend 
 
+
+## @at-root
+
+> 多层嵌套中跳出来
+
+```scss
+// SCSS
+.a {
+  color: red;
+
+  .b {
+    color: orange;
+
+    .c {
+      color: yellow;
+
+      @at-root .ddd {
+        color: green;
+      }
+    }
+  }  
+}
+// 编译后的css
+a {
+  color: red;
+}
+
+.a .b {
+  color: orange;
+}
+
+.a .b .c {
+  color: yellow;
+}
+
+.ddd {
+  color: green;
+}
+```
+
+## @warn 和 @debug 和 @error
+
+- @warn 和 @debug 功能类似，调试 Sass。如：
+
+```scss
+@mixin adjust-location($x, $y) {
+  @if unitless($x) {
+    @warn "Assuming #{$x} to be in pixels";
+    $x: 1px * $x;
+  }
+  @if unitless($y) {
+    @warn "Assuming #{$y} to be in pixels";
+    $y: 1px * $y;
+  }
+  position: relative; left: $x; top: $y;
+}
+
+
+.botton{
+  @include adjust-location(20px, 30);
+}
+
+
+@mixin error($x){
+  @if $x < 10 {
+    width: $x * 10px;
+  } @else if $x == 10 {
+    width: $x;
+  } @else {
+    @error "你需要将#{$x}值设置在10以内的数";
+  }
+}
+
+.test {
+  @include error(15);
+}
+```
 
 [参考](https://www.imooc.com/learn/436)
