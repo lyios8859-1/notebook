@@ -127,6 +127,14 @@ function runner (command) {
       }, time);
     } else if (command === 'stop') {
       clearInterval(timer);
+    } else if (command === 'keep') {
+      clearInterval(timer);
+      let keepCounter = 0;
+      timer = setInterval(function () {
+        let domstop = keepCounter % 10;
+        runmode(domstop);
+        keepCounter++;
+      }, time);
     }
   };
 

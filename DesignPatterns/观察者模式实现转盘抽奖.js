@@ -132,3 +132,5 @@ function runner (command) {
 
   runcontroll(command);
 }
+
+// 如果有需求，等待请求后台接口返回数据奖品前一直匀速，数据回来之后开始减慢，添加一个判断
