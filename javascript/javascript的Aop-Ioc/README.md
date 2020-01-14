@@ -12,12 +12,81 @@
 > 5, 职责链模式
 > 6, 组合替代模式
 
+- 前置通知（Before advice）：在某连接点之前执行的通知，但这个通知不能阻止连接点之前的执行流程（除非它抛出一个异常）。
+- 后置通知（After returning advice）：在某连接点正常完成后执行的通知：例如，一个方法没有抛出任何异常，正常返回。
+- 异常通知（After throwing advice）：在方法抛出异常退出时执行的通知。
+- 最终通知（After (finally) advice）：当某连接点退出的时候执行的通知（不论是正常返回还是异常退出）。
+- 环绕通知（Around Advice）：包围一个连接点的通知，如方法调用。这是最强大的一种通知类型。环绕通知可以在方法调用前后完成自定义的行为。它也会选择是否继续执行连接点或直接返回它自己的返回值或抛出异常来结束执行。
+
 实际的业务中有一些公共逻辑，比如日志的记录，事务的管理等等，而如果每次都把日志和事务的代码手动写到业务逻辑前后，这样重复代码就相当可怕了:bug:，
 而如果这些额外代码有修改，必须要每个都修改，这是相当不明智的。Aop思想来了:star:
 
-[参考1](https://cxis.me/2017/04/12/AOP%E6%A6%82%E5%BF%B5%EF%BC%8C%E5%8E%9F%E7%90%86%EF%BC%8C%E5%BA%94%E7%94%A8%E4%BB%8B%E7%BB%8D/ "AOP")
+[参考1](https://www.jianshu.com/p/ec24aa4b3ee7 "AOP")
 
 [参考2](https://www.jb51.net/article/130906.htm "AOP")
+
+```js
+const Aspects = function () {
+  // 依赖前置
+  /**
+   * target: 被注入的对象 ,
+   * method: 被注入的对象的方法名 ,
+   * advice: 通知函数
+   */
+  this.before = function (target, method, advice) {
+    const original = target[method];
+    target[method] = function () {
+      (advice)();
+      original.apply(target, arguments);
+    };
+    return target;
+  },
+    // 依赖后置
+    this.after = function (target, method, advice) {
+      const original = target[method];
+      target[method] = function () {
+        original.apply(target, arguments);
+        (advice)();
+      };
+      return target;
+    },
+    // 依赖环绕
+    this.around = function (target, method, advice) {
+      const original = target[method];
+      target[method] = function () {
+        (advice)();
+        original.apply(target, arguments);
+        (advice)();
+      };
+      return target;
+    }
+};
+
+
+// 实例一
+function voice () {
+  console.log('救命啊！');
+}
+const btn = document.getElementById("btn");
+const aspects1 = new Aspects;
+aspects1.before(btn, 'onclick', function () {
+  console.log('HELP！HELP！')
+});
+
+// 实例二
+function Person () {
+  this.say = function (name) {
+    console.log(`My name is ${name}`);
+  }
+}
+let person = new Person;
+const aspects2 = new Aspects;
+person = aspects2.before(person, 'say', function () {
+  console.log('请你介绍一下自己！')
+});
+// 执行注入的方法的函数
+person.say("司徒正美");
+```
 
 ## IoC（Inversion of Control）依赖倒置（反转）
 
