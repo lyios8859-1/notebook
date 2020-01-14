@@ -57,4 +57,4 @@ person = aspects2.before(person, 'say', function () {
   console.log('请你介绍一下自己！')
 });
 // 执行注入的方法的函数
-person.say("司徒正美");
+person.say('欧阳明日');

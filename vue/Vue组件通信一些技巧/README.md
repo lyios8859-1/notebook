@@ -174,6 +174,7 @@ export default {
 ```
 
 - 王者回归 .sync (数据双向流动)
+
 > `<demo :foo.sync="something"></demo>` <==> 语法糖的扩展 `<demo :foo="something" @update:foo="val => something = val"></demo>`
 
 - foo 则是 demo 子组件需要从父组件 props 接收的数据
@@ -230,6 +231,7 @@ export default {
 
 [参考1](https://juejin.im/post/5cb3eed65188251b0351f2c4#heading-2)
 [参考2](https://juejin.im/post/5bd97e7c6fb9a022852a71cf#heading-53)
+[vue 组件通信](https://juejin.im/post/5bd97e7c6fb9a022852a71cf#heading-110  "vue 组件通信")
 
 ## 封装API组件
 
