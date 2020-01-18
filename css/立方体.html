@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+    .cube-wrap {
+        width: 200px;
+        height: 200px;
+        margin: 100px auto;
+        /*观众所在位置*/
+        perspective: 800px;
+    }
+    .cube {
+        position: relative;
+        top: 0;
+        left: 0;
+        width: 200px;
+        height: 200px;
+        /*舞台*/
+        transform-style: preserve-3d;
+        /*为了产生立体效果*/
+        transform: rotateX(50deg) rotateY(30deg);
+        transition: transform 1s;
+    }
+    .big-cube {
+        /*物体*/
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 200px;
+        height: 200px;
+        background: blanchedalmond;
+        opacity: 0.3;
+        text-align: center;
+        line-height: 200px;
+        color: black;
+        transition: transform 1s;
+    }
+    .big-cube:nth-child(1) {
+        background: red;
+        transform: rotateX(90deg) translateZ(100px);
+    }
+    .big-cube.down {
+        background: blueviolet;
+        transform: rotateX(-90deg) translateZ(100px);
+    }
+    .big-cube.left {
+        background: yellow;
+        transform: rotateY(-90deg) translateZ(100px);
+    }
+    .big-cube.right {
+        background: yellowgreen;
+        transform: rotateY(90deg) translateZ(100px);
+    }
+    .big-cube.front {
+        background: cadetblue;
+        transform: translateZ(100px);
+    }
+    .big-cube.back {
+        background: brown;
+        transform: translateZ(-100px);
+    }
+    .cube:hover .up {
+        transform: rotateX(90deg) translateZ(150px);
+        transition: transform 1s;
+    }
+    .cube:hover .down {
+        transform: rotateX(-90deg) translateZ(150px);
+        transition: transform 1s;
+    }
+    .cube:hover .left {
+        transform: rotateY(-90deg) translateZ(150px);
+        transition: transform 1s;
+    }
+    .cube:hover .right {
+        transform: rotateY(90deg) translateZ(150px);
+        transition: transform 1s;
+    }
+    .cube:hover .front {
+        transform: translateZ(150px);
+        transition: transform 1s;
+    }
+    .cube:hover .back {
+        transform: translateZ(-150px);
+        transition: transform 1s;
+    }
+
+
+    .small-cube {
+        /*物体*/
+        position: absolute;
+        top: 50px;
+        left: 50px;
+        width: 100px;
+        height: 100px;
+        background: blue;
+        opacity: 0.3;
+        text-align: center;
+        line-height: 100px;
+        color: black;
+        transition: transform 1s;
+    }
+
+    .small-cube.up-s {
+        transform: rotateX(90deg) translateZ(50px);
+    }
+    .small-cube.down-s {
+        transform: rotateX(-90deg) translateZ(50px);
+    }
+    .small-cube.left-s {
+        transform: rotateY(-90deg) translateZ(50px);
+    }
+    .small-cube.right-s {
+        transform: rotateY(90deg) translateZ(50px);
+    }
+    .small-cube.front-s {
+        transform: translateZ(50px);
+    }
+    .small-cube.back-s {
+        transform: translateZ(-50px);
+    }
+    </style>
+</head>
+<body>
+    <div class="cube-wrap">
+        <div class="cube">
+            <div class="big-cube up">上</div>
+            <div class="big-cube down">下</div>
+            <div class="big-cube left">左</div>
+            <div class="big-cube right">右</div>
+            <div class="big-cube front">前</div>
+            <div class="big-cube back">后</div>
+
+            <div class="small-cube up-s">上</div>
+            <div class="small-cube down-s">下</div>
+            <div class="small-cube left-s">左</div>
+            <div class="small-cube right-s">右</div>
+            <div class="small-cube front-s">前</div>
+            <div class="small-cube back-s">后</div>
+        </div>
+    </div>
+</body>
+</html>
