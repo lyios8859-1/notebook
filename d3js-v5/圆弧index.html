@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="./node_modules/d3/dist/d3.js"></script>
+</head>
+
+<body>
+  <div id="svg-root"
+    style="margin: 20px;padding: 0px;width: 800px;height: 500px;box-sizing: border-box; border: 2px solid red;background: yellow;">
+  </div>
+  <script>
+
+    /**
+     * 线性比例尺: 定义域和值域是连续的.
+     * 
+     * 序数比例尺：定义域和值域不一定是连续的，都是离散的.
+     * 
+     * 
+     * 
+     *  树形图 Tree
+        力导向图 Force
+        弦图 Chord
+        饼状图 Pie (接下来会用到的布局)
+        集群图 Cluster
+        捆图 Bundle
+        打包图 Pack
+        直方图 Histogrom
+        分区图 Partition
+        堆栈图 Stack
+        矩阵树图 TreeMap
+        层级图 Hierarchy
+
+        布局的使用遵循以下步骤：
+        1.确定初始数据 2.转换数据 3.绘制
+     * 
+     */
+    console.log(`Versioin: ${d3.version}`);
+    const getDom = id => {
+      const dom = document.getElementById(id);
+      dom.style.verticalAlign = 'middle';
+      dom.style.lineHeight = 0;
+      return {
+        el: dom,
+        width: dom.scrollWidth,
+        height: dom.scrollHeight
+      };
+    }
+    const rootSvg = getDom('svg-root');  // 添加画布到页面
+    const padding = { left: 20, top: 20, right: 20, bottom: 20 }
+
+    const height = rootSvg.height - padding.top - padding.bottom
+    const width = rootSvg.width - padding.left - padding.right
+
+    // 创建 svg 画布
+    const svg = d3.create('svg')
+      .style('width', width)
+      .style('height', height)
+      .style('font', '12px sans-serif')
+      .style('background-color', '#ddd')
+      .style('padding-left', padding.left)
+      .style('padding-right', padding.right)
+      .style('padding-top', padding.top)
+      .style('padding-bottom', padding.bottom);
+
+
+      // Math.PI * 2 圆弧跨度大小
+      const dataset = {
+        startAngle: 0,
+        endAngle: Math.PI * 2
+      };
+
+       // Math.PI * 2 圆弧跨度大小
+       const dataset2 = {
+        startAngle: 0,
+        endAngle: Math.PI
+      };
+
+      //创建一个弧生成器
+      const arcPath = d3.arc()
+          .innerRadius(50) // 内半径
+          .outerRadius(100); // 外半径
+
+      //添加路径
+      svg.append('path')
+          .attr('d', arcPath(dataset))
+          .attr('transform', `translate(${width / 2}, ${height / 2})`)
+          .attr('stroke', 'black')
+          .attr('stroke-width', '2px')
+          .attr('fill', 'yellow')
+      
+      svg.append('path')
+        .attr('d', arcPath(dataset2))
+        .attr('transform', `translate(100, 100)`)
+        .attr('stroke', 'black')
+        .attr('stroke-width', '2px')
+        .attr('fill', 'yellow')
+
+    rootSvg.el.append(svg.node());
+  </script>
+</body>
+
+</html>

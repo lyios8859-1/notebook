@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="./node_modules/d3/dist/d3.js"></script>
+</head>
+
+<body>
+  <div id="svg-root"
+    style="margin: 20px;padding: 0px;width: 800px;height: 500px;box-sizing: border-box; border: 2px solid red;background: yellow;">
+  </div>
+  <script>
+
+    /**
+     * 线性比例尺: 定义域和值域是连续的.
+     * 
+     * 序数比例尺：定义域和值域不一定是连续的，都是离散的.
+     * 
+     */
+    console.log(`Versioin: ${d3.version}`);
+    const getDom = id => {
+      const dom = document.getElementById(id);
+      dom.style.verticalAlign = 'middle';
+      dom.style.lineHeight = 0;
+      return {
+        el: dom,
+        width: dom.scrollWidth,
+        height: dom.scrollHeight
+      };
+    }
+    const rootSvg = getDom('svg-root');  // 添加画布到页面
+    const padding = { left: 20, top: 20, right: 20, bottom: 20 }
+
+    const height = rootSvg.height - padding.top - padding.bottom
+    const width = rootSvg.width - padding.left - padding.right
+
+    // 创建 svg 画布
+    const svg = d3.create('svg')
+      .style('width', width)
+      .style('height', height)
+      .style('font', '12px sans-serif')
+      .style('background-color', '#ddd')
+      .style('padding-left', padding.left)
+      .style('padding-right', padding.right)
+      .style('padding-top', padding.top)
+      .style('padding-bottom', padding.bottom);
+
+    const data = [
+      { x: '上海', y: 100 },
+      { x: '北京', y: 200 },
+      { x: '天津', y: 280 },
+      { x: '西安', y: 100 },
+      { x: '武汉', y: 240 },
+      { x: '长沙', y: 210 },
+      { x: '深圳', y: 100 },
+      { x: '郑州', y: 220 },
+      { x: '驻马店', y: 310 },
+      { x: '信阳', y: 100 },
+      { x: '漯河', y: 220 },
+      { x: '商丘', y: 210 },
+      { x: '南阳', y: 100 },
+      { x: '纽约', y: 220 },
+      { x: '南昌', y: 210 }
+    ];
+
+    const xData = data.map(function (e, i) {
+      //拿到x轴所有数据
+      return e.x;
+    });
+    const yData = data.map(function (e, i) {
+      //拿到y轴所有数据
+      return e.y;
+    });
+
+    // 设置 x 轴比例尺
+    const xScale = d3.scaleBand()  //定义序数比例尺（不是数值）
+      .domain(xData)
+      .rangeRound([0, width - 30])
+      .padding(0.1)
+
+    // 设置 y 轴比例尺
+    const yScale = d3.scaleLinear() //创建一个值域的线性比例尺
+      .domain([0, d3.max(yData)]) // 设置定义域
+      .range([height, 30]); // 设置值域
+
+    /*
+    yScale与 _yScale的差别就在于range恰恰相反，
+    因此同样的数值在运算时拿到的正好是相反的数据.
+    */
+    const _yScale = d3.scaleLinear() //创建一个值域的线性比例尺
+      .domain([0, d3.max(yData)]) // 设置定义域
+      .range([0, height]); // 设置值域
+
+    // 定义 x 轴
+    const xAxis = d3.axisBottom(xScale)
+    // 定义 y 轴
+    const yAxis = d3.axisLeft(yScale);
+
+    //添加x轴
+    svg.append('g')
+      .attr('class', 'xAxis')
+      .attr('transform', 'translate(' + '25 ,' + (height - 20) + ')')
+      .call(xAxis);
+
+    // 添加左侧 y 坐标轴
+    svg.append('g')
+      .attr('class', 'yAxis')
+      .attr('transform', 'translate(' + 25 + ',' + (-20) + ')')
+      .call(yAxis);
+
+
+    // 画柱状图
+    const rect = svg.selectAll('rect')
+      .data(data)
+      .enter()
+      .append('rect')
+      .on('mouseover', function () {
+        d3.select(this).attr('fill', 'pink')
+      })
+      .on('mouseout', function () {
+        d3.select(this).attr('fill', 'steelBlue')
+      })
+      .attr('transform', 'translate(' + 25 + ',' + (-20) + ')')
+      .attr('x', function (d, i) {
+        return xScale(d.x);
+      })
+      .attr('y', function (d) {
+        return height - _yScale(d.y);
+      })
+      .attr('width', xScale.bandwidth())
+      .attr('height', function (d) {
+        return _yScale(d.y);
+      })
+      .attr('fill', 'steelBlue');
+    const text = svg.append('g')
+      .selectAll('text')
+      .data(data)
+      .enter()
+      .append('text')
+      .attr('transform', 'translate(' + 25 + ',' + 0 + ')')
+      .attr('x', function (d, i) {
+        return xScale(d.x)
+      })
+      .attr('y', function (d) {
+        return height - _yScale(d.y)
+      })
+      .attr('dy', '1em')
+      .attr('dx', xScale.bandwidth() / 2)
+      .attr('text-anchor', 'middle')
+      .attr('font-size', '14px')
+      .attr('fill', '#fff')
+      .text(function (d) {
+        return d.y;
+      })
+    rootSvg.el.append(svg.node());
+  </script>
+</body>
+
+</html>

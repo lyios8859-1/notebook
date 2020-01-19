@@ -7,6 +7,18 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
   <script src="./node_modules/d3/dist/d3.js"></script>
+  <style>
+    .tooltip {
+      position: absolute;
+      width: 100px;
+      height: auto;
+      font-size: 14px;
+      text-align: center;
+      border: 1px solid #666;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.5)
+    }
+  </style>
 </head>
 
 <body>
@@ -20,6 +32,24 @@
      * 
      * 序数比例尺：定义域和值域不一定是连续的，都是离散的.
      * 
+     * 
+     * 
+     *  树形图 Tree
+        力导向图 Force
+        弦图 Chord
+        饼状图 Pie (接下来会用到的布局)
+        集群图 Cluster
+        捆图 Bundle
+        打包图 Pack
+        直方图 Histogrom
+        分区图 Partition
+        堆栈图 Stack
+        矩阵树图 TreeMap
+        层级图 Hierarchy
+
+        布局的使用遵循以下步骤：
+        1.确定初始数据 2.转换数据 3.绘制
+     * 
      */
     console.log(`Versioin: ${d3.version}`);
     const getDom = id => {
@@ -32,6 +62,8 @@
         height: dom.scrollHeight
       };
     }
+
+    const color = d3.scaleOrdinal(d3.schemeCategory10);
     const rootSvg = getDom('svg-root');  // 添加画布到页面
     const padding = { left: 20, top: 20, right: 20, bottom: 20 }
 
@@ -49,113 +81,89 @@
       .style('padding-top', padding.top)
       .style('padding-bottom', padding.bottom);
 
-    const data = [
-      { x: '上海', y: 100 },
-      { x: '北京', y: 200 },
-      { x: '天津', y: 280 },
-      { x: '西安', y: 100 },
-      { x: '武汉', y: 240 },
-      { x: '长沙', y: 210 },
-      { x: '深圳', y: 100 },
-      { x: '郑州', y: 220 },
-      { x: '驻马店', y: 310 },
-      { x: '信阳', y: 100 },
-      { x: '漯河', y: 220 },
-      { x: '商丘', y: 210 },
-      { x: '南阳', y: 100 },
-      { x: '纽约', y: 220 },
-      { x: '南昌', y: 210 }
+    //添加提示框
+    const tooltip = d3.select('body')
+      .append('div')
+      .attr('class', 'tooltip')
+      .style('opacity', 0)
+    const dataset = [
+      ['香蕉', 150],
+      ['苹果', 200],
+      ['菠萝', 190],
+      ['南瓜', 250],
+      ['雪梨', 350],
+      ['西红柿', 190]
     ];
 
-    const xData = data.map(function (e, i) {
-      //拿到x轴所有数据
-      return e.x;
-    });
-    const yData = data.map(function (e, i) {
-      //拿到y轴所有数据
-      return e.y;
-    });
+    const innerRadius = 80;
+    const outerRadius = 180;
 
-    // 设置 x 轴比例尺
-    const xScale = d3.scaleBand()  //定义序数比例尺（不是数值）
-      .domain(xData)
-      .rangeRound([0, width - 30])
-      .padding(0.1)
+    const innerRadiusFinal = 80;
+    const outerRadiusFinal = 200;
 
-    // 设置 y 轴比例尺
-    const yScale = d3.scaleLinear() //创建一个值域的线性比例尺
-      .domain([0, d3.max(yData)]) // 设置定义域
-      .range([height, 30]); // 设置值域
+    //创建一个弧生成器
+    const arc = d3.arc()
+      .innerRadius(innerRadius)
+      .outerRadius(outerRadius);
+    // for animation
+    const arcFinal = d3.arc()
+      .innerRadius(innerRadiusFinal)
+      .outerRadius(outerRadiusFinal);
 
-    /*
-    yScale与 _yScale的差别就在于range恰恰相反，
-    因此同样的数值在运算时拿到的正好是相反的数据.
-    */
-    const _yScale = d3.scaleLinear() //创建一个值域的线性比例尺
-      .domain([0, d3.max(yData)]) // 设置定义域
-      .range([0, height]); // 设置值域
+    // 进行数据转换
+    const pie = d3.pie()
+      .sort(null)
+      .value(function (d) { return d[1] });
 
-    // 定义 x 轴
-    const xAxis = d3.axisBottom(xScale)
-    // 定义 y 轴
-    const yAxis = d3.axisLeft(yScale);
+    const pieData = pie(dataset);
 
-    //添加x轴
-    svg.append('g')
-      .attr('class', 'xAxis')
-      .attr('transform', 'translate(' + '25 ,' + (height - 20) + ')')
-      .call(xAxis);
-
-    // 添加左侧 y 坐标轴
-    svg.append('g')
-      .attr('class', 'yAxis')
-      .attr('transform', 'translate(' + 25 + ',' + (-20) + ')')
-      .call(yAxis);
-
-
-    // 画柱状图
-    const rect = svg.selectAll('rect')
-      .data(data)
+    // 添加对应的弧组
+    const arcs = svg.selectAll('g')
+      .data(pieData)
       .enter()
-      .append('rect')
-      .on('mouseover', function () {
-        d3.select(this).attr('fill', 'pink')
+      .append('g')
+      .attr('transform', function () {
+        return `translate(${width / 2}, ${height / 2})`;
+      })
+    // 添加弧的路径元素
+    arcs.append('path')
+      .attr('fill', function (d, i) { return color(i) })
+      .attr('d', function (d) { return arc(d) })
+      .on('click', function (d) {
+        console.log(d.data)
+      })
+      .on('mouseover', function (d) {
+        tooltip.html(d.data[0] + ':' + d.data[1])
+          .style('left', d3.event.pageX + 20 + 'px')
+          .style('top', d3.event.pageY + 20 + 'px')
+          .style('opacity', 1);
+        d3.select(this).transition()
+          .duration(300)
+          .attr('d', arcFinal);
       })
       .on('mouseout', function () {
-        d3.select(this).attr('fill', 'steelBlue')
+        tooltip.style('opacity', 0);
+        d3.select(this).transition()
+          .duration(300)
+          .attr('d', arc);
+      });
+
+
+    //添加文字
+    arcs.append('text')
+      .attr('transform', function (d) {
+        const x = arc.centroid(d)[0];
+        const y = arc.centroid(d)[1];
+        return `translate(${x}, ${y})`;
       })
-      .attr('transform', 'translate(' + 25 + ',' + (-20) + ')')
-      .attr('x', function (d, i) {
-        return xScale(d.x);
-      })
-      .attr('y', function (d) {
-        return height - _yScale(d.y);
-      })
-      .attr('width', xScale.bandwidth())
-      .attr('height', function (d) {
-        return _yScale(d.y);
-      })
-      .attr('fill', 'steelBlue');
-    const text = svg.append('g')
-      .selectAll('text')
-      .data(data)
-      .enter()
-      .append('text')
-      .attr('transform', 'translate(' + 25 + ',' + 0 + ')')
-      .attr('x', function (d, i) {
-        return xScale(d.x)
-      })
-      .attr('y', function (d) {
-        return height - _yScale(d.y)
-      })
-      .attr('dy', '1em')
-      .attr('dx', xScale.bandwidth() / 2)
-      .attr('text-anchor', 'middle')
-      .attr('font-size', '14px')
-      .attr('fill', '#fff')
       .text(function (d) {
-        return d.y;
+        const percent = Number(d.value) / d3.sum(dataset, function (d) { return d[1] }) * 100;
+        return percent.toFixed(2) + '%';
       })
+      .attr('text-anchor', 'middle')
+      .attr('fill', '#fff')
+      .style('font-size', '10px');
+
     rootSvg.el.append(svg.node());
   </script>
 </body>
