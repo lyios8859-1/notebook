@@ -1360,3 +1360,52 @@ function sendMsg (callback) {
 ```
 
 [参考](https://www.jb51.net/article/159325.htm)
+
+
+## 装饰者模式（专注方法/功能，内部的）
+
+> 如不想改动某个方法，或这在请求的数据时候添加loading可以使用装饰者模式
+
+```js
+// 例一
+const oldAjax = $.ajax; // 缓存老方法
+// 不影响原来逻辑
+// 重写老方法
+$.ajax = function () {
+  // 执行老方法
+  oldAjax.call(this, arguments);
+
+  // 现在的新逻辑
+  // TODO
+  // loading...
+}
+
+// 调用重写的方法
+$.ajax();
+
+// 例二
+dom.onclick = function () {
+  console.log('原始方法');
+}
+
+// 不影响原来逻辑
+const oldFn = dom.onclick; // 缓存老方法
+
+// 重写老方法
+dom.onclick = function () {
+  // 执行老方法
+  oldFn();
+
+  // 现在的新逻辑
+  // TODO
+}
+```
+
+
+## 适配器模式（专注API/接口，外部的）
+
+
+
+## 职责链模式
+
+> 把各个模块组织成一个链条，然后让消息依次从链条上传递
