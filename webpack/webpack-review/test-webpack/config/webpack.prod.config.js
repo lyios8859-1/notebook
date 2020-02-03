@@ -1,9 +1,12 @@
 const path = require('path');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
   entry: './src/index.js',// 入口文件程序
   output: { // 编译打包后的输出文件信息
-    filename: 'bundle.js',
+    filename: 'js/bundle.js',
     path: path.resolve(__dirname, '../dist') // 必须绝对路径
   },
   module: {
@@ -30,7 +33,7 @@ module.exports = {
           {
             loader: 'file-loader',
             options: {
-              outputPath: 'assest/', //打包后文件文件输出目录
+              outputPath: 'fonts/', //打包后文件文件输出目录
             }
           }
         ]
@@ -42,12 +45,19 @@ module.exports = {
             loader: 'url-loader',
             options: {
               name: '[name].[hash:8].[ext]',
-              outputPath: 'assest/', //打包后文件文件输出目录
+              outputPath: 'images/', //打包后文件文件输出目录
               limit: 102400, //小于102400kb时，打包为base64格式;大于时打包为文件,引用的地方使用路径
             }
           }
         ]
       }
     ]
-  }
+  },
+  plugins: [
+    new webpack.ProgressPlugin(), // 进度条
+    new CleanWebpackPlugin(), // 清除之前打包的所有文件
+    new HtmlWebpackPlugin({
+      template: './src/index.html',
+    })
+  ]
 }
