@@ -41,7 +41,8 @@ main属性值指向模块的入口程序.（一般模块默认为该文件下当
 ```js
 const path = require('path');
 module.exports = {
-  mode: 'development', // development|none 配置在开发环境(不压缩代码), production 配置在生产环境(会压缩代码)
+  // development|none 配置在开发环境(不压缩代码), production 配置在生产环境(会压缩代码)
+  mode: 'development',
   entry: './src/index.js',// 入口文件程序
   output: { // 编译打包后的输出文件信息
     filename: 'bundle.js',
@@ -67,8 +68,146 @@ Size: 963 bytes(打包出来的文件大小)
 
 Chunks: 0(每一个js文件对应的ID)  [emitted]
 
-Chunk Names: main(每一个js文件对应的名
+Chunk Names: main(每一个js文件对应的名)
 
 ## 什么是loader
 
-webpack默认识别.js结尾的文件,如果不是.js结尾的文件是不能识别的,只能通过配置loader来让webpack可以识别并处理.
+webpack默认识别.js结尾的文件,如果不是.js结尾的文件是不能识别的,只能通过配置相应的loader来让webpack可以识别并处理.
+
+## loader 处理图片
+
+url-loader 封装了 file-loader(file-loader处理为的是url路径)，但在文件大小（单位 byte）低于limit指定的限制时，会将图片转化为base64格式. url-loader 如果处理大于limit指定的限制时依赖file-loader, 字体图标打包用 file-loader
+
+```bash
+npm install -D file-loader url-loader
+```
+
+```js
+module: {
+  rules: [
+    {
+      test: /\.jpe?g/,
+      use: [
+        {
+          loader: 'url-loader',
+          options: {
+            name: '[name].[hash:8].[ext]',
+            outputPath: 'assest/', //打包后文件文件输出目录
+            limit: 102400, //小于102400kb时,打包为base64格式到js文件中;大于时打包为文件,引用的地方使用路径
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+## loader 处理CSS样式
+
+1, 使用多个loader时，webpack遵循从右到左，从下到上的顺序打包。
+2, 样式加浏览器前缀可以使用postcss-loader中的autoprefixer插件。
+
+css-loader 处理各个css文件中的css文件依赖,style-loader 负责把css样式插入到页面的style标签中
+
+```bash
+npm install -D style-loader css-loader
+```
+
+## loader 处理 Less, Stylus, Sass样式的预处理
+
+```bash
+ npm i less less-loader
+```
+
+## loader 处理CSS 样式添加前缀
+
+```bash
+ npm i postcss-loader autoprefixer
+```
+
+- 方案一的配置
+
+```js
+{
+  test: /\.(css|styl|scss|less)/,
+  use: [
+    'style-loader',
+    'css-loader',
+    'less-loader',
+    {
+      loader: 'postcss-loader',
+      options: {
+        plugins: () => ([
+          require('autoprefixer'), // 添加css前缀
+        ]),
+      },
+    }
+  ]
+},
+```
+
+- 方案二的配置, 需要在项目根目录下创建postcss.config.js文件
+
+**postcss.config.js 配置内容**:
+
+```js
+module.exports = {
+  plugins: [
+    require('autoprefixer')
+  ]
+}
+```
+
+**webpack 配置内容**:
+
+```js
+{
+  test: /\.(css|styl|scss|less)/,
+  use: [
+    'style-loader',
+    'css-loader',
+    'less-loader',
+    'postcss-loader'
+  ]
+},
+```
+
+## css-loader的局部引入(modules: true)和多个样式文件中@import的文件处理(importLoaders: 2)
+
+```js
+{
+  test: /\.(css|styl|scss|less)/,
+  use: [
+    'style-loader',
+    {
+      loader: 'css-loader',
+      options: {
+        importLoaders: 2, //配置css-loader 作用于样式文件中 @import 的样式资源都会重新通过postcss-loader.less-loader往上再依次处理 @import 引入的样式文件
+        //modules: true这样配置以后,通过 import './index.less'; 方式全局部引入是没有作用的
+        modules: true, // css模块 应用import css from './index.less'这样局部引入; css.属性
+      },
+    },
+    'less-loader',
+    'postcss-loader' // 这个配合autoprefixer插件添加css前缀,在根目录下创建postcss.config.js
+  ]
+}
+```
+
+PS: 配置`modules: true,`这个时候注意样式的作用情况
+
+**例如**:
+
+```js
+import src from './1.jpeg';
+import css from './index.less'; // 这样是局部引入
+import './index.less'; // 这样是全局部引入是没有作用的
+const img = new Image();
+img.src = src;
+img.classList.add(css.imgStyle); // 这个有样式作用
+document.querySelector('#root').append(img);
+
+const imgs = new Image();
+imgs.src = src;
+imgs.classList.add('imgStyle'); // 这个是没有样式作用的
+document.querySelector('#root').append(imgs);
+```
