@@ -9,7 +9,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(css|styl|scss|less)/,
+        test: /\.(s?css|styl|less)/,
         use: [
           'style-loader',
           {
@@ -17,7 +17,7 @@ module.exports = {
             options: {
               importLoaders: 2, //配置css-loader 作用于样式文件中 @import 的样式资源都会重新通过postcss-loader.less-loader往上再依次处理 @import 引入的样式文件
               //modules: true这样配置以后,通过 import './index.less'; 方式全局部引入是没有作用的
-              modules: true, // css模块 应用import css from './index.less'这样局部引入; css.属性
+              // modules: true, // css模块 应用import css from './index.less'这样局部引入; css.属性
             },
           },
           'less-loader',
@@ -25,7 +25,18 @@ module.exports = {
         ]
       },
       {
-        test: /\.jpe?g/,
+        test: /\.(eot|svg|ttf|woff)$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              outputPath: 'assest/', //打包后文件文件输出目录
+            }
+          }
+        ]
+      },
+      {
+        test: /\.(jpe?g|png)/,
         use: [
           {
             loader: 'url-loader',
