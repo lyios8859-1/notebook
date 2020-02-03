@@ -9,6 +9,8 @@ module.exports = {
     ddd: './src/index.js',
   },
   output: { // 编译打包后的输出文件信息
+    // 打包后的文件中资源文件引用路径（比如src），一般是服务器指定的资源文件路径（CDN）最好区分一下开发环境和生产环境
+    publicPath: 'http://www.baidu.com', 
     filename: 'js/[name].[chunkhash:8].js',
     path: path.resolve(__dirname, '../dist') // 必须绝对路径
   },
@@ -63,7 +65,7 @@ module.exports = {
     }), // 清除之前打包的所有文件
     new HtmlWebpackPlugin({
       template: './src/index.html',
-      // chunks: ['index'] // 打包后的文件中引入的入口的js文件，就是entry对象的属性名
+      chunks: ['index'] // 打包后的文件中引入的入口的js文件，就是entry对象的属性名
     })
   ]
 }

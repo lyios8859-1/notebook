@@ -4,16 +4,23 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
+  mode: 'development', // production：生产环境（压缩代码），development|none：开发环境（不压缩代码）
   entry: { // 入口文件程序
     index: './src/index.js',
     ddd: './src/index.js',
   },
   output: { // 编译打包后的输出文件信息
     // 打包后的文件中资源文件引用路径（比如src），一般是服务器指定的资源文件路径（CDN）最好区分一下开发环境和生产环境
-    publicPath: 'http://www.baidu.com', 
+    // publicPath: 'http://www.baidu.com', 
     filename: 'js/[name].[chunkhash:8].js',
     path: path.resolve(__dirname, '../dist') // 必须绝对路径
   },
+  // source-map： 会生成map文件 
+  // inline-source-map：不会生成map文件，但是会在文件后面添加一个base64的字符串
+  // cheap: 表示代码出错，代码表示那一行出错。如果没有cheap会精确到那一行那一列出错（非常耗费打包性能）
+  // module： 表示代码出错不尽是自己的业务代码还包含了第三方库（loader）是否出错
+  // eval: 打包速度最快的一种方式，eval方式处理代码（针对于复杂的代码不建议使用）
+  devtool: 'cheap-module-eval-source-map', // 生成sourceMap文件，cheap-module-eval-source-map建议使用在开发环境，cheap-module-source-map建议使用在生产环境（一般不使用）
   module: {
     rules: [
       {

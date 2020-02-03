@@ -5,5 +5,5 @@ const img = new Image();
 img.src = src;
 img.classList.add('imgStyle');
 
-
+consoled.log('kkkkkkkkk')
 document.querySelector('#root').append(img);

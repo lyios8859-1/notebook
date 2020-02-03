@@ -21,7 +21,7 @@
 - `npm init -y` 初始化一个项目.
 - `npm install webpack webpack-cli -D`(项目内安装webpack).
   
-如果需要使用指定版本这样操作`npm install webpack@4.16.5 webpack-cli -D` 安装指定版本webpack.
+如果需要使用指定版本这样操作`npm install webpack@4.16.5 webpack-cli --save-dev` 安装指定版本webpack.
 
 2, `npx webpack -v` 检查当前项目webpack版本.
 
@@ -82,7 +82,7 @@ webpack默认识别.js结尾的文件,如果不是.js结尾的文件是不能识
 url-loader 封装了 file-loader(file-loader处理为的是url路径)，但在文件大小（单位 byte）低于limit指定的限制时，会将图片转化为base64格式. url-loader 如果处理大于limit指定的限制时依赖file-loader, 字体图标打包用 file-loader
 
 ```bash
-npm install -D file-loader url-loader
+npm install --save-dev file-loader url-loader
 ```
 
 ```js
@@ -114,13 +114,13 @@ module: {
 css-loader 处理各个css文件中的css文件依赖,style-loader 负责把css样式插入到页面的style标签中
 
 ```bash
-npm install -D style-loader css-loader
+npm install --save-dev style-loader css-loader
 ```
 
 ## loader 处理 Less, Stylus, Sass样式的预处理
 
 ```bash
- npm i less less-loader
+ npm install less less-loader --save-dev
 ```
 
 ## loader 处理CSS 样式添加前缀
@@ -235,6 +235,31 @@ document.querySelector('#root').append(imgs);
 
 ## plugins 自动模板处（html-webpack-plugin）
 
-```js
-
+```bash
+npm install --save-dev html-webpack-plugin
 ```
+
+```js
+plugins: [
+    new webpack.ProgressPlugin(), // 进度条
+    new CleanWebpackPlugin({
+      verbose: true, // 控制台打印日志
+    }), // 清除之前打包的所有文件
+    new HtmlWebpackPlugin({
+      template: './src/index.html',
+      chunks: ['index'] // 打包后的文件中引入的入口的js文件，就是entry对象的属性名
+    })
+  ]
+```
+
+## sourceMap 处理
+```js
+// source-map： 会生成map文件 
+// inline-source-map：不会生成map文件，但是会在文件后面添加一个base64的字符串
+// cheap: 表示代码出错，代码表示那一行出错。如果没有cheap会精确到那一行那一列出错（非常耗费打包性能）
+// module： 表示代码出错不尽是自己的业务代码还包含了第三方库（loader）是否出错
+// eval: 打包速度最快的一种方式，eval方式处理代码（针对于复杂的代码不建议使用）
+devtool: 'cheap-module-eval-source-map', // 生成sourceMap文件，cheap-module-eval-source-map建议使用在开发环境，cheap-module-source-map建议使用在生产环境（一般不使用）
+```
+
+PS：`cheap-module-eval-source-map`建议使用在开发环境，`cheap-module-source-map`建议使用在生产环境（一般不使用）
