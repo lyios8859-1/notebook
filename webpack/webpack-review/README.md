@@ -1,6 +1,7 @@
 # webpack4
 
 1, webpack助力前端开发的一个模块打包工具.
+
 2, `npx`的会在运行时,到`node_modules/.bin`路径和环境变量`$PATH`里面,检查命令是否存在.
 
 [参考](https://www.jianshu.com/p/b63cc830aaf3)
@@ -23,7 +24,9 @@
 如果需要使用指定版本这样操作`npm install webpack@4.16.5 webpack-cli -D` 安装指定版本webpack.
 
 2, `npx webpack -v` 检查当前项目webpack版本.
+
 3, `npm info webpack` 查看webpack历史版本信息.
+
 4, package.json配置信息：
 `private: true || false`(防止意外发布私有库,如果你设置`"private": true`,npm就不会发布它.)
 main属性值指向模块的入口程序.（一般模块默认为该文件下当前目录下的index.js文件）
@@ -104,8 +107,9 @@ module: {
 
 ## loader 处理CSS样式
 
-1, 使用多个loader时，webpack遵循从右到左，从下到上的顺序打包。
-2, 样式加浏览器前缀可以使用postcss-loader中的autoprefixer插件。
+1, 使用多个loader时, webpack遵循从右到左, 从下到上的顺序打包.
+
+2, 样式加浏览器前缀可以使用postcss-loader中的autoprefixer插件.
 
 css-loader 处理各个css文件中的css文件依赖,style-loader 负责把css样式插入到页面的style标签中
 
