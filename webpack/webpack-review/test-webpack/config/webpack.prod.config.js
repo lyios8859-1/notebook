@@ -12,18 +12,16 @@ module.exports = {
         test: /\.(css|styl|scss|less)/,
         use: [
           'style-loader',
-          'css-loader',
-          'less-loader',
-          //'postcss-loader' // 这个配合autoprefixer插件添加css前缀,在根目录下创建postcss.config.js
           {
-            loader: 'postcss-loader',
+            loader: 'css-loader',
             options: {
-              plugins: () => ([
-                require('autoprefixer'), // 添加css前缀
-                // require('precss'),
-              ]),
+              importLoaders: 2, //配置css-loader 作用于样式文件中 @import 的样式资源都会重新通过postcss-loader.less-loader往上再依次处理 @import 引入的样式文件
+              //modules: true这样配置以后,通过 import './index.less'; 方式全局部引入是没有作用的
+              modules: true, // css模块 应用import css from './index.less'这样局部引入; css.属性
             },
           },
+          'less-loader',
+          'postcss-loader' // 这个配合autoprefixer插件添加css前缀,在根目录下创建postcss.config.js
         ]
       },
       {
