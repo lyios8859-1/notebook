@@ -55,7 +55,9 @@ module.exports = {
   },
   plugins: [
     new webpack.ProgressPlugin(), // 进度条
-    new CleanWebpackPlugin(), // 清除之前打包的所有文件
+    new CleanWebpackPlugin({
+      verbose: true, // 控制台打印日志
+    }), // 清除之前打包的所有文件
     new HtmlWebpackPlugin({
       template: './src/index.html',
     })

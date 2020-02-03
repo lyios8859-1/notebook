@@ -215,3 +215,26 @@ imgs.src = src;
 imgs.classList.add('imgStyle'); // 这个是没有样式作用的
 document.querySelector('#root').append(imgs);
 ```
+
+## loader 处理字体文件
+
+```js
+{
+  test: /\.(eot|svg|ttf|woff)$/,
+  use: [
+    {
+      loader: 'file-loader',
+      options: {
+        outputPath: 'assest/', //打包后文件文件输出目录
+      }
+    }
+  ]
+}
+```
+
+
+## plugins 自动模板处（html-webpack-plugin）
+
+```js
+
+```
