@@ -21,6 +21,11 @@ module.exports = {
   // module： 表示代码出错不尽是自己的业务代码还包含了第三方库（loader）是否出错
   // eval: 打包速度最快的一种方式，eval方式处理代码（针对于复杂的代码不建议使用）
   devtool: 'cheap-module-eval-source-map', // 生成sourceMap文件，cheap-module-eval-source-map建议使用在开发环境，cheap-module-source-map建议使用在生产环境（一般不使用）
+  devServer: {
+    // webpackDevserver启动的服务在那个文件夹目录下
+    contentBase: [path.resolve(__dirname, '../dist')],
+    open: true, // 启动项目时会自动打开页面
+  },
   module: {
     rules: [
       {

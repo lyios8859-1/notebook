@@ -253,13 +253,37 @@ plugins: [
 ```
 
 ## sourceMap 处理
+
+- source-map： 会生成map文件 
+- inline：不会生成map文件，但是会在文件后面添加一个base64的字符串
+- cheap: 表示代码出错，代码表示那一行出错。如果没有cheap会精确到那一行那一列出错（非常耗费打包性能）
+- module： 表示代码不仅仅是自己的业务代码还包含了第三方库（loader）是否出错
+- eval: 打包速度最快的一种方式，eval方式处理代码（针对于复杂的代码不建议使用）
+
+PS：需要组合使用
+
 ```js
-// source-map： 会生成map文件 
-// inline-source-map：不会生成map文件，但是会在文件后面添加一个base64的字符串
-// cheap: 表示代码出错，代码表示那一行出错。如果没有cheap会精确到那一行那一列出错（非常耗费打包性能）
-// module： 表示代码出错不尽是自己的业务代码还包含了第三方库（loader）是否出错
-// eval: 打包速度最快的一种方式，eval方式处理代码（针对于复杂的代码不建议使用）
-devtool: 'cheap-module-eval-source-map', // 生成sourceMap文件，cheap-module-eval-source-map建议使用在开发环境，cheap-module-source-map建议使用在生产环境（一般不使用）
+devtool: 'cheap-module-eval-source-map'
 ```
 
 PS：`cheap-module-eval-source-map`建议使用在开发环境，`cheap-module-source-map`建议使用在生产环境（一般不使用）
+
+## webpack-dev-server
+
+```bash
+npm install --save-dev webpack-dev-server
+```
+
+```json
+"dev": "webpack-dev-server --config config/webpack.prod.config.js"
+```
+
+```js
+devServer: {
+  // webpackDevserver启动的服务在那个文件夹目录下
+  contentBase: [path.resolve(__dirname, '../dist')],
+  open: true, // 启动项目时会自动打开页面
+}
+```
+
+
