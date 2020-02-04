@@ -120,13 +120,13 @@ npm install --save-dev style-loader css-loader
 ## loader 处理 Less, Stylus, Sass样式的预处理
 
 ```bash
- npm install less less-loader --save-dev
+npm install less less-loader --save-dev
 ```
 
 ## loader 处理CSS 样式添加前缀
 
 ```bash
- npm i postcss-loader autoprefixer
+npm i postcss-loader autoprefixer
 ```
 
 - 方案一的配置
@@ -307,4 +307,156 @@ plugins: [
 ]
 ```
 
+## ES5 语法编译
 
+```bash
+npm install --save-dev babel-loader @babel/core
+```
+
+- webpack 配置
+
+```js
+{
+  test: /\.js$/,
+  exclude: /node_modules/,
+  loader: 'babel-loader'
+}
+```
+
+PS: 虽然 webpack 已经配置好了 Babel ，但并没有让它真正生效。在项目的根目录中创建一个 .babelrc 文件并启用一些插件来编译ES6语法。例如：可以使用  @babel/preset-env 把 ES6 -> ES5 的语法规则。
+
+- 在根目录下创建.babelrc 配置文件
+
+```bash
+npm install @babel/preset-env --save-dev
+```
+
+```json
+{
+  "presets": ["@babel/preset-env"]
+}
+```
+
+也可以这么配置，不使用 .babelrc 文件，直接在webpack文件中配置
+
+```js
+{
+  test: /\.js$/,
+  exclude: /node_modules/,
+  loader: 'babel-loader',
+  options: {
+    'presets': ['@babel/preset-env']
+  }
+}
+```
+
+PS：如果需要使更低版本的浏览器也兼容，补充一些函数等 需要使用`@babel/polyfill` 
+安装：`npm install --save @babel/polyfill`; 注意这是用于生产环境的。
+**放到业务代码的顶部** `import '@babel/polyfill'` 或者 `require(’@babel/polyfill‘);`;
+
+如果不需要把所有的`@babel/polyfill`都引入，只是需要按需引入，那么在 .babelrc （或者在webpack）中配置 `useBuiltIns: true`。
+
+.babelrc中配置
+
+```json
+{
+  "presets": [
+    ["@babel/preset-env", {"useBuiltIns": "usage"}]
+  ]
+}
+```
+
+webpack中配置
+
+```js
+{
+  test: /\.js$/,
+  exclude: /node_modules/,
+  loader: 'babel-loader',
+  options: {
+    'presets': [
+      ['@babel/preset-env', {'useBuiltIns': 'usage'}]
+    ]
+  }
+}
+```
+
+如果要指定那些浏览器版本以上的是否有必要编译成低版本的兼容代码（高版本的浏览器对ES6的兼容已经很好了，就不需要再编译了）
+
+```json
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {"chrome": "67"},
+        "useBuiltIns": "usage"
+      }
+    ]
+  ]
+}
+```
+
+PS: 另外在新版中，还需要`npm install --save core-js@3`
+
+```json
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {"chrome": "67"},
+        "useBuiltIns": "usage",
+        "corejs": 3
+      }
+    ]
+  ]
+}
+```
+
+PS: `useBuiltIns` 的值解析
+
+1, false：不处理 polyfill
+
+2, 'usage'：按需加载 polyfill，且不需要手动引入@babel/polyfill 文件
+
+3, 'entry'：必须手动引入 @babel/polyfill 文件，会把 @babel/polyfill 切为小包，全量引入，但要注意的是，这里的全量并不是真的全量，因为我们没有配置目标浏览器，Babbel 默认转了全量的 ECMAScript 2015+，如果配置了如： targets: "chrome>60" ，会在配置四的编译结果中，包减少到 20+ ，也就是 'entry' 会加载目标浏览器所需的 polyfill
+
+
+- 注意：开发组件库时使用 `@babel/plugin-transform-runtime`，不存在全局变量的污染，
+  
+PS: 如果是开发自己的组件库是不建议使用 @babel/polyfill , 它处理全局变量会影响到代码。需要使用：
+
+```bash
+npm install --save-dev @babel/plugin-transform-runtime
+npm install --save @babel/runtime
+```
+
+这个 `"corejs": 3`, 配置需要安装：`npm install --save @babel/runtime-corejs3`
+
+```json
+{
+  // 这个就需要了
+  // "presets": [
+  //     [
+  //         "@babel/preset-env",
+  //         {
+  //             "targets": {"chrome": "67"},
+  //             "corejs": 3,
+  //             "useBuiltIns": "usage"
+  //         }
+  //     ]
+  // ],
+  "plugins": [
+      [
+          "@babel/plugin-transform-runtime",
+          {
+          "corejs": 3,
+          "helpers": true,
+          "regenerator": true,
+          "useESModules": false
+          }
+      ]
+  ]
+}
+```
