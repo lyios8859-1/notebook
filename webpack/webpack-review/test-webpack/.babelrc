@@ -1,13 +1,13 @@
 {
-    "plugins": [
+    "presets": [
         [
-            "@babel/plugin-transform-runtime",
+            "@babel/preset-env",
             {
-            "corejs": 3,
-            "helpers": true,
-            "regenerator": true,
-            "useESModules": false
+                "targets": {"chrome": "67"},
+                "corejs": 3,
+                "useBuiltIns": "usage"
             }
-        ]
-    ]
+        ],
+        "@babel/preset-react"
+    ],
 }
