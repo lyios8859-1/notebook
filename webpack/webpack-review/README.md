@@ -423,7 +423,8 @@ PS: `useBuiltIns` 的值解析
 3, 'entry'：必须手动引入 @babel/polyfill 文件，会把 @babel/polyfill 切为小包，全量引入，但要注意的是，这里的全量并不是真的全量，因为我们没有配置目标浏览器，Babbel 默认转了全量的 ECMAScript 2015+，如果配置了如： targets: "chrome>60" ，会在配置四的编译结果中，包减少到 20+ ，也就是 'entry' 会加载目标浏览器所需的 polyfill
 
 
-- 注意：开发组件库时使用 `@babel/plugin-transform-runtime`，不存在全局变量的污染，
+**注意：开发组件库时**:
+使用`@babel/plugin-transform-runtime`，不存在全局变量的污染（开发组件库时推荐使用），`@babel/polyfill`会污染全局变量（开发组件库时不推荐使用，在业务代码中还是可以的）
   
 PS: 如果是开发自己的组件库是不建议使用 @babel/polyfill , 它处理全局变量会影响到代码。需要使用：
 
