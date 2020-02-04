@@ -286,4 +286,25 @@ devServer: {
 }
 ```
 
+## 热更替
+
+表示页面不重新刷新，只是某个文件发生变化做变化处理
+
+```js
+devServer: {
+  // 热更替
+  hot: true, // 开启热更替
+  hotOnly: true, // 开启热更替以后需要设置浏览器不刷新页面
+  // Other Code ...
+},
+plugins: [
+  // 热加载时直接返回更新文件名,而不是文件的id
+  new webpack.NamedModulesPlugin(),
+  // 热更新模块
+  new webpack.HotModuleReplacementPlugin(),
+
+  // Other Code ...
+]
+```
+
 

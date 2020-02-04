@@ -6,13 +6,12 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 module.exports = {
   mode: 'development', // production：生产环境（压缩代码），development|none：开发环境（不压缩代码）
   entry: { // 入口文件程序
-    index: './src/index.js',
-    ddd: './src/index.js',
+    index: './src/index.js'
   },
   output: { // 编译打包后的输出文件信息
     // 打包后的文件中资源文件引用路径（比如src），一般是服务器指定的资源文件路径（CDN）最好区分一下开发环境和生产环境
     // publicPath: 'http://www.baidu.com', 
-    filename: 'js/[name].[chunkhash:8].js',
+    filename: 'js/[name].[hash:8].js', // 在开发时入口开启热更替不能使用 [chunkhash] or [contenthash]  只能使用 [hash]
     path: path.resolve(__dirname, '../dist') // 必须绝对路径
   },
   // source-map： 会生成map文件 
@@ -25,6 +24,10 @@ module.exports = {
     // webpackDevserver启动的服务在那个文件夹目录下
     contentBase: [path.resolve(__dirname, '../dist')],
     open: true, // 启动项目时会自动打开页面
+
+    // 热更替
+    hot: true, // 开启热更替
+    hotOnly: true, // 开启热更替以后需要设置浏览器不刷新页面
   },
   module: {
     rules: [
@@ -72,9 +75,15 @@ module.exports = {
   },
   plugins: [
     new webpack.ProgressPlugin(), // 进度条
-    new CleanWebpackPlugin({
+    
+    // 热加载时直接返回更新文件名,而不是文件的id
+    new webpack.NamedModulesPlugin(),
+    // 热更新模块
+    new webpack.HotModuleReplacementPlugin(),
+    
+    new CleanWebpackPlugin({ // 清除之前打包的所有文件
       verbose: true, // 控制台打印日志
-    }), // 清除之前打包的所有文件
+    }),
     new HtmlWebpackPlugin({
       template: './src/index.html',
       chunks: ['index'] // 打包后的文件中引入的入口的js文件，就是entry对象的属性名
