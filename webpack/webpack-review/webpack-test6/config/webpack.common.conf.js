@@ -119,26 +119,46 @@ module.exports = {
 			// initial 表示只对同步的引入做分割
 			// 对于同步引入的模块会到cacheGroups中判断一下
 			chunks: 'all',
-			minSize: 30000, // 针对于引入的模块或者库的文件内容大小，大于30kb就做代码分割，如果小于30kb会走配置cacheGroups中的default的配置（此时default不能配置为false）做代码分割成一个模块
-			maxSize: 0,  // 如果打包的模块大于这里配置的数值，会再次做代码分割，（不过一般设置0（或者就不配置了）,没必要再次分割了）
-			minChunks: 1, // 表示某个模块引入次数大于等于这里的设置的数值就做代码分割
-			maxAsyncRequests: 5, // 表示同时加载的模块数量，如果同时加载的模块数大于这里设置的数值就不会做代码分割了
-			maxInitialRequests: 3, // 表示入口文件加载的模块数，大于这里设置的就不会在做代码分割了
-			automaticNameDelimiter: '~', // 如果不配置cacheGroups中的filename，默认使用 ～ 作文件名的连接符号， 
-			name: true, // 表示打包生成的文件名使用cacheGrops中配置的文件名
+			minSize: 30000, // 针对于引入的模块或者库的文件内容大小，大于30kb就做代码分割，如果是同步引入的模块配置cacheGroups中的default做分割成一个模块
+			maxSize: 0,
+			minChunks: 1,
+			maxAsyncRequests: 5,
+			maxInitialRequests: 3,
+			automaticNameDelimiter: '~',
+			name: true,
 			cacheGroups: {
 				vendors: { // vendors 任意名
 					test: /[\\/]node_modules[\\/]/, // 表示针对于 node_module 中需要引入的第三方模块
-					priority: -10, // 表示模块同时满足多个test条件的话，打包的文件优先级会打包到那里去
+					priority: -10,
 					filename: 'lib/vendors.min.js' // 打包出的文件名，默认是vendors～模块.js, vendors是和对应的属性一致
 				},
-				default: {
-					minChunks: 2, // 表示某个模块引入次数大于等于这里的设置的数值就做代码分割
-          priority: -20,
-					reuseExistingChunk: true, //表示如果一个模块已经打包了，再次打包的时候就忽略不重复再次打包，直接使用之前打包的模块
-					filename: 'common/common.min.js'
-				}
+				default: false
 			}
 		}
 	}
+	// optimization: {
+	// 	splitChunks: {
+	// 		chunks: 'all',
+	// 		minSize: 30000,
+	// 		minRemainingSize: 0,
+	// 		maxSize: 0,
+	// 		minChunks: 1,
+	// 		maxAsyncRequests: 6,
+	// 		maxInitialRequests: 4,
+	// 		automaticNameDelimiter: '~',
+	// 		automaticNameMaxLength: 30,
+	// 		name: true,
+	// 		cacheGroups: {
+	// 			defaultVendors: {
+	// 				test: /[\\/]node_modules[\\/]/, // 表示引入的库是否是node_module下的库
+	// 				priority: -10
+	// 			},
+	// 			default: {
+	// 				minChunks: 2,
+	// 				priority: -20,
+	// 				reuseExistingChunk: true
+	// 			}
+	// 		}
+	// 	}
+	// }
 }

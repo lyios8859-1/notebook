@@ -496,3 +496,138 @@ webpack4 通过 mode 区分是开发环境和生产环境
 ## code splitting （代码分割）
 
 一般分离第三方库，第三方库一般都不做改动，做分离和缓存
+
+```js
+plugins: [
+  new webpack.ProgressPlugin(), // 进度条
+  new CleanWebpackPlugin({ // 清除之前打包的所有文件
+    verbose: true, // 控制台打印日志
+  }),
+  /**
+   * code-spliting webpack3 如下配置,webpack4已经废弃
+   * 方案一，分割代码配置
+   * 
+   * 1, 在入口entry中配置需要分割的第三方库
+   * vendor: ['vue', 'axios']
+   * 
+   * 2, 在入口plugins中配置需要分割的第三方库的chunk名与entry中的属性相同
+   * new webpack.optimize.CommonsChunkPlugin({
+        name: 'vendor',
+      }),
+    * 详解：
+    * 如下配置分割后的chunk名表示
+    * Webpack 大佬，在所有的 chunk 中，帮我找到依赖2次及以上的模块，然后移到 vendor 这个 chunk 里面，感激不尽。
+    1, 所有的 chunk（ app.js 和 vendor.js ）中，app.js 和 vendor.js 都引用了 vue 和 axios
+    2, 加起来2次，那把他们都移动到 vendor.js 里面。
+    3, 最后，app.js 原本包含的 vue 和 axios 都移动到了 vendor.js 。
+
+    方案二，自动分割代码配置，如果我们想把所有 node_modules 目录下的所有 .js 都自动分离到 vendor.js ，则需要用到 minChunks
+    1, 不需要在entry配置指定那些第三方库
+    entry: {
+      // vendor: ['vue', 'axios'] // 删掉!
+    },
+    2, 直接在 plugins中配置
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      minChunks: ({ resource }) => (
+        resource &&
+        resource.indexOf('node_modules') >= 0 &&
+        resource.match(/\.js$/)
+      ),
+    })
+    详解：
+    Webpack 大佬，如果你看见某些模块是来自 node_modules 目录的，并且名字是 .js 结尾的话，麻烦把他们都移到 vendor chunk 里去，如果 vendor chunk 不存在的话，就创建一个新的。
+      1, 找到了，vue 和 axios 都来自 node_modules 并且是 JS 文件
+      2, vendor chunk 不存在，那我就创建一个
+      3, 把他们俩移动到 vendor chunk
+    */
+  new HtmlWebpackPlugin({
+    template: './index.html',
+    // 如果采用了代码分割注意配置chunks: ['index']会引入不到分割的第三方模块
+    // chunks: ['index'] // 打包后的文件中引入的入口的js文件，就是entry对象的属性名
+  }),
+],
+// webpack 4 使用这个 optimization.splitChunks 实现 code-splitting
+optimization: {
+  splitChunks: { // 表示对webpack对代码分割
+    chunks: 'all'
+  }
+}
+```
+
+PS：这样打包的打包出来的一部加载的文件名是ID,不是我们想要的，我们需要的是对应的第三方模块名一致 需要在引入的地方使用 `/* webpackChunkName: "lodash" */`
+
+```js
+// 这是异步的加载方式
+// 测试 code-ssplitting的异步分割
+function getComponent () {
+  return import(/* webpackChunkName: "lodash" */'lodash').then(({default: _}) => {
+    const element = document.createElement('mark');
+    element.innerHTML = _.join(['Tom', 'Jerry'], '@');
+    return element;
+  });
+}
+```
+
+PS：此时打包出来的文件名会有一个前缀 **vendors~** 如下图：
+![codeSplitting的打包后的文件名](./1.png)
+
+PS：如果这里的静态的异步引入报错，需要安装`npm install --save-dev @babel/plugin-syntax-dynamic-import`，在 .babelrc 文件中配置 plugins
+
+```json
+{
+  "plugins": ["@babel/plugin-syntax-dynamic-import"]
+}
+```
+
+
+**splitChunks 中的部分配置详解**
+
+```js
+// webpack 4 使用这个 optimization.splitChunks 实现 code-splitting
+optimization: {
+  splitChunks: { // 表示对webpack对代码分割
+    chunks: 'all',
+    cacheGroups: {
+      vendors: false,
+      default: false
+    }
+  }
+}
+```
+
+配置了 cacheGroups 打包后的文件没有了 **vendors~** 如下图：
+![codeSplitting的打包后的文件名](./2.png)
+
+
+```js
+optimization: {
+  splitChunks: { // 表示对webpack对代码分割
+    // async 只针对于异步引入的做代码分割，如 import(/* webpackChunkName: "lodash" */'lodash').then(({default: _}) => {});有效，对于同步引入的是不会做代码分割的， 如：import _ from 'lodash';
+    //all 表示不管是异步还是同步引入都分割，但是需要在cacheGroups中配置
+    // initial 表示只对同步的引入做分割
+    // 对于同步引入的模块会到cacheGroups中判断一下
+    chunks: 'all',
+    minSize: 30000, // 针对于引入的模块或者库的文件内容大小，大于30kb就做代码分割，如果小于30kb会走配置cacheGroups中的default的配置（此时default不能配置为false）做代码分割成一个模块
+    maxSize: 0,  // 如果打包的模块大于这里配置的数值，会再次做代码分割，（不过一般设置0（或者就不配置了）,没必要再次分割了）
+    minChunks: 1, // 表示某个模块引入次数大于等于这里的设置的数值就做代码分割
+    maxAsyncRequests: 5, // 表示同时加载的模块数量，如果同时加载的模块数大于这里设置的数值就不会做代码分割了
+    maxInitialRequests: 3, // 表示入口文件加载的模块数，大于这里设置的就不会在做代码分割了
+    automaticNameDelimiter: '~', // 如果不配置cacheGroups中的filename，默认使用 ～ 作文件名的连接符号， 
+    name: true, // 表示打包生成的文件名使用cacheGrops中配置的文件名
+    cacheGroups: {
+      vendors: { // vendors 任意名
+        test: /[\\/]node_modules[\\/]/, // 表示针对于 node_module 中需要引入的第三方模块
+        priority: -10, // 表示模块同时满足多个test条件的话，打包的文件优先级会打包到那里去
+        filename: 'lib/vendors.min.js' // 打包出的文件名，默认是vendors～模块.js, vendors是和对应的属性一致
+      },
+      default: {
+        minChunks: 2, // 表示某个模块引入次数大于等于这里的设置的数值就做代码分割
+        priority: -20,
+        reuseExistingChunk: true, //表示如果一个模块已经打包了，再次打包的时候就忽略不重复再次打包，直接使用之前打包的模块
+        filename: 'common/common.min.js'
+      }
+    }
+  }
+}
+```
