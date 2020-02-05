@@ -11,7 +11,8 @@ module.exports = {
 	output: { // 编译打包后的输出文件信息
 		// 打包后的文件中资源文件引用路径（比如src），一般是服务器指定的资源文件路径（CDN）最好区分一下开发环境和生产环境
 		// publicPath: 'http://www.baidu.com',
-		filename: 'js/[name].[hash:8].js', // 在开发时入口开启热更替不能使用 [chunkhash] or [contenthash]  只能使用 [hash]
+		// filename: 'js/[name].[hash:8].js', // 打包后的entry配置的入口文件名，在开发时入口开启热更替不能使用 [chunkhash] or [contenthash]  只能使用 [hash]
+		// chunkFilename: 'js/[name].[chunkhash:8].js', // 非入口文件的文件名
 		path: path.resolve(__dirname, '../dist') // 必须绝对路径
 	},
 	module: {
@@ -20,22 +21,6 @@ module.exports = {
 				test: /\.jsx?$/,
 				exclude: /node_modules/,
 				loader: 'babel-loader'
-			},
-			{
-				test: /\.(s?css|styl|less)/,
-				use: [
-					'style-loader',
-					{
-						loader: 'css-loader',
-						options: {
-							importLoaders: 2, //配置css-loader 作用于样式文件中 @import 的样式资源都会重新通过postcss-loader.less-loader往上再依次处理 @import 引入的样式文件
-							//modules: true这样配置以后,通过 import './index.less'; 方式全局部引入是没有作用的
-							// modules: true, // css模块 应用import css from './index.less'这样局部引入; css.属性
-						},
-					},
-					'less-loader',
-					'postcss-loader' // 这个配合autoprefixer插件添加css前缀,在根目录下创建postcss.config.js
-				]
 			},
 			{
 				test: /\.(eot|svg|ttf|woff)$/,
@@ -113,12 +98,29 @@ module.exports = {
 		}),
 	],
 	optimization: {
+		// 兼容老版本的contenthash打包后文件没有修改的不一致的问题, 或多生成一个带 runtime~ 的映射文件信息
+		runtimeChunk: {
+      name: entrypoint => `runtime~${entrypoint.name}`
+    },
+		// 但是一些不需要TreeShaking的模块文件，需要在 package.json 中配置 
+		// "sideEffects": ["@babel/polyfill", "*.css"]
+		// 表示配置了 TreeShaking 了也不会对这里配置的文件做TreeShaking(比如：@babel/polyfill 和 .css 的文件是不需要TreeShaking，如果都需要TreeShaking操作就配置："sideEffects": false)
+    /*
+    没有使用TreeShaking前
+    ! exports provided: add, minus 
+
+    打包后出现这个表示TreeShaking作用了
+    ! exports provided: add, minus 
+    ! exports used: add 
+    */
+		// 如果配置 mode: 'production',是生产环境都不用配置了，已经内置了，但是这个"sideEffects": ["@babel/polyfill", "*.css"]还是需要配置的
+		usedExports: true, // 表示导入的模块需要TreeShaking
 		splitChunks: { // 表示对webpack对代码分割
 			// async 只针对于异步引入的做代码分割，如 import(/* webpackChunkName: "lodash" */'lodash').then(({default: _}) => {});有效，对于同步引入的是不会做代码分割的， 如：import _ from 'lodash';
-			//all 表示不管是异步还是同步引入都分割，但是需要在cacheGroups中配置
+			// all 表示不管是异步还是同步引入都分割，但是需要在cacheGroups中配置
 			// initial 表示只对同步的引入做分割
 			// 对于同步引入的模块会到cacheGroups中判断一下
-			chunks: 'all',
+			chunks: 'async',
 			minSize: 30000, // 针对于引入的模块或者库的文件内容大小，大于30kb就做代码分割，如果小于30kb会走配置cacheGroups中的default的配置（此时default不能配置为false）做代码分割成一个模块
 			maxSize: 0,  // 如果打包的模块大于这里配置的数值，会再次做代码分割，（不过一般设置0（或者就不配置了）,没必要再次分割了）
 			minChunks: 1, // 表示某个模块引入次数大于等于这里的设置的数值就做代码分割
@@ -130,15 +132,18 @@ module.exports = {
 				vendors: { // vendors 任意名
 					test: /[\\/]node_modules[\\/]/, // 表示针对于 node_module 中需要引入的第三方模块
 					priority: -10, // 表示模块同时满足多个test条件的话，打包的文件优先级会打包到那里去
-					filename: 'lib/vendors.min.js' // 打包出的文件名，默认是vendors～模块.js, vendors是和对应的属性一致
+					// filename: 'lib/vendors.min.js' // 打包出的文件名，这个文件不在前面指定的js下的，默认是vendors～模块.js, vendors是和对应的属性一致
+					name: 'lib/vendors' // 打包后的文件名，这个文件是在前面指定的js下的
 				},
 				default: {
 					minChunks: 2, // 表示某个模块引入次数大于等于这里的设置的数值就做代码分割
-          priority: -20,
+					priority: -20,
 					reuseExistingChunk: true, //表示如果一个模块已经打包了，再次打包的时候就忽略不重复再次打包，直接使用之前打包的模块
 					filename: 'common/common.min.js'
 				}
 			}
 		}
-	}
+	},
+	// 表示打包后文件超过规定的文件大小不报警告
+	performance: false
 }

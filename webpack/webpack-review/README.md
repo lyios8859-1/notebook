@@ -567,6 +567,14 @@ function getComponent () {
     return element;
   });
 }
+
+// 也可以这么写
+async function getComponent () {
+  const {default: _} = await import(/* webpackChunkName: "lodash" */'lodash');
+  const element = document.createElement('mark');
+  element.innerHTML = _.join(['Tom', 'Jerry'], '@');
+  return element;
+}
 ```
 
 PS：此时打包出来的文件名会有一个前缀 **vendors~** 如下图：
@@ -630,4 +638,92 @@ optimization: {
     }
   }
 }
+```
+
+## 懒加载
+
+```js
+function getComponent () {
+  // 魔法写法import(/* webpackChunkName: "lodash" */'lodash')
+  return import(/* webpackChunkName: "lodash" */'lodash').then(({default: _}) => {
+    const element = document.createElement('mark');
+    element.innerHTML = _.join(['Tom', 'Jerry'], '@');
+    return element;
+  });
+}
+
+// 也可以这么写
+async function getComponent () {
+  const {default: _} = await import(/* webpackChunkName: "lodash" */'lodash');
+  const element = document.createElement('mark');
+  element.innerHTML = _.join(['Tom', 'Jerry'], '@');
+  return element;
+}
+```
+
+## 魔法写法 webpackPrefetch: true
+
+prefetch(预取)：将来某些导航下可能需要的资源
+
+preload(预加载)：当前导航下可能需要资源
+
+```js
+// webpackPrefetch 表示等核心代码加载完成才加载(预先加载)
+import(/* webpackPrefetch: true */ 'lodash');
+```
+
+## CSS样式的分离
+
+```shell
+npm install --save-dev mini-css-extract-plugin optimize-css-assets-webpack-plugin
+```
+
+```js
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+module: {
+  rules: [
+    {
+      test: /\.(s?css|styl|less)/,
+      use: [
+        MiniCssExtractPlugin.loader,
+        {
+          loader: 'css-loader',
+          options: {
+            importLoaders: 2, //配置css-loader 作用于样式文件中 @import 的样式资源都会重新通过postcss-loader.less-loader往上再依次处理 @import 引入的样式文件
+            //modules: true这样配置以后,通过 import './index.less'; 方式全局部引入是没有作用的
+            // modules: true, // css模块 应用import css from './index.less'这样局部引入; css.属性
+          },
+        },
+        'less-loader',
+        'postcss-loader' // 这个配合autoprefixer插件添加css前缀,在根目录下创建postcss.config.js
+      ]
+    }
+  ]
+},
+plugins: [
+  new MiniCssExtractPlugin({
+    filename: "[name].[hash:8].css",
+    chunkFilename: "[id].[chunkhash:8].css"
+  })
+],
+optimization: {
+  minimizer: [
+    // 用terser-webpack-plugin替换掉uglifyjs-webpack-plugin解决uglifyjs不支持es6语法问题
+    // new TerserJSPlugin({}), const TerserJSPlugin = require("terser-webpack-plugin"); 
+    // 压缩CSS
+    new OptimizeCSSAssetsPlugin({})
+  ]
+},
+```
+
+PS: 如果没有作用，注意 package.json 中的 配置，如下
+
+告诉 webpack 那些不需要TreeShaking
+
+```json
+"sideEffects": [
+  "@babel/polyfill",
+  "*.css"
+],
 ```
