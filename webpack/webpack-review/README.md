@@ -46,7 +46,10 @@ const path = require('path');
 module.exports = {
   // development|none 配置在开发环境(不压缩代码), production 配置在生产环境(会压缩代码)
   mode: 'development',
-  entry: './src/index.js',// 入口文件程序
+  entry: { // 入口文件程序. 属性的前后注定打包后通过script的引入的前后,如下 a.js在index.js之前先加载
+    a: './src/a.js', 
+    index: './src/index.js',
+  }，
   output: { // 编译打包后的输出文件信息
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'bundle') // 必须绝对路径
@@ -488,3 +491,8 @@ optimization: {
 
 ## mode的 development 和 production 模式
 
+webpack4 通过 mode 区分是开发环境和生产环境
+
+## code splitting （代码分割）
+
+一般分离第三方库，第三方库一般都不做改动，做分离和缓存
