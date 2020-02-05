@@ -461,3 +461,30 @@ npm install --save @babel/runtime
   ]
 }
 ```
+
+## Tree Shaking
+
+在打包后没有引用到模块代码不会打包出去（会删除掉）
+
+注意：只支持ES Module的（静态模块的）模块引入（require是不支持的）
+
+```js
+optimization: {
+  // 但是一些不需要TreeShaking的模块文件，需要在 package.json 中配置 
+  // "sideEffects": ["@babel/polyfill", "*.css"]
+  // 表示配置了 TreeShaking 了也不会对这里配置的文件做TreeShaking(比如：@babel/polyfill 和 .css 的文件是不需要TreeShaking，如果都需要TreeShaking操作就配置："sideEffects": false)
+  /*
+  没有使用TreeShaking前
+  ! exports provided: add, minus 
+
+  打包后出现这个表示TreeShaking作用了
+  ! exports provided: add, minus 
+  ! exports used: add 
+  */
+  // 如果配置 mode: 'production',是生产环境都不用配置了，已经内置了，但是这个"sideEffects": ["@babel/polyfill", "*.css"]还是需要配置的
+  usedExports: true  // 表示导入的模块需要TreeShaking
+}
+```
+
+## mode的 development 和 production 模式
+
