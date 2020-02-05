@@ -440,7 +440,7 @@ npm install --save @babel/runtime
 
 ```json
 {
-  // 这个就需要了
+  // 这个就删除不需要了
   // "presets": [
   //     [
   //         "@babel/preset-env",
