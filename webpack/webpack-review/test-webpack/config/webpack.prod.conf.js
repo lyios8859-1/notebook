@@ -5,6 +5,9 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
+// 这个压缩的代码如果产生的 map 定位错误文件是有问题的（暂时没有找到原因）
+const TerserJSPlugin = require('terser-webpack-plugin');
+
 // 最新的npm i -D uglifyjs-webpack-plugin@beta 才可以压缩 es6
 const UglifyESPlugin = require('uglifyjs-webpack-plugin');
 
@@ -63,10 +66,10 @@ prodConfig = {
   // optimization: {
   //   minimizer: [
   //     // 用terser-webpack-plugin替换掉uglifyjs-webpack-plugin解决uglifyjs不支持es6语法问题
-  //     // const TerserJSPlugin = require('terser-webpack-plugin');
-  //     // new TerserJSPlugin({
-  //     //   sourceMap: true  // 这个生成的sourceMap在生产环境出错定位有问题。暂时没找到原因
-  //     // }),
+  //     new TerserJSPlugin({
+  //       parallel: true,
+  //       sourceMap: true  // 这个生成的sourceMap在生产环境出错定位有问题。暂时没找到原因
+  //     }),
   //   ]
   // },
 
@@ -74,6 +77,7 @@ prodConfig = {
     minimizer: [
       // 压缩 js
       new UglifyESPlugin({
+        parallel: true,
         sourceMap: true, // 生成map文件
         // 多嵌套了一层
         uglifyOptions: {
@@ -96,7 +100,7 @@ prodConfig = {
         }
       })
     ],
-  },
+  }
 }
 
 module.exports = merge(commonConfig, prodConfig);
