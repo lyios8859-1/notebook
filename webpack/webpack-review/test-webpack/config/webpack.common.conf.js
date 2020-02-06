@@ -2,8 +2,6 @@ const path = require('path');
 const webpack = require('webpack');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-
 module.exports = {
 	entry: { // 入口文件程序
 		index: './src/index.js'
@@ -50,9 +48,6 @@ module.exports = {
 	},
 	plugins: [
 		new webpack.ProgressPlugin(), // 进度条
-		new CleanWebpackPlugin({ // 清除之前打包的所有文件
-			verbose: true, // 控制台打印日志
-		}),
 		/**
 		 * code-spliting webpack3 如下配置,webpack4已经废弃
 		 * 方案一，分割代码配置
@@ -95,7 +90,8 @@ module.exports = {
 			template: './index.html',
 			// 如果采用了代码分割注意配置chunks: ['index']会引入不到分割的第三方模块
 			// chunks: ['index'] // 打包后的文件中引入的入口的js文件，就是entry对象的属性名
-		}),
+    }),
+    // 支持 PWA
 	],
 	optimization: {
 		// 兼容老版本的contenthash打包后文件没有修改的不一致的问题, 或多生成一个带 runtime~ 的映射文件信息

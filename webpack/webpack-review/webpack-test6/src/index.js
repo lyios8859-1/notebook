@@ -17,17 +17,17 @@ element.innerHTML = _.join(['Tom', 'Jerry'], '@');
 //     });
 // }
 
-class App extends Component {
-	render() {
-		return (
-			<div>
-				Hello React!!!!
-      </div>
-		);
-	}
-}
+// class App extends Component {
+// 	render() {
+// 		return (
+// 			<div>
+// 				Hello React!!!!
+//       </div>
+// 		);
+// 	}
+// }
 
-ReactDom.render(<App />, document.getElementById('root'));
+// ReactDom.render(<App />, document.getElementById('root'));
 // getComponent().then((element) => {
 document.body.appendChild(element);
 // });

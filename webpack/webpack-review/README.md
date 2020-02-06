@@ -727,3 +727,20 @@ PS: 如果没有作用，注意 package.json 中的 配置，如下
   "*.css"
 ],
 ```
+
+## webpack中配置 PWA
+
+> Progressive Web Application
+
+```shell
+npm install --save-dev 
+```
+
+```js
+plugins: [
+  new 
+]
+```
+
+
+[参考](https://www.jianshu.com/p/75161cbc067e)

@@ -15,6 +15,7 @@ async function getComponent () {
   return element;
 }
 
+consoled.log('dd')
 // class App extends Component {
 // 	render() {
 // 		return (
