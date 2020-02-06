@@ -442,25 +442,25 @@ npm install --save @babel/runtime
 {
   // 这个就删除不需要了
   // "presets": [
-  //     [
-  //         "@babel/preset-env",
-  //         {
-  //             "targets": {"chrome": "67"},
-  //             "corejs": 3,
-  //             "useBuiltIns": "usage"
-  //         }
-  //     ]
+  //   [
+  //     "@babel/preset-env",
+  //     {
+  //       "targets": {"chrome": "67"},
+  //       "corejs": 3,
+  //       "useBuiltIns": "usage"
+  //     }
+  //   ]
   // ],
   "plugins": [
-      [
-          "@babel/plugin-transform-runtime",
-          {
-          "corejs": 3,
-          "helpers": true,
-          "regenerator": true,
-          "useESModules": false
-          }
-      ]
+    [
+      "@babel/plugin-transform-runtime",
+      {
+      "corejs": 3,
+      "helpers": true,
+      "regenerator": true,
+      "useESModules": false
+      }
+    ]
   ]
 }
 ```

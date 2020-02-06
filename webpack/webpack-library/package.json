@@ -1,0 +1,19 @@
+{
+  "name": "timly-library",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./dist/ly.min.js",
+  "scripts": {
+    "build": "webpack"
+  },
+  "keywords": [],
+  "author": "Timly",
+  "license": "MIT",
+  "devDependencies": {
+    "webpack": "^4.41.5",
+    "webpack-cli": "^3.3.10"
+  },
+  "dependencies": {
+    "lodash": "^4.17.15"
+  }
+}
