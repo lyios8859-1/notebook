@@ -713,7 +713,7 @@ optimization: {
     // 用terser-webpack-plugin替换掉uglifyjs-webpack-plugin解决uglifyjs不支持es6语法问题
     // new TerserJSPlugin({}), const TerserJSPlugin = require("terser-webpack-plugin"); 
     // 压缩CSS
-    new OptimizeCSSAssetsPlugin({})
+    new OptimizeCSSAssetsPlugin({})   // 在 webpack的文档中看到是在optimization.minimizer中配置，然而在github中是在 plugins 中配置的（不不理解其中的原因）
   ]
 },
 ```
@@ -728,6 +728,40 @@ PS: 如果没有作用，注意 package.json 中的 配置，如下
   "*.css"
 ],
 ```
+
+PS: 注意在压缩js时 不使用`terser-webpack-plugin`压缩后如果生成 map的文件定位错误是有bug的，所以使用 `uglifyjs-webpack-plugin@beta`
+
+```js
+optimization: {
+  minimizer: [
+    // 压缩 js
+    new UglifyESPlugin({ // 使用  npm i -D uglifyjs-webpack-plugin@beta  替换 terser-webpack-plugin 打包的生成的sourceMap 定位错误有bug ，使用 beta版本是为了可以打包 es6
+      parallel: true,
+      sourceMap: true, // 生成map文件
+      // 多嵌套了一层
+      uglifyOptions: {
+        compress: {
+          // 在UglifyJs删除没有用到的代码时不输出警告
+          warnings: false,
+          // 删除所有的 `console` 语句，可以兼容ie浏览器
+          drop_console: true,
+          // 内嵌定义了但是只用到一次的变量
+          collapse_vars: true,
+          // 提取出出现多次但是没有定义成变量去引用的静态值
+          reduce_vars: true,
+        },
+        output: {
+          // 最紧凑的输出
+          beautify: false,
+          // 删除所有的注释
+          comments: false,
+        }
+      }
+    })
+  ],
+}
+```
+
 
 ## webpack中配置 PWA
 
