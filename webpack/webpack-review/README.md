@@ -800,3 +800,63 @@ if ('serviceWorker' in navigator) {
 打包后生成文件 service-sorker.js
 ![PWA](./serviceworker.png)
 
+
+## 支持TypeScript
+
+webpack配置
+
+```js
+const path = require('path');
+module.exports = {
+  mode: 'production',
+  entry: './src/index.ts',
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'bundle.js'
+  },
+  module: {
+    rules: [
+      {
+        test: /\.tsx?/,
+        use: 'ts-loader',
+        exclude: /node_modules/ // 不处理node_modules引入的文件
+      }
+    ]
+  }
+}
+```
+
+在项目根目录下，创建 typescript 的配置文件 tsconfig.json
+
+```json
+{
+ "compilerOptions": {
+   "outDir": "./dist", // 编译后的文件存放路径（和webpack配置的打包后的存放路径一致）
+   "module": "es6", // 使用 ES Module 的方式引入各个模块js，如：import * as _ from 'lodash';
+   "target": "ES3",  // 编译后的支持 可以ES3,ES5等
+   "allowJs": true  // 允许在typescript模块中js文件
+ } 
+}
+```
+
+PS: 如果需要符合typescript的类型检测，那么
+
+```bash
+npm install --save lodash
+npm install --save-dev @types/lodash
+```
+
+```js
+import * as _ from 'lodash';
+```
+
+PS: 当然在打包是对性能是有影响的（ts-loader）
+
+在开发阶段配置一些明确的 typescript 的类型错误提示(当然其他一些错误提示也是可以的), 在 webpack 中配置
+
+```js
+devServer: {
+  // 出现编译器错误或警告时，在浏览器中显示全屏覆盖x显示出来。
+  overlay: true
+}
+```
