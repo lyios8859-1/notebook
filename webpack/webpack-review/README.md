@@ -4,7 +4,8 @@
 
 2, `npx`的会在运行时,到`node_modules/.bin`路径和环境变量`$PATH`里面,检查命令是否存在.
 
-[参考](https://www.jianshu.com/p/b63cc830aaf3)
+[参考1](https://www.jianshu.com/p/b63cc830aaf3)
+[参考2](https://www.jianshu.com/p/75161cbc067e)
 
 ## 什么是模块打包工具
 
@@ -730,17 +731,38 @@ PS: 如果没有作用，注意 package.json 中的 配置，如下
 
 ## webpack中配置 PWA
 
-> Progressive Web Application
+> Progressive Web Application, 离线可以访问页面的新技术（原理serviceworker）
 
 ```shell
-npm install --save-dev 
+npm i --save-dev workbox-webpack-plugin 
 ```
 
 ```js
 plugins: [
-  new 
+  // 生产环境使用
+  new new WorkboxPlugin.GenerateSW({
+    clientsClaim: true,
+    skipWaiting: true
+  })
 ]
 ```
 
+入口文件
 
-[参考](https://www.jianshu.com/p/75161cbc067e)
+```js
+// 支持 serviceWorker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    // 注册 serviceWorker
+    navigator.serviceWorker.register('service-worker.js') // service-worker.js 是生成的文件
+      .then(registeration => {
+        // 注册成功
+        console.log('serviceSorker registed!');
+      })
+  });
+}
+```
+
+打包后生成文件 service-sorker.js
+![PWA](./serviceworker.png)
+

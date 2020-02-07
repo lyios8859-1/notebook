@@ -90,8 +90,7 @@ module.exports = {
 			template: './index.html',
 			// 如果采用了代码分割注意配置chunks: ['index']会引入不到分割的第三方模块
 			// chunks: ['index'] // 打包后的文件中引入的入口的js文件，就是entry对象的属性名
-    }),
-    // 支持 PWA
+    })
 	],
 	optimization: {
 		// 兼容老版本的contenthash打包后文件没有修改的不一致的问题, 或多生成一个带 runtime~ 的映射文件信息

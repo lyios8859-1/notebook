@@ -15,7 +15,6 @@ async function getComponent () {
   return element;
 }
 
-consoled.log('dd')
 // class App extends Component {
 // 	render() {
 // 		return (
@@ -35,4 +34,15 @@ document.addEventListener('click', () => {
 if (module.hot) {
 	console.log('hot');
 	module.hot.accept();
+}
+// 支持 serviceWorker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    // 注册 serviceWorker
+    navigator.serviceWorker.register('service-worker.js') // service-worker.js 是生成的文件
+      .then(registeration => {
+        // 注册成功
+        console.log('serviceSorker registed!');
+      })
+  });
 }

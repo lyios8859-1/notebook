@@ -8,8 +8,11 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 // 这个压缩的代码如果产生的 map 定位错误文件是有问题的（暂时没有找到原因）
 const TerserJSPlugin = require('terser-webpack-plugin');
 
-// 最新的npm i -D uglifyjs-webpack-plugin@beta 才可以压缩 es6
+// 最新的npm i -D uglifyjs-webpack-plugin@beta 才可以压缩 es6， 这个解决了 terser-webpack-plugin 的 bug
 const UglifyESPlugin = require('uglifyjs-webpack-plugin');
+
+// 使用 PWA
+const WorkboxPlugin =  require('workbox-webpack-plugin');
 
 const commonConfig = require('./webpack.common.conf.js');
 
@@ -52,7 +55,8 @@ prodConfig = {
   },
   // plugins: [new BundleAnalyzerPlugin()]
   plugins: [
-    new CleanWebpackPlugin({ // 清除之前打包的所有文件
+    // 清除之前打包的所有文件
+    new CleanWebpackPlugin({
       verbose: true, // 控制台打印日志
     }),
     // 提取 css
@@ -62,6 +66,12 @@ prodConfig = {
     }),
     // 压缩 css
     new OptimizeCSSAssetsPlugin({}),
+
+    // 生产环境支持 PWA
+    new WorkboxPlugin.GenerateSW({
+      clientsClaim: true,
+      skipWaiting: true
+    })
   ],
   // optimization: {
   //   minimizer: [
@@ -76,7 +86,7 @@ prodConfig = {
   optimization: {
     minimizer: [
       // 压缩 js
-      new UglifyESPlugin({
+      new UglifyESPlugin({ // 使用  npm i -D uglifyjs-webpack-plugin@beta  替换 terser-webpack-plugin 打包的生成的sourceMap 定位错误有bug ，使用 beta版本是为了可以打包 es6
         parallel: true,
         sourceMap: true, // 生成map文件
         // 多嵌套了一层
