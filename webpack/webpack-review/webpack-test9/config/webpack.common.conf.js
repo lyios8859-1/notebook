@@ -18,18 +18,7 @@ module.exports = {
 			{
 				test: /\.(jsx?|tsx?)$/,
 				exclude: /node_modules/,
-        // loader: 'babel-loader'
-        // use: ['babel-loader', 'eslint-loader'] // 由于webpack是从后往前执行，所以必须配置在最后一个，否则配置 force: 'pre'
-        use: [
-          {
-            loader: 'eslint-loader',
-            options: {
-              fix: true, // 一些可以修复的，eslint可以自动修复
-              force: 'pre' // 强制 elsint 优先执行
-            }
-          },
-          'babel-loader'
-        ]
+				loader: 'babel-loader'
 			},
 			{
 				test: /\.(eot|svg|ttf|woff)$/,

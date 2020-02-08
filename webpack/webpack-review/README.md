@@ -860,3 +860,87 @@ devServer: {
   overlay: true
 }
 ```
+
+## 代码规范检测（Eslint）
+
+```shell
+npm install --save-dev eslint babel-eslit
+```
+
+通过命令 `npx eslint --init` 生成 `.eslintrc.js`
+
+也可以手动配置一下 .eslintrc.js：
+
+```js
+module.exports = {
+  /*
+    指定了是那个环境下，否则像 document,window 这种全局变量会检测不通过.
+    也可以配置：
+    globals: {
+      document: false
+    }
+  */
+  'env': { 
+    'browser': true,
+    'es6': true
+  },
+  'extends': [
+    'airbnb'
+  ],
+  "parser": "babel-eslint",
+  'rules': {
+    'react/prefer-stateless-function': 0,
+    'react/jsx-filename-extension': 0
+  }
+};
+```
+
+尝试通过命令 `npx eslint src` 检测一下src文件夹下的文件
+
+忽略哪些文件不需要检测，在项目根目录下创建文件 `.eslintignore`
+/src/font
+/dist
+
+**配置Eslint自动检测**
+
+```shell
+ npm install --save-dev eslint-loader
+```
+
+webpack配置：
+
+```js
+
+module: {
+  rules: [
+    {
+      test: /\.(jsx?|tsx?)$/,
+      exclude: /node_modules/,
+      /*
+        由于webpack是从后往前执行，所以必须配置在最后一个, 如果需要写在前面, 必须配置 force: ‘pre’, 这个参数
+          use: [
+          {
+            loader: 'eslint-loader',
+            options: {
+              fix: true, // 一些可以修复的，eslint可以自动修复
+              force: 'pre' // 强制 elsint 优先执行
+            }
+          },
+          'babel-loader'
+        ]
+      */
+      use: ['babel-loader', 'eslint-loader']
+    }
+  ]
+}
+// 更加友好的信息提示
+devServer: {
+  // 出现编译器错误或警告时，在浏览器中显示全屏相关提示信息。
+  overlay: {
+    warnings: true,
+    errors: true
+  }
+}
+```
+
+PS: 当然在打包是对性能是有影响的（eslint-loader），生产环境根据需要再配置

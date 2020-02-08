@@ -19,11 +19,6 @@ const devConfig = {
   // eval: 打包速度最快的一种方式，不会产生map文件，eval方式处理代码（针对于复杂的代码不建议使用）
   devtool: 'cheap-module-eval-source-map', // 生成sourceMap文件，cheap-module-eval-source-map建议使用在开发环境，cheap-module-source-map建议使用在生产环境（一般不使用）
   devServer: {
-    // 出现编译器错误或警告时，在浏览器中显示全屏相关提示信息。
-    overlay: {
-      warnings: true,
-      errors: true
-    },
     // 对前端路由的处理，否则请求路由找的是后台服务是找不到的，所以配置
     historyApiFallback: true,
     // webpackDevserver启动的服务在那个文件夹目录下
