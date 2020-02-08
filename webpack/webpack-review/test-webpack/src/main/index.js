@@ -1,8 +1,5 @@
 import React, { Component } from 'react';
 import ReactDom from 'react-dom';
-import { BrowserRouter, Route } from 'react-router-dom';
-import Home from './child/home';
-import List from './child/list';
 
 class App extends Component {
   componentDidMount() {
@@ -26,14 +23,7 @@ class App extends Component {
   }
 
   render() {
-    return React.createElement(BrowserRouter, null, React.createElement('div', null, React.createElement(Route, {
-      path: '/',
-      exact: true,
-      component: Home,
-    }), React.createElement(Route, {
-      path: '/list',
-      component: List,
-    })));
+    return React.createElement('div', null, '首页');
   }
 }
 

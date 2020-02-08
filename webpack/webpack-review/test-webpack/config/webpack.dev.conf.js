@@ -21,7 +21,7 @@ const devConfig = {
   devServer: {
     // 出现编译器错误或警告时，在浏览器中显示全屏相关提示信息。
     overlay: {
-      warnings: true,
+      warnings: false,
       errors: true
     },
     // 对前端路由的处理，否则请求路由找的是后台服务是找不到的，所以配置

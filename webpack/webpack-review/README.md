@@ -949,7 +949,7 @@ PS: 当然在打包是对性能是有影响的（eslint-loader），生产环境
 
 ## webpack 性能优化
 
-- dll 的打包处理, 对于第三哪方模块只打包一次
+- dll 的打包处理, 对于第三哪方模块提取出来只打包一次
 
 首先生成dll的文件，webpack配置, 新创建 webpack.dll.conf.js 文件，内容：
 
@@ -1062,3 +1062,81 @@ dllFiles.forEach(file => {
   }
 });
 ```
+
+- 控制包文件大小（源码中使用不到的TreeShaking，或不引用）
+- 多进程打包，thread-loader, parallel-webpack, happypack
+- 合理使用 sourceMap
+
+1. source-map： 会生成map文件 
+2. inline-source-map：不会生成map文件，但是会在文件后面添加一个base64的字符串
+3. cheap: 表示代码出错，代码表示那一行出错。如果没有cheap会精确到那一行那一列出错（非常耗费打包性能）
+4. module： 表示代码出错不尽是自己的业务代码还包含了第三方库（loader）是否出错
+5. eval: 打包速度最快的一种方式，不会产生map文件，eval方式处理代码（针对于复杂的代码不建议使用）
+
+因此：`cheap-module-eval-source-map `建议使用在开发环境，`cheap-module-source-map `建议使用在生产环境（一般不使用）
+
+- 使用一些打包分析工具分析，再处理
+
+```js
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+
+plugins: [new BundleAnalyzerPlugin()]
+```
+
+- 开发环境内存编译（不会生成dist目录，放在内存中）
+- 开发环境剔除无用的插件
+
+## 自动构建多入口，多页面
+
+1. 自动构建多入口
+
+```js
+const glob = require('glob');
+// 自动构建多入口entries函数
+const entries = function (srcDir) {
+  const jsDir = path.resolve(__dirname, srcDir);
+  const entryFiles = glob.sync(jsDir + '/*.{js,jsx}');
+  const map = {};
+  entryFiles.forEach((filePath) => {
+    const filename = filePath.substring(filePath.lastIndexOf('\/') + 1, filePath.lastIndexOf('.'));
+    map[filename] = filePath;
+  });
+  return map;
+}
+
+entry: entries('../src/main'),
+```
+
+2. 自动构建多页面
+
+```js
+// 多页面配置，其实就是多个HtmlWebpackPlugin的配置
+if (Object.prototype.toString.call(config.entry) === '[object Object]') {
+  Object.keys(config.entry).forEach(entry => {
+    config.plugins.push(
+      new HtmlWebpackPlugin({
+        template: './index.html',
+        filename: `${entry}.html`,
+        title: entry,
+        // 尤其注意这里需要把所有打包后要用到的文件chunk名都引入
+        // 如果采用了代码分割注意配置chunks: ['index']会引入不到分割的第三方模块
+        // chunks: [`runtime~${entry}`, 'vendors', 'commons', entry] // 打包后的文件中引入的入口的js文件，就是entry对象的属性名
+        chunks: ['runtime', 'vendors', 'commons', entry] // 打包后的文件中引入的入口的js文件，就是entry对象的属性名
+      })
+    );
+  })
+} else if (Object.prototype.toString.call(config.entry) === '[object String]') {
+  config.plugins.push(
+    new HtmlWebpackPlugin({
+      template: './index.html',
+      filename: 'index.html',
+      title: '首页',
+      // 如果采用了代码分割注意配置chunks: ['index']会引入不到分割的第三方模块
+      // chunks: ['runtime~main', 'vendors', 'commons', 'main'] // 打包后的文件中引入的入口的js文件，就是entry对象的属性名
+      chunks: ['runtime', 'vendors', 'commons', 'main'] // 打包后的文件中引入的入口的js文件，就是entry对象的属性名
+    })
+  );
+}
+```
+
+PS: 尤其关注，如果多页面配置的话，需要注意代码不要使用任何迁前端路由（测试有问题），还有就是 HtmlWebpackPlugin 中的配置要注意：凡是打包后的模板引入的脚本文件，都要配置到chunks `chunks: ['runtime', 'vendors', 'commons', 'main']`;
