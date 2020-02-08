@@ -897,20 +897,21 @@ module.exports = {
 
 尝试通过命令 `npx eslint src` 检测一下src文件夹下的文件
 
-忽略哪些文件不需要检测，在项目根目录下创建文件 `.eslintignore`
+忽略哪些文件不需要检测，在项目根目录下创建文件 `.eslintignore`, 内容：
+
 /src/font
+
 /dist
 
 **配置Eslint自动检测**
 
 ```shell
- npm install --save-dev eslint-loader
+npm install --save-dev eslint-loader
 ```
 
 webpack配置：
 
 ```js
-
 module: {
   rules: [
     {
@@ -944,3 +945,120 @@ devServer: {
 ```
 
 PS: 当然在打包是对性能是有影响的（eslint-loader），生产环境根据需要再配置
+
+
+## webpack 性能优化
+
+- dll 的打包处理, 对于第三哪方模块只打包一次
+
+首先生成dll的文件，webpack配置, 新创建 webpack.dll.conf.js 文件，内容：
+
+```js
+const path = require('path');
+const webpack = require('webpack');
+
+module.exports = {
+  mode: 'production',
+  entry: {
+    // 第三方模块
+    // 方案一：都不拆分，把所有的第三哪方模块都打包到 vendors文件中
+    vendors: ['react', 'react-dom', 'react-router-dom', 'lodash']
+  },
+  output: {
+    filename: '[name].dll.js',
+    path: path.resolve(__dirname, '../js/dll'), // 必须绝对路径
+    library: '[name]_[hash:8]' // 暴露出去的全局变量
+  },
+  plugins: [
+    // 分析这个打包后的dll文件中的第三方库，把第三方库的信息存放到 [name].manifest.json 文件中
+    new webpack.DllPlugin({
+      name: '[name]_[hash:8]', // 这里配置的和output.library的属性值一致
+      path: path.resolve(__dirname, '../js/dll/[name].manifest.json')
+    })
+  ]
+}
+```
+
+使用生成的dll文件，自动添加打包后的dll文件到入口html文件中去，安装 `npm install add-asset-html-webpack-plugin --save-dev`。
+
+在公共的 webpack 中配置：
+
+```js
+// 在模板自动添加一些额外的插件，比如打包后生成的 dll 文件 
+const AddAssetHtmWebpacklPlugin = require('add-asset-html-webpack-plugin');
+
+plugins: [
+  // 配置 dll 的文件映射
+  // 在已经生成的模板添加额外的一些js插件，比如：打包后生成的 dll 文件
+  new AddAssetHtmWebpacklPlugin({
+    // vendors.dll.js 这个文件是 webpack.dll.conf.js 文件打包后生成的文件
+    filepath: path.resolve(__dirname, '../js/dll/vendors.dll.js')
+  }),
+  // 映射 dll 的文件库，如果对应有相应的第三方库就不要再打包了
+  new webpack.DllReferencePlugin({
+    // vendors.manifest.json 这个文件是 webpack.dll.conf.js 文件打包后生成的文件
+    manifest: path.resolve(__dirname, '../js/dll/vendors.manifest.json')
+  })
+]
+```
+
+如果生成多个 dll.js, manifest.json 文件， 拆分了
+
+```js
+const path = require('path');
+const webpack = require('webpack');
+
+module.exports = {
+  mode: 'production',
+  entry: {
+    // 第三方模块
+    // 方案二：拆分一下
+    vendors: ['lodash'],
+    react: ['react', 'react-dom', 'react-router-dom']
+  },
+  output: {
+    filename: '[name].dll.js',
+    path: path.resolve(__dirname, '../js/dll'), // 必须绝对路径
+    library: '[name]_[hash:8]' // 暴露出去的全局变量
+  },
+  plugins: [
+    // 分析这个打包后的dll文件中的第三方库，把第三方库的信息存放到 [name].manifest.json 文件中
+    new webpack.DllPlugin({
+      name: '[name]_[hash:8]', // 这里配置的和output.library的属性值一致
+      path: path.resolve(__dirname, '../js/dll/[name].manifest.json')
+    })
+  ]
+}
+```
+
+```js
+
+// // 配置 dll 的文件映射
+// // 在已经生成的模板添加额外的一些js插件，比如：打包后生成的 dll 文件
+// new AddAssetHtmWebpacklPlugin({
+//   // vendors.dll.js 这个文件是 webpack.dll.conf.js 文件打包后生成的文件
+//   filepath: path.resolve(__dirname, '../dll/*.dll.js')
+// }),
+// // 映射 dll 的文件库，如果对应有相应的第三方库就不要再打包了
+// new webpack.DllReferencePlugin({
+//   // vendors.manifest.json 这个文件是 webpack.dll.conf.js 文件打包后生成的文件
+//   manifest: path.resolve(__dirname, '../dll/vendors.manifest.json')
+// })
+const dllFiles = fs.readdirSync(path.resolve(__dirname, '../dll'));
+dllFiles.forEach(file => {
+  if (/.*\.dll.js$/.test(file)) {
+    commonConfig.plugins.push(
+      new AddAssetHtmWebpacklPlugin({
+        filepath: path.resolve(__dirname, '../dll', file)
+      })
+    )
+  }
+  if (/.*\.manifest.json$/.test(file)) {
+    commonConfig.plugins.push(
+      new webpack.DllReferencePlugin({
+        manifest: path.resolve(__dirname, '../dll', file)
+      })
+    )
+  }
+});
+```
