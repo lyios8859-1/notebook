@@ -41,29 +41,16 @@ const config = {
         test: /\.(jsx?|tsx?)$/,
         exclude: /node_modules/,
         // loader: 'babel-loader'
-        /*
-        // 由于webpack是从后往前执行，所以必须配置在最后一个，否则配置 enforce: 'pre' ，单独配置检测js文件
-         {
-            test: /\.(jsx?|tsx?)$/,
-            enforce: 'pre',
-            exclude: /node_modules/,
-            loader: 'eslint-loader'
-          },
-          {
-            test: /\.(jsx?|tsx?)$/,
-            exclude: /node_modules/,
-            loader: 'babel-loader'
-          },
-        */
+        // use: ['babel-loader', 'eslint-loader'] // 由于webpack是从后往前执行，所以必须配置在最后一个，否则配置 force: 'pre'
         use: [
-          'babel-loader',
           {
             loader: 'eslint-loader',
             options: {
-              cache: true, // 对打包速度有一定的提高
-              fix: true // 一些可以修复的，eslint可以自动修复
+              fix: true, // 一些可以修复的，eslint可以自动修复
+              force: 'pre' // 强制 elsint 优先执行
             }
           },
+          'babel-loader'
         ]
       },
       {

@@ -917,19 +917,20 @@ module: {
     {
       test: /\.(jsx?|tsx?)$/,
       exclude: /node_modules/,
-      /*
-        由于webpack是从后往前执行，所以必须配置在最后一个, 如果需要写在前面, 必须配置 force: ‘pre’, 这个参数
-          use: [
-          {
-            loader: 'eslint-loader',
-            options: {
-              fix: true, // 一些可以修复的，eslint可以自动修复
-              force: 'pre' // 强制 elsint 优先执行
-            }
+        /*
+        // 由于webpack是从后往前执行，所以必须配置在最后一个，否则配置 enforce: 'pre' ，单独配置检测js文件
+         {
+            test: /\.(jsx?|tsx?)$/,
+            enforce: 'pre',
+            exclude: /node_modules/,
+            loader: 'eslint-loader'
           },
-          'babel-loader'
-        ]
-      */
+          {
+            test: /\.(jsx?|tsx?)$/,
+            exclude: /node_modules/,
+            loader: 'babel-loader'
+          },
+        */
       use: ['babel-loader', 'eslint-loader']
     }
   ]
