@@ -251,7 +251,11 @@ PS:  如果需要对 Jest 进行配置，运行 `npx jest --init`，会生成jes
 ## 自动检测文件变化自动进行测试
 
 ```shell
+# 默认修改一个文件的内容会测试所有文件的测试用例
 npx jest --watchAll
+
+# 默认修改那个文件就对那个文件的所有测试用例进行测试
+npx jest --watch
 ```
 
 ## Jest 常用的匹配器
@@ -270,3 +274,99 @@ npx jest --watchAll
 12. toBeCloseTo() 注意：0.1 + 0.2 通过 toEqual() 判断是不能测试通过的，所以使用toBeCloseTo()
 13. toContain() 判断是否在数组中
 14. toMath() 可以使用正则，判断是否在字符串中
+
+## Jest 的命令工具 查文档
+
+## Jest 异步代码测试
+
+- 异步返回数据
+
+fetchData.js 
+
+```js
+import axios from 'axios';
+
+function fetchDatas (callback) {
+  const url = 'http://localhost:8080/api/test.json'
+  axios.get(url).then(function(response) {
+    callback && callback(response.data);
+  })
+}
+
+export {
+  fetchDatas
+};
+```
+
+fetchData.test.js
+
+```js
+import { fetchDatas } from './fetchData.js';
+
+test('结果应该：{success: true}', (done) => {
+  fetchDatas(data => {
+    expect(data).toEqual({success: true});
+    done();
+  });
+});
+```
+
+PS: 多了一个参数 done，执行done()函数，表示等数据请求回来才才进行下一步测试
+
+- 异步返回 Promise 对象
+
+fetchData.js 
+
+```js
+import axios from 'axios';
+
+function fetchDatas (callback) {
+  const url = 'http://localhost:8080/api/test.json'
+  return axios.get(url);
+}
+
+export {
+  fetchDatas
+};
+```
+
+fetchData.test.js
+
+```js
+import { fetchDatas } from './fetchData.js';
+
+test('结果应该：{success: true}', () => {
+  return fetchDatas().then((response => {
+    expect(response.data).toEqual({success: true});
+  }));
+});
+```
+
+PS: 如果有 catch，`expect.assertions(1);`
+fetchData.js 
+
+```js
+import axios from 'axios';
+
+function fetchDatas (callback) {
+  const url = 'http://localhost:8080/api/test1.json' // 不存在的地址，才能通过
+  return axios.get(url);
+}
+
+export {
+  fetchDatas
+};
+```
+
+fetchData.test.js
+
+```js
+import { fetchDatas } from './fetchData.js';
+
+test('结果应该返回了 404', () => {
+  expect.assertions(1);
+  return fetchDatas().catch((err => {
+    expect(err.message.indexOf('404') > -1).toBe(true);
+  }));
+});
+```
