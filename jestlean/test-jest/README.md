@@ -313,7 +313,9 @@ test('结果应该：{success: true}', (done) => {
 
 PS: 多了一个参数 done，执行done()函数，表示等数据请求回来才才进行下一步测试
 
-- 异步返回 Promise 对象
+- 异步返回 Promise 对象 
+
+1. 方案一
 
 fetchData.js 
 
@@ -342,7 +344,7 @@ test('结果应该：{success: true}', () => {
 });
 ```
 
-PS: 如果有 catch，`expect.assertions(1);`
+PS: 如果有 catch，`expect.assertions(1);` 这里的数字 `1` 表示会执行 一次expect，如果是数字 n 个， 表示expect有几个就有expect也要执行（n与expect个数一致）
 fetchData.js 
 
 ```js
@@ -366,7 +368,376 @@ import { fetchDatas } from './fetchData.js';
 test('结果应该返回了 404', () => {
   expect.assertions(1);
   return fetchDatas().catch((err => {
-    expect(err.message.indexOf('404') > -1).toBe(true);
+    // expect(err.message.indexOf('404') > -1).toBe(true);
+    expect(err.toString().indexOf('404') > -1).toBe(true);
   }));
+});
+```
+
+1. 方案二
+
+
+```js
+import { fetchDatas } from './fetchData.js';
+
+// 成功返回
+test('结果应该返回：{success: true}', () => {
+  return expect(fetchDatas()).resolves.toMatchObject({
+    data: {
+      success: true
+    }
+  });
+});
+// 或者 使用 ES6 语法
+test('结果应该返回：{success: true}', async () => {
+  await expect(fetchDatas()).resolves.toMatchObject({
+    data: {
+      success: true
+    }
+  });
+});
+
+// 请求路径不存在，返回 404
+test('结果应该返回：404', () => {
+  return expect(fetchDatas()).rejects.toThrow();
+});
+// 或者 使用 ES6 语法
+test('结果应该返回：404', async () => {
+  await expect(fetchDatas()).rejects.toThrow();
+});
+```
+
+## Jest 中的钩子函数
+
+Counter.js
+
+```js
+class Counter {
+  constructor () {
+    this.number = 0;
+  }
+
+  add () {
+    this.number +=1;
+  }
+
+  minus () {
+    this.number -=1;
+  }
+}
+
+export default Counter;
+```
+
+Counter.test.js
+
+```js
+import Counter from './Counter.js';
+
+let counter = null;
+
+beforeAll(() => {
+  counter = new Counter();
+  console.log('beforeAll');
+});
+
+beforeEach(() => {
+  console.log('beforeEach, 所有的测试实例之前都执行该钩子函数');
+})
+
+afterAll(() => {
+  counter = null;
+  console.log('afterAll');
+});
+
+test('测试 Counter 中的 add 方法', () => {
+  counter.add();
+  expect(counter.number).toBe(1);
+  console.log('测试 Counter 中的 add 方法');
+});
+
+test('测试 Counter 中的 minus 方法', () => {
+  counter.minus();
+  expect(counter.number).toBe(0);
+  console.log('测试 Counter 中的 minus 方法');
+});
+```
+
+PS: 这里的 add，minus 都影响同一个变量的值，这是我们不愿看到的。如下，`beforeEach` 解决。
+
+```js
+import Counter from './Counter.js';
+
+let counter = null;
+
+beforeEach(() => {
+  counter = new Counter(); // 每个测试用例之前都先创建一个新的实例
+  console.log('beforeEach, 所有的测试实例之前都先执行该钩子函数');
+})
+
+afterEach(() => {
+  counter = null;
+  console.log('afterEach, 所有的测试实例之后都先执行该钩子函数');
+});
+
+test('测试 Counter 中的 add 方法', () => {
+  counter.add(); // 每个测试用例之后都先创建一个新的实例
+  expect(counter.number).toBe(1);
+  console.log('测试 Counter 中的 add 方法');
+});
+
+test('测试 Counter 中的 minus 方法', () => {
+  counter.minus();
+  expect(counter.number).toBe(-1);
+  console.log('测试 Counter 中的 minus 方法');
+});
+```
+- Jest describe 分组测试
+
+Counter.js
+
+```js
+class Counter {
+  constructor () {
+    this.number = 0;
+  }
+
+  add1 () {
+    this.number +=1;
+  }
+  add2 () {
+    this.number +=1;
+  }
+
+  minus1 () {
+    this.number -=1;
+  }
+
+  minus2 () {
+    this.number -=1;
+  }
+}
+
+export default Counter;
+```
+
+Counter.test.js
+
+```js
+import Counter from './Counter.js';
+
+// 理解为分组测试
+describe('测试 Counter 类的相关函数', () => {
+  let counter = null;
+
+  beforeEach(() => {
+    counter = new Counter(); // 每个测试用例之前都先创建一个新的实例
+    // console.log('beforeEach, 所有的测试实例之前都先执行该钩子函数');
+  })
+
+  afterEach(() => {
+    counter = null;
+    // console.log('afterEach, 所有的测试实例之后都先执行该钩子函数');
+  });
+
+  describe('测试加法相关的函数', () => {
+    test('测试 Counter 中的 add1 方法', () => {
+      counter.add1(); // 每个测试用例之后都先创建一个新的实例
+      expect(counter.number).toBe(1);
+      // console.log('测试 Counter 中的 add 方法');
+    });
+
+    test('测试 Counter 中的 add2 方法', () => {
+      counter.add2(); // 每个测试用例之后都先创建一个新的实例
+      expect(counter.number).toBe(1);
+      // console.log('测试 Counter 中的 add 方法');
+    });
+  });
+
+  describe('测试减法相关的函数', () => {
+    test('测试 Counter 中的 minus1 方法', () => {
+      counter.minus1();
+      expect(counter.number).toBe(-1);
+      // console.log('测试 Counter 中的 minus 方法');
+    });
+
+    test('测试 Counter 中的 minus2 方法', () => {
+      counter.minus2();
+      expect(counter.number).toBe(-1);
+      // console.log('测试 Counter 中的 minus 方法');
+    });
+  });
+});
+```
+
+PS：如果忽略其他测试用例，使用 `test.only()`
+
+```js
+test.only('测试 Counter 中的 add2 方法', () => {
+  counter.add2(); // 每个测试用例之后都先创建一个新的实例
+  expect(counter.number).toBe(1);
+  // console.log('测试 Counter 中的 add 方法');
+});
+```
+
+## Jest 中的 Mock 测试回调函数
+
+```js
+function ly (callback) {
+  callback && callback();
+}
+
+export {
+  ly
+};
+
+// 测试
+import { ly } from './TestDemo.js';
+
+test('测试回调函数执行', () => {
+  const func = jest.fn(); // Jest 生成一个Mock函数
+  ly(func); // 运行自己的回调函数
+  expect(func).toBeCalled();
+});
+```
+
+测试回调函数返回的参数值
+
+```js
+
+function ly (callback) {
+  callback && callback('Tom');
+}
+
+export {
+  ly
+};
+
+// 测试
+import { ly } from './TestDemo.js';
+
+test('测试回调函数执行', () => {
+  const func = jest.fn(); // Jest 生成一个Mock函数
+  ly(func); // 运行自己的回调函数
+  expect(func.mock.calls[0]).toEqual(['Tom']);
+  console.log(func.mock);
+  /*
+  func.mock = {
+    calls: [ [ 'Tom' ] ],
+    instances: [ undefined ],
+    invocationCallOrder: [ 1 ],
+    results: [ { type: 'return', value: undefined } ]
+  }
+   */
+});
+```
+
+模拟传递的回调函数
+
+- 执行的都是同一个函数
+
+```js
+function ly (callback) {
+  callback && callback('Tom');
+}
+
+export {
+  ly
+};
+
+// 测试
+import { ly } from './TestDemo.js';
+
+test('测试回调函数执行', () => {
+  // 这里书写执行的3次都是同一个函数
+  const func = jest.fn(() => {
+    return 'Jerry';
+  }); // Jest 生成一个Mock函数
+  ly(func); // 运行自己的回调函数 1 次
+  ly(func); // 运行自己的回调函数 2 次
+  ly(func); // 运行自己的回调函数 3 次
+  expect(func.mock.calls[0]).toEqual(['Tom']);
+  console.log(func.mock)
+  /**
+  func.mock = {
+    calls: [ [ 'Tom' ], [ 'Tom' ], [ 'Tom' ] ],
+    instances: [ undefined, undefined, undefined ],
+    invocationCallOrder: [ 1, 2, 3 ],
+    results: [
+      { type: 'return', value: 'Jerry' },
+      { type: 'return', value: 'Jerry' },
+      { type: 'return', value: 'Jerry' }
+    ]
+  }
+  */
+});
+```
+
+- 每次执行不同的函数
+
+```js
+function ly (callback) {
+  callback && callback('Tom');
+}
+
+export {
+  ly
+};
+
+// 测试
+import { ly } from './TestDemo.js';
+
+test('测试回调函数执行', () => {
+  const func = jest.fn(); // Jest 生成一个Mock函数
+  func.mockReturnValueOnce('Jerry1');
+  func.mockReturnValueOnce('Jerry2');
+  func.mockReturnValueOnce('Jerry4');
+  // func.mockReturnValueOnce('Jerry1').mockReturnValueOnce('Jerry2').mockReturnValueOnce('Jerry3');
+  // func.mockReturnValue('Jerry1') // 所有的执行都是同一个函数
+  ly(func); // 运行自己的回调函数 1 次
+  ly(func); // 运行自己的回调函数 2 次
+  ly(func); // 运行自己的回调函数 3 次
+  expect(func.mock.calls[0]).toEqual(['Tom']);
+  console.log(func.mock)
+  /**
+  func.mock = {
+    calls: [ [ 'Tom' ], [ 'Tom' ], [ 'Tom' ] ],
+    instances: [ undefined, undefined, undefined ],
+    invocationCallOrder: [ 1, 2, 3 ],
+    results: [
+      { type: 'return', value: 'Jerry1' },
+      { type: 'return', value: 'Jerry2' },
+      { type: 'return', value: 'Jerry4' }
+    ]
+  }
+  */
+});
+```
+
+- Jest 测试函数的 this 指向
+
+```js
+function instanceLy (classInstace) {
+  new classInstace('ab');
+}
+export {
+  instanceLy
+};
+
+// 测试
+import { instanceLy } from './TestDemo.js';
+
+test.only('测试函数的this指向', () => {
+  const func = jest.fn();
+  instanceLy(func); // 运行自己的回调函数 1 次
+  console.log(func.mock);
+  /**
+  func.mock = {
+    calls: [ ['ab'] ],
+    instances: [ mockConstructor {} ],  // 函数执行 this 的指向 mockConstructor
+    invocationCallOrder: [ 1 ],
+    results: [ { type: 'return', value: undefined } ]
+  }
+   */
 });
 ```
