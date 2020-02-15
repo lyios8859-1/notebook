@@ -1,11 +1,13 @@
-function ly (callback) {
-  callback && callback('Tom');
+import axios from 'axios';
+
+const fetchData = () => {
+  return axios.get('/').then(res => res.data);
 }
 
-function instanceLy (classInstace) {
-  new classInstace('ab');
+const getNumber = () => {
+  return 123;
 }
 export {
-  ly,
-  instanceLy
+  fetchData,
+  getNumber
 };

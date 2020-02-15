@@ -734,10 +734,315 @@ test.only('测试函数的this指向', () => {
   /**
   func.mock = {
     calls: [ ['ab'] ],
-    instances: [ mockConstructor {} ],  // 函数执行 this 的指向 mockConstructor
+    instances: [ mockConstructor {} ],  // 函数执行 this 的指向 mockConstructor，其实就是传入的函数（类）实例对象
     invocationCallOrder: [ 1 ],
     results: [ { type: 'return', value: undefined } ]
   }
    */
 });
 ```
+
+## Jest Mock 测试ajax请求数据
+
+```js
+import axios from 'axios';
+
+const getData = () => {
+  return axios.get('/api').then(res => res.data);
+}
+
+export {
+  getData
+};
+
+// 测试
+import axios from 'axios';
+
+// 使用jest 模拟 ajax 请求
+jest.mock('axios');
+test.only('测试 ajax 请求 getData', async () => {
+  // 这个会真实请求后台数据（但是很慢），建议使用 jest 模拟ajax请求
+  // await getData().then(res => {});
+  // 模拟ajax请求的返回的结果数据格式
+  axios.get.mockResolvedValueOnce({data: 'Tom'}); // 改变函数内部的返回值
+  axios.get.mockResolvedValueOnce({data: 'jerry'}); // 改变函数内部的返回值
+  await getData().then(data => {
+    expect(data).toBe('Tom');
+  });
+  await getData().then(data => {
+    expect(data).toBe('jerry');
+  });
+})
+```
+
+**如果需要在函数里做其他操作**
+
+```js
+import { ly } from './TestDemo.js';
+test.only('测试回调函数执行', () => {
+  const func = jest.fn(); // Jest 生成一个Mock函数，模拟真实环境中传入的函数
+  func.mockImplementationOnce(() => {
+    // 传入的函数做一些操作
+    const temp = 'Ly_';
+    return temp + 'Test';
+  });
+
+  ly(func); // 运行自己的回调函数 1 次
+  expect(func.mock.results[0].value).toBe('Ly_Test');
+});
+```
+
+**如果传递的函数返回this，或不返回**
+
+```js
+import { ly } from './TestDemo.js';
+
+test.only('测试回调函数执行', () => {
+  const func = jest.fn(); // Jest 生成一个Mock函数
+  func.mockImplementationOnce(() => {
+    return this;
+  });
+
+  ly(func); // 运行自己的回调函数 1 次
+  // expect(func.mock.results[0].value).toBe(undefined);
+  expect(func.mock.results[0].value).toBeUndefined();
+});
+
+// 或者
+test.only('测试回调函数执行', () => {
+  const func = jest.fn(); // Jest 生成一个Mock函数
+  console.log(func);
+  /**
+   func = {
+      _isMockFunction: true,
+      getMockImplementation: [Function],
+      mock: [Getter/Setter],
+      mockClear: [Function],
+      mockReset: [Function],
+      mockRestore: [Function],
+      mockReturnValueOnce: [Function],
+      mockResolvedValueOnce: [Function],
+      mockRejectedValueOnce: [Function],
+      mockReturnValue: [Function],
+      mockResolvedValue: [Function],
+      mockRejectedValue: [Function],
+      mockImplementationOnce: [Function],
+      mockImplementation: [Function],
+      mockReturnThis: [Function],
+      mockName: [Function],
+      getMockName: [Function]
+    }
+   */
+  // func.mockImplementationOnce(() => {
+  //   return this;
+  // });
+  func.mockReturnThis(); // 很少用
+  ly(func); // 运行自己的回调函数 1 次
+  // expect(func.mock.results[0].value).toBe(undefined);
+  expect(func.mock.results[0].value).toBeUndefined();
+});
+```
+
+**Jest Mock 进一步学习**
+
+- 方案一，Jest Mock 模拟 ajax 请求数据 (使用的模拟 axios 库方法)
+
+```js
+// TestDemo.js
+import axios from 'axios';
+
+const fetchData = () => {
+  return axios.get('/').then(res => res.data);
+}
+
+export {
+  fetchData
+};
+
+// 测试
+import { fetchData } from "./TestDemo.js";
+import axios from 'axios';
+
+// Jest 模拟ajax请求数据
+jest.mock('axios');
+test('测试Jest模拟ajax请求数据', () => {
+  axios.get.mockResolvedValue({
+    data: "(function(){return 'Tom'})()"
+  });
+  // 这样fetchData()就不会真实请求后台数据了
+  return fetchData().then(data => {
+    expect(eval(data)).toEqual('Tom');
+  });
+});
+```
+
+- 方案二，Jest Mock 模拟 ajax 请求数据
+
+需要创建一个模拟真实请求文件接口，该文件与真实文件名一样，但是它在与真实文件同一级目录下的 `__mocks__` 文件夹下面，如图：
+
+![Jest模拟ajax请求数据](./Jest-Mock模拟ajax请求数据.png "Jest模拟ajax请求数据]")
+
+真实文件中的ajax请求：TestDemo.js
+
+```js
+import axios from 'axios';
+
+const fetchData = () => {
+  return axios.get('/').then(res => res.data);
+}
+
+export {
+  fetchData
+};
+```
+
+模拟真实文件中的ajax请求：\_\_mocks\_\_/TestDemo.js
+
+```js
+// 这个文件内容会替换与 TestDemo.js 文件中的内容
+const fetchData = () => {
+  return new Promise((resolve, reject) => {
+    resolve("(function(){return 'Jerry'})()")
+  });
+}
+
+export { 
+  fetchData
+};
+```
+
+测试文件：TestDemo.test.js
+
+```js
+import { fetchData } from "./TestDemo.js";
+
+// 创建一个TestDemo.js真实请求后台数据的文件同级文件夹__mocks__下的替换真实文件内容的TestDemo.js文件，这样fetchData()就不会真实请求后台数据了
+jest.mock('./TestDemo.js'); // 这个文件就是会去找 __mocks__ 文件夹目录下的模拟文件 TestDemo.js
+
+// 如果不使用模拟文件请求数据, 走真实的文件下的请求接口
+// jest.unmock('./TestDemo.js');
+
+test('创建一个与TestDemo.js同级文件夹__mocks__下TestDemo.js替换真实的文件内容，测试Jest模拟ajax请求数据', () => {
+  return fetchData().then(data => {
+    expect(eval(data)).toEqual('Jerry');
+  });
+});
+```
+
+- 如果不使用代码的方式模拟，那么在配置文件 jest.config.js 配置 `automock: true`, 但是任然需要模拟文件 `__mocks__/TestDemo.js`
+
+测试文件：TestDemo.test.js
+
+```js
+import { fetchData } from "./TestDemo.js";
+
+test('创建一个与TestDemo.js同级文件夹__mocks__下TestDemo.js替换真实的文件内容，测试Jest模拟ajax请求数据', () => {
+  return fetchData().then(data => {
+    expect(eval(data)).toEqual('Jerry');
+  });
+});
+```
+
+- 一些函数需要模拟请求，而一些函数不需要模拟的解决方案: `jest.requireActual('./TestDemo.js')`
+
+TestDemo.js
+
+```js
+import axios from 'axios';
+
+const fetchData = () => {
+  return axios.get('/').then(res => res.data);
+}
+
+const getNumber = () => {
+  return 123;
+}
+export {
+  fetchData,
+  getNumber
+};
+```
+
+TestDemo.test.js
+
+```js
+// fetchData 是异步请求数据，需要模拟，所以这种引入方式
+import { fetchData } from "./TestDemo.js";
+
+// getNumber 是同步返回数据，不需要模拟，所以这种请求方式
+const { getNumber } = jest.requireActual('./TestDemo.js');
+
+// 创建一个TestDemo.js真实请求后台数据的文件同级文件夹__mocks__下的替换真实文件内容的TestDemo.js文件，这样fetchData()就不会真实请求后台数据了
+jest.mock('./TestDemo.js');
+
+test('创建一个与TestDemo.js同级文件夹__mocks__下TestDemo.js替换真实的文件内容，测试Jest模拟ajax请求数据', () => {
+  return fetchData().then(data => {
+    expect(eval(data)).toEqual('Jerry');
+  });
+});
+
+test('测试非异步的方法 getNumber', () => {
+  expect(getNumber()).toEqual(123);
+});
+```
+
+
+## Jest 快照（Snapshot）
+
+针对于文件的配置，很优秀的。
+如果是行内快照需要安装 `npm install --save-dev prettier`
+
+```js
+// TestDemo.js
+const config = () => {
+  return {
+    name: 'Tom',
+    port: '9090',
+    timer: new Date()
+  }
+}
+export {
+  config
+};
+
+// 原始的测试方案
+import { config } from './TestDemo.js';
+
+test('配置的快照测试', () => {
+  expect(config()).toEqual({
+    name: 'Tom',
+    port: '9090',
+    timer: new Date()
+  })
+});
+
+// 使用快照测试
+import { config } from './TestDemo.js';
+
+test('配置的快照测试', () => {
+  // 开始测试时，会生成一个 __snapshots__ 的文件夹下的快照文件
+  expect(config()).toMatchSnapshot({
+    timer: expect.any(Date)  // 由于时间是变化的，排除时间不做快照
+  })
+});
+
+// 使用行内快照测试 需要安装 npm install --save-dev prettier
+test("配置的快照测试", () => {
+  expect(config()).toMatchInlineSnapshot(
+    {
+      timer: expect.any(Date)
+    },
+    // 开始测试时，会在测试用例行内生成如下快照
+    `
+    Object {
+      "name": "Tom",
+      "port": "9090",
+      "timer": Any<Date>,
+    }
+  `
+  );
+});
+```
+
+
+PS: 这里注意配合命令，`u`（更新快照） `i`（交互式）`s`（跳过不更新快照）使用
