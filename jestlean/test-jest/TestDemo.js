@@ -1,9 +1,7 @@
-import Util from './Util.js';
-
-const referenceUtilClass = (a, b) => {
-  const util = new Util();
-  util.add(a, b);
-  util.minus(a, b);
+const createElementDom = () => {
+  const dom = document.createElement('h1');
+  dom.setAttribute('class', 'JestDom');
+  document.body.appendChild(dom);
 };
 
-export default referenceUtilClass;
+export default createElementDom;

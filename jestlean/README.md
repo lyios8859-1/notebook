@@ -1176,3 +1176,31 @@ Util.prototype.minus = jest.fn(() => {
 
 export default Util;
 ```
+
+## Jest 对 DOM 的测试，
+
+Jest 使用 jsDom 模拟了 DOM 数据结构，测试就像平时获取 DOM 的对象操作是一样的。
+
+TestDemo.js
+
+```js
+const createElementDom = () => {
+  const dom = document.createElement('h1');
+  dom.setAttribute('class', 'JestDom');
+  document.body.appendChild(dom);
+};
+
+export default createElementDom;
+```
+
+TestDemo.test.js
+
+```js
+import createElementDom from './TestDemo';
+
+test('测试 Jest DOM， createElementDom', () => {
+  createElementDom();
+  createElementDom();
+  expect(document.getElementsByClassName('JestDom').length).toBe(2);
+})
+```
