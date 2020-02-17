@@ -1078,3 +1078,101 @@ test('timer 测试', () => {
   expect(fn).toHaveBeenCalledTimes(2); // 表示 12 秒后 fn（回调函数） 被调用了 2 次
 })
 ```
+
+## Jest Mock 对 ES6 类模块的测试
+
+Util.js
+
+```js
+class Util {
+  add (a, b) {
+    // TODO
+    return a + b;
+  }
+
+  minus (a, b) {
+    // TODO
+    return a - b;
+  }
+  // Other Code...
+}
+export default Util;
+```
+
+Util.test.js，单元测试 Util.js 的内容
+
+```js
+import Util from './Util.js';
+
+let util = null;
+
+beforeAll(() => {
+  util = new Util();
+});
+
+describe('类 Util 的相关方法测试', () => {
+
+  test('测试 add 方法', () => {
+    expect(util.add(1, 3)).toBe(4);
+  });
+
+  test('测试 minus 方法', () => {
+    expect(util.minus(1, 3)).toBe(-2);
+  });
+});
+
+// 显然单独测试这个 Util 类，不是很复杂，那么如果在引用这个类时，进行测试呢？
+```
+
+测试这个类中的方式是否被调用，那么在 TestDemo.js 中调用
+
+```js
+import Util from './Util.js';
+
+const referenceUtilClass = (a, b) => {
+  const util = new Util();
+  util.add(a, b);
+  util.minus(a, b);
+};
+
+export default referenceUtilClass;
+```
+
+现在使用 Jest Mock 模拟测试是否调用了 Util 中的方法， 不关注类 Uitl 中方法的实现细节, TestDemo.test.js
+
+```js
+
+import Util from './Util.js';
+import referenceUtilClass from './TestDemo.js';
+
+// 测试的时候，只需要知道是否调用了，Util 类中的方法即可，
+// 由于 Util 的方法特别复杂，测试时候特别耗时，我们只需要知道是否已经调用了就行了，具体的细节，交给单元测试搞定（比如：文件Util.test.js 测试 Util.js 的具体细节），那么就需要模拟该 Util 类中的这些方法,
+// jest.mock 发现 Uitl 这个类，会自动把类的构造函数和方法变成 jest.fn()
+jest.mock('./Util.js');
+
+test('测试 referenceUtilClass 调用了类 Util 中的 add，minus 方法', () => {
+  referenceUtilClass(1, 3);
+  // toHaveBeenCalled() 表示方法是否执行了
+  // 表示 referenceUtilClass 中调用了类 Util 的 add 方法，如果没有调用，则测试不通过
+  expect(Util.mock.instances[0].add).toHaveBeenCalled();
+  // 表示 referenceUtilClass 中调用了类 Util 的 minus 方法，如果没有调用，则测试不通过
+  expect(Util.mock.instances[0].minus).toHaveBeenCalled();
+})
+```
+
+如果不需要 Jest Mock 去模拟， 需要自己模拟的话，在 Uitl.js 文件所在目录中创建 `__mocks__/Util.js`, 内容如下：
+
+```js
+// 这个文件内容会替换 Uitl.js 文件中的内容
+const Util = jest.fn();
+
+Util.prototype.add = jest.fn(() => {
+  console.log('手动模拟 add 方法');
+});
+
+Util.prototype.minus = jest.fn(() => {
+  console.log('手动模拟 minus 方法');
+});
+
+export default Util;
+```

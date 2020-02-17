@@ -1,12 +1,9 @@
-const testTimer = (callback) => {
-  setTimeout(() => {
-    callback && callback();
-    setTimeout(() => {
-      callback && callback();
-    }, 6000);
-  }, 6000);
-}
+import Util from './Util.js';
 
-export {
-  testTimer
+const referenceUtilClass = (a, b) => {
+  const util = new Util();
+  util.add(a, b);
+  util.minus(a, b);
 };
+
+export default referenceUtilClass;
