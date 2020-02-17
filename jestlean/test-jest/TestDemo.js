@@ -1,13 +1,12 @@
-import axios from 'axios';
-
-const fetchData = () => {
-  return axios.get('/').then(res => res.data);
+const testTimer = (callback) => {
+  setTimeout(() => {
+    callback && callback();
+    setTimeout(() => {
+      callback && callback();
+    }, 6000);
+  }, 6000);
 }
 
-const getNumber = () => {
-  return 123;
-}
 export {
-  fetchData,
-  getNumber
+  testTimer
 };

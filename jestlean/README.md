@@ -1044,5 +1044,37 @@ test("配置的快照测试", () => {
 });
 ```
 
-
 PS: 这里注意配合命令，`u`（更新快照） `i`（交互式）`s`（跳过不更新快照）使用
+
+## Jest 测试定时器的调用
+
+```js
+// TestDemo.js
+const testTimer = (callback) => {
+  setTimeout(() => {
+    callback && callback();
+    setTimeout(() => {
+      callback && callback();
+    }, 6000);
+  }, 6000);
+}
+
+export {
+  testTimer
+};
+
+// TestDemo.test.js
+// 测试
+import { testTimer } from "./TestDemo.js";
+
+beforeEach(() => {
+  jest.useFakeTimers();
+});
+
+test('timer 测试', () => {
+  const fn = jest.fn();
+  testTimer(fn);
+  jest.advanceTimersByTime(12000); // 表示 12 秒
+  expect(fn).toHaveBeenCalledTimes(2); // 表示 12 秒后 fn（回调函数） 被调用了 2 次
+})
+```
