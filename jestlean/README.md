@@ -1204,3 +1204,21 @@ test('测试 Jest DOM， createElementDom', () => {
   expect(document.getElementsByClassName('JestDom').length).toBe(2);
 })
 ```
+
+## 单元测试
+
+TDD(Test Driven Development), 测试驱动开发。
+
+**TDD 开发流程**
+
+1. 首先，编写测试用例。
+2. 运行测试，此时，这些测试用例是无法通过测试的。
+3. 再编写代码，使测试用例通过，步骤 1 的测试用例。
+4. 优化代码，完成开发。
+5. 不断的重复上述步骤。
+
+**TDD 开发优势**
+
+1. 长期减少回归 BUG。
+2. 代码质量更好（代码组织结构更好，可维护性更强）。
+3. 测试覆盖率非常高。
