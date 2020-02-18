@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <style>
+    body {
+      padding: 100px;
+    }
+    span {
+      position: relative;
+      display: inline-block;
+      box-sizing: border-box;
+      width: 80px;
+      height: 40px;
+      line-height: 40px;
+      letter-spacing: 2px;
+      font-size: 16px;
+      font-family: "Microsoft Yahei";
+      cursor: pointer;
+      text-align: center;
+    }
+    span::before, span::after {
+      position: absolute;
+      content: '';
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      transition: all .5s;
+    }
+
+    /*btn1*/
+    .btn1::before, .btn1::after {
+      height: 2px;
+      left: 50%;
+      width: 0;
+      background: crimson;
+      transform: translateX(-50%);
+    }
+    .btn1::before {
+      top: 0;
+    }
+    .btn1::after {
+      bottom: 0;
+    }
+    .btn1:hover:before, .btn1:hover::after {
+      width: 100%;
+    }
+ 
+    /*btn2*/
+    .btn2 {
+      background: #fff;
+      height: 36px;
+    }
+    .btn2::before, .btn2::after {
+      width: 10px;
+      height: 10px;
+      background: crimson;
+      mix-blend-mode: hue; /*作用：让 span 的背景颜色显示出来覆盖:before, :after背景颜色的上方*/
+    }
+    .btn2::before {
+      left: -2px;
+      top: -2px;
+    }
+    .btn2::after {
+      right: -2px;
+      bottom: -2px;
+    }
+    .btn2:hover:before, .btn2:hover::after {
+      width: calc( 100% + 4px );
+      height: calc( 100% + 4px );
+    }
+
+    /*btn3*/
+    .btn3 {
+      background: #fff;
+      height: 40px;
+    }
+    .btn3::before,
+    .btn3::after,
+    .btn33::before,
+    .btn33::after {
+      width: 10px;
+      height: 10px;
+      background: crimson;
+      mix-blend-mode: hue; /*作用：让 span 的背景颜色显示出来覆盖:before, :after背景颜色的上方*/
+    }
+    .btn3::before {
+      left: -2px;
+      top: -2px;
+    }
+    .btn3::after {
+      right: -2px;
+      top: -2px;
+    }
+    .btn33::before {
+      left: -2px;
+      bottom: -2px;
+    }
+    .btn33::after {
+      right: -2px;
+      bottom: -2px;
+    }
+    .btn3:hover::before,
+    .btn3:hover::after,
+    .btn33:hover::before,
+    .btn33:hover::after {
+      height: 60%;
+      width: 60%;
+    }
+  </style>
+  <span class="btn1">点我</span>
+  <span class="btn2">点我</span>
+  
+  <span class="btn3">
+    <span class="btn33">点我</span>
+  </span>
+  
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+
+  <style>
+    b {
+      position: relative;
+      display: inline-block;
+      box-sizing: border-box;
+      width: 80px;
+      height: 40px;
+      line-height: 40px;
+      letter-spacing: 2px;
+      font-size: 16px;
+      font-family: "Microsoft Yahei";
+      cursor: pointer;
+      text-align: center;
+      overflow: hidden;
+    }
+    b::before, b::after {
+      position: absolute;
+      content: '';
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      transition: all .5s;
+    }
+    .btn::before,
+    .btn::after,
+    .btn b::before,
+    .btn b::after {
+      background-color: limegreen;
+      background: linear-gradient(top right, rgba(0, 0, 0, 0), red);
+      transition: all .5s;
+    }
+    .btn::before,
+    .btn::after {
+      width: 100%;
+      height: 1px;
+    }
+    .btn::before {
+      top: 0;
+      left: -100%;
+    }
+    .btn::after {
+      bottom: 0;
+      right: -100%;
+    }
+    .btn b::before,
+    .btn b::after {
+      width: 1px;
+      height: 100%;
+    }
+    .btn b::before {
+      bottom: -100%;
+      left: 0;
+    }
+    .btn b::after {
+      top: -100%;
+      right: 0;
+    }
+    /*上*/
+    .btn:hover::before {
+      animation: topA 1s linear infinite;
+      animation-delay: 0.5s;
+    }
+    @keyframes topA {
+      100% {
+        left: 100%;
+      }
+    }
+    /*下*/
+    .btn:hover::after {
+      animation: bottomA 1s linear infinite;
+      animation-delay: 1.5s;
+    }
+    @keyframes bottomA {
+      100% {
+        right: 100%;
+      }
+    }
+    /*左*/
+    .btn:hover b::before {
+      animation: leftA 1s linear infinite;
+      animation-delay: 2s;
+    }
+    @keyframes leftA {
+      100% {
+        bottom: 100%;
+      }
+    }
+    /*右*/
+    .btn:hover b::after {
+      animation: rightA 1s linear infinite;
+      animation-delay: 1s;
+    }
+    @keyframes rightA {
+      100% {
+        top: 100%;
+      }
+    }
+  </style>
+  <b class="btn">
+    <b>button</b>
+  </b>
+</body>
+</html>
