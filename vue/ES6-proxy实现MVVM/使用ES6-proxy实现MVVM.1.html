@@ -29,7 +29,7 @@
         // 把 options.data 赋值给 this._data
         let data = this._data = this.$options.data;
         let vm = this.initVm.call(this);
-        // 要使得 Proxy 起作用，必须针对 Proxy 实例, 所以返回 Proxy 是实例
+        // 要使得 Proxy 起作用，必须针对 Proxy 实例, 所以返回 Proxy 是实例（）修改了实例对象的指向
         return this._vm;
       }
       initVm() {

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <div id="app">
+    <h1>人类：{{people}}</h1>
+    <h2>组成部分：</h2>
+    <ul>
+      <li>{{person.hande}}</li>
+      <li>{{person.foot}}</li>
+      <li>{{person.breast}}</li>
+    </ul>
+    <h2>描述：</h2>
+    <p>{{describe}}</p>
+    <p>prvAge: {{prvAge}},
+      <br/>      
+      nowAge: {{nowAge}}
+      <br/>
+      age: {{age}}</p>
+    <input placeholder="人呐" v-module="people" />
+  </div>
+<script>
+// https://segmentfault.com/a/1190000015375217#item-4
+// https://www.cnblogs.com/canfoo/p/6891868.html
+
+/*
+1, 实现数据监听器 Observer，用 Object.defineProperty() 重写数据的 get、set，值更新就在 set 中通知订阅者更新数据。
+2, 实现模板编译 Compile，深度遍历 dom 树，对每个元素节点的指令模板进行替换数据以及订阅数据。
+3, 实现 Watch 用于连接 Observer 和 Compile，能够订阅并收到每个属性变动的通知，执行指令绑定的相应回调函数，从而更新视图。
+4, Mvvm 入口函数，整合以上三者。
+*/
+
+// 整合数据监听器 this._observer()、
+// 指令解析器 this._compile()以及
+// 连接 Observer 和 Compile 的 _watchers 的 watch 池
+function Mvvm (options = {}) {
+  this.$options = options;
+  this.$el = document.querySelector(options.el);
+  this._data = options.data;
+  this._watchers = {};
+  this._observer(this._data); // 重写数据的 get，set
+  this._compile(this.$el); // 编译模板，发布订阅
+}
+
+// 实现据监听器函数,在 set 中我们监听到数据的变化，然后就触发 watch 更新视图。
+Mvvm.prototype._observer = function (data) {
+  const vm = this;
+  console.log('options:', data);
+}
+
+// 实现 Compile 模板编译函数
+Mvvm.prototype._compile = function (el) {
+  const vm = this;
+  const nodes = el.children; // 获取根元素的所有子元素 DOM
+  console.log('$el:', nodes);
+}
+
+const mvvm = new Mvvm({
+  el: '#app',
+  data: {
+    people: '人类这种生物',
+    person: {
+      hande: '机智的头部',
+      foot: '行走的脚',
+      breast: '坦荡的胸'
+    },
+    describe: '人呐就那样吧,什么都明白了...',
+    prvAge: 22,
+    nowAge: 1
+  },
+  computed: {
+    // 这里的计算属性，没有做到像 vue 那样一般情况下不允许下直接修改计算属性的值，例：这样是不允许的 mvvm.age = 34;
+    age() {
+      return this.nowAge + this.prvAge;
+    }
+  },
+  mounted() {
+    console.log('I am mounted', this.prvAge);
+  }
+});
+</script>
+</body>
+</html>
