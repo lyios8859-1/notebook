@@ -155,7 +155,7 @@ Mvvm.prototype._compile = function (el) {
         // 必须返回一个函数，触发 input 事件就会执行该函数，去触发 set
         return function () {
           // input 值改变的时，将新值赋给数据， 触发 set => set 再触发 watch 更新视图
-          // vm._data[attVal] = nodes[key].value;
+          vm._data[attVal] = nodes[key].value;
         }
       })(i), false);
     }
