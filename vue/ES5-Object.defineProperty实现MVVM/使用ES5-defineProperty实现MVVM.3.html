@@ -133,6 +133,7 @@ Mvvm.prototype._compile = function (el) {
         // 数据存放到订阅池, 并且将dom替换成属性的数据并发布订阅, 在 set 的时候更新数据
         vm._watchers[attVal]._directives.push(new Watcher(node, vm, attVal, 'value'));
         
+        // 必须返回一个函数，触发 input 事件就会执行该函数，去触发 set
         return function () {
           // input 值改变的时，将新值赋给数据， 触发 set => set 再触发 watch 更新视图
           vm._data[attVal] = nodes[key].value;
