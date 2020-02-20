@@ -83,26 +83,88 @@ Mvvm.prototype._observer = function (data) {
       }
     });
   });
-  console.log('options:', data);
 }
 ```
 
-**测试数据是否监听成功**
+**测试data数据是否监听成功**
 
 使用 Mvvm 的实例 mvvm 访问：
 
-![测试数据劫持](./测试数据劫持.png)
+![测试dat数据劫持](./测试data数据劫持.png "测试data数据劫持")
 
 
+## 实现 Watcher 函数，连接 Observer 和 Compile 的作用 
 
+```js
+// 实现 Watcher 函数，连接 Observer 和 Compile 的作用 
+/*
+1, 在模板编译 _compile() 阶段发布订阅
+2, 在赋值操作的时，更新视图
+*/
 
+// new Watcher() 为 this._compile() 发布订阅 和 在 this._observer() 中 set (赋值)的时更新视图
+function Watcher(el, vm, val, attr) {
+  this.el = el; // 指令对应的 DOM 元素
+  this.vm = vm; // Mvvm 实例
+  this.val = val; // 指令对应的值 
+  this.attr = attr; // DOM 元素的属性，如 value 获取 input 元素的属性 / innerHTML 获取 DOM 元素的属性
+  this.update(); // 更新视图
+}
+Watcher.prototype.update = function () { 
+  this.el[this.attr] = this.vm._data[this.val]; // 获取data的最新值 赋值给dom 更新视图
+}
+```
 
 ## 实现 Compile 模板编译函数
 
+**实现对输入框 v-mode 的数据劫持**
+
 ```js
+// 实现思路中的第三步
+/*
+  a, 首先深度遍历 DOM 树，遍历每个节点以及子节点
+  b, 将模板中的变量替换成数据，初始化渲染页面视图
+  c, 把指令绑定的属性添加到对应的订阅池中
+  d, 数据有更新，收到通知，更新视图
+*/
+// 实现 Compile 模板编译函数
 Mvvm.prototype._compile = function (el) {
   const vm = this;
   const nodes = el.children; // 获取根元素的所有子元素 DOM
-  console.log('$el:', nodes);
+  // 遍历 DOM 节点
+  for (let i = 0, len = nodes.length; i < len; i++) {
+    const node = nodes[i];
+    if (node.children.length) {
+      // 递归遍历 DOM 树
+      vm._compile(node);
+    }
+    
+    // 判断如果有 v-model 属性，并且是 input 元素或 textarea 元素，监听其 input 事件
+    if (node.hasAttribute('v-model') && (node.tagName = 'INPUT' || node.tagName == 'TEXTAREA')) {
+      // 监听 input 事件
+      node.addEventListener('input', (function(key) {
+        const attVal = node.getAttribute('v-model'); // 获取 v-model 绑定的值
+        /*
+          v-model 的值（attVal）作为 data 的属性变量必须要先在 data 里定义，
+          这里需要检测 v-model 的值作为 data 的属性是否存在 data 上, 不存在，则报错，给出提示
+        */
+
+        // 数据存放到订阅池, 并且将dom替换成属性的数据并发布订阅, 在 set 的时候更新数据
+        vm._watchers[attVal]._directives.push(new Watcher(node, vm, attVal, 'value'));
+        
+        return function () {
+          // input 值改变的时，将新值赋给数据， 触发 set => set 再触发 watch 更新视图
+          vm._data[attVal] = nodes[key].value;
+        }
+      })(i), false);
+    }
+  }
 }
 ```
+
+**测试v-mode指令的数据是否监听成功**
+
+在 input 框中输入内容，触发 set：
+
+![测试v-mode指令的数据劫持](./测试v-mode指令的数据劫持.png "测试 v-mode 指令的数据劫持")
+
