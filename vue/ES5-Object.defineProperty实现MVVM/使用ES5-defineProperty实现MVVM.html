@@ -17,15 +17,44 @@
     </ul>
     <h2>描述：</h2>
     <p>{{describe}}</p>
-    <p>prvAge: {{prvAge}},
+    <p>
+      prvAge: {{prvAge}},
       <br/>      
       nowAge: {{nowAge}}
-      <br/>
-      age: {{age}}</p>
-    <input placeholder="人呐" v-model="username" />
+    </p>
+    
+    <p>
+        mounted: 
+        <br/>
+        <span>age: {{age}}</span>
+    </p>
+
+    <p>
+      v-model: <input placeholder="人呐" v-model="username" />
+      <br>
+      v-bind: <span v-bind="username"></span>
+      <br>
+      {{}}: <span>{{username}}</span>
+    </p>
     
   </div>
 <script>
+
+const parsePath = function (key) {
+  const args = key.split('.');
+  return function (obj) {
+    for (let i = 0; i < args.length; i++) {
+      if (!obj) return;
+      obj = obj[args[i]];
+    }
+    return obj;
+  };
+};
+
+function getObjValue (obj, key) {
+  key = key.substring(key.indexOf('.') + 1);
+  return parsePath(key)(obj);
+}
 /*
 1, 实现数据监听器 Observer，用 Object.defineProperty() 重写数据的 get、set，值更新就在 set 中通知订阅者更新数据。
 2, 实现模板编译 Compile，深度遍历 dom 树，对每个元素节点的指令模板进行替换数据以及订阅数据。
@@ -82,23 +111,22 @@ Mvvm.prototype._observer = function (data) {
       configurable: true, // 可删除
       enumerable: true, // 可遍历
       get () {
-        console.log(`${key}的值：${value}`);
+        // console.log(`${key}的值：${value}`);
         return value;
       },
       set (newVal) {
-        console.log(`${key}更新：${newVal}`);
-        // if (value !== newVal) {
-        //   value = newVal;
-        //   watchers._directives.forEach((item) => { // 遍历订阅池
-        //     console.log('item', item);
-        //     item.update();
-        //     // 遍历所有订阅的地方(v-model+v-bind+{{}}) 触发 this._compile() 中发布的订阅 Watcher 更新视图  
-        //   });
-        // }
+        // console.log(`${key}更新：${newVal}`);
+        if (value !== newVal) {
+          value = newVal;
+          watchers._directives.forEach((item) => { // 遍历订阅池
+            // console.log('item', item);
+            item.update();
+            // 遍历所有订阅的地方(v-model+v-bind+{{}}) 触发 this._compile() 中发布的订阅 Watcher 更新视图  
+          });
+        }
       }
     });
   });
-  // console.log('options:', data);
 }
 
 // 实现思路中的第三步
@@ -133,12 +161,46 @@ Mvvm.prototype._compile = function (el) {
         // 数据存放到订阅池, 并且将dom替换成属性的数据并发布订阅, 在 set 的时候更新数据
         vm._watchers[attVal]._directives.push(new Watcher(node, vm, attVal, 'value'));
         
-        // 必须返回一个函数，触发 input 事件就会执行该函数，去触发 set
+        // 必须返回一个函数，触发 input 事件就会执行该函数，去触发 set, 更新页面视图
         return function () {
           // input 值改变的时，将新值赋给数据， 触发 set => set 再触发 watch 更新视图
           vm._data[attVal] = nodes[key].value;
         }
       })(i), false);
+    }
+
+    if (node.hasAttribute('v-bind')) { // v-bind指令 
+      const attrVal = node.getAttribute('v-bind'); // 绑定的data
+      vm._watchers[attrVal]._directives.push(new Watcher(node, vm, attrVal, 'innerHTML'))
+    }
+  
+    // 判断如果有 {{}} 的操作
+    const reg = /\{\{\s*([^}]+\S)\s*\}\}/g; // 正则匹配{{}}
+    const txt = node.textContent;
+    if (reg.test(txt)) {
+      node.textContent = txt.replace(reg, (matched, placeholder) => {
+        // placeholder 是 {{}} 中提取出来的占位符属性名变量，data 中定义好的。 
+        // matched 匹配的文本节点包括{{}}， 如：{{person.foot}}，{{age}}
+        
+        // 获取所有绑定 watch 的数据
+        let getKeyNames = vm._watchers;
+        // 获取对应 watch 数据的值 
+        let getKeyName = getKeyNames[placeholder];
+
+        console.log(getKeyNames, placeholder)
+        if (placeholder.indexOf('.') !== -1) {
+        }
+        // 判断是否有对应的订阅池，没有就创建
+        if (getKeyName !== undefined && !getKeyName._directives) {
+          getKeyName._directives = [];
+        }
+        getKeyName && getKeyName._directives.push(new Watcher(node, vm, placeholder, 'innerHTML'));
+
+        // 必须返回数据，去触发 get, 更新页面视图
+        return placeholder.split('.').reduce((val, key) => {
+          return vm._data[key]; // 获取数据的值, 触发 get 返回当前值
+        }, vm.$el);
+      });
     }
   }
 }
