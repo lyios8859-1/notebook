@@ -249,5 +249,4 @@ addEvent('click', div, function () {
 addEvent('click', div, function () {
   alert(2)
 })
-
 ```

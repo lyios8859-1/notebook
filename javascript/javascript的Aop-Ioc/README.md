@@ -43,34 +43,61 @@ const Aspects = function () {
   this.before = function (target, method, advice) {
     const original = target[method];
     target[method] = function () {
-      (advice)();
+      let self = this;
+      const pointCut = {
+        target,
+        method: original,
+        args: arguments,
+        self
+        // 在连接点信息中还加入了 self 即当前对象的引用，是因为当增强代码如果是箭头函数时，后面的 apply 和 call 方法无法修改增强代码的 this 引用，可通过这个 self 来访问目标对象的属性
+        // 使用 function 定义的回调可以直接使用 this 访问目标对象的
+      };
+      (advice).call(self, pointCut);
       original.apply(target, arguments);
     };
     return target;
   },
-  // 依赖后置
-  this.after = function (target, method, advice) {
-    const original = target[method];
-    target[method] = function () {
-      original.apply(target, arguments);
-      (advice)();
-    };
-    return target;
-  },
-  // 依赖环绕
-  this.around = function (target, method, advice) {
-    const original = target[method];
-    target[method] = function () {
-      (advice)();
-      original.apply(target, arguments);
-      (advice)();
-    };
-    return target;
-  }
+    // 依赖后置
+    this.after = function (target, method, advice) {
+      const original = target[method];
+      target[method] = function () {
+        let self = this;
+        const pointCut = {
+          target,
+          method: original,
+          args: arguments,
+          self
+          // 在连接点信息中还加入了 self 即当前对象的引用，是因为当增强代码如果是箭头函数时，后面的 apply 和 call 方法无法修改增强代码的 this 引用，可通过这个 self 来访问目标对象的属性
+          // 使用 function 定义的回调可以直接使用 this 访问目标对象的 
+        };
+        original.apply(target, pointCut);
+        (advice).call(self, arguments);
+      };
+      return target;
+    },
+    // 依赖环绕
+    this.around = function (target, method, advice) {
+      const original = target[method];
+      target[method] = function () {
+        let self = this;
+        const pointCut = {
+          target,
+          method: original,
+          args: arguments,
+          self
+          // 在连接点信息中还加入了 self 即当前对象的引用，是因为当增强代码如果是箭头函数时，后面的 apply 和 call 方法无法修改增强代码的 this 引用，可通过这个 self 来访问目标对象的属性
+          // 使用 function 定义的回调可以直接使用 this 访问目标对象的
+        };
+        (advice).call(self, pointCut);
+        original.apply(target, arguments);
+        (advice).call(self, pointCut);
+      };
+      return target;
+    }
 };
 
 // 实例一
-function voice () {
+function voice() {
   console.log('救命啊！');
 }
 const btn = document.getElementById("btn");
@@ -80,14 +107,15 @@ aspects1.before(btn, 'onclick', function () {
 });
 
 // 实例二
-function Person () {
+function Person() {
   this.say = function (name) {
     console.log(`My name is ${name}`);
   }
 }
 let person = new Person;
 const aspects2 = new Aspects;
-person = aspects2.before(person, 'say', function () {
+person = aspects2.before(person, 'say', function (param) {
+  console.log(param)
   console.log('请你介绍一下自己！')
 });
 // 执行注入的方法的函数
