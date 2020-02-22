@@ -25,6 +25,13 @@
 
 [参考2](https://www.jb51.net/article/130906.htm "AOP")
 
+**AOP的几个概念**：
+
+1. 连接点(JointPoint): 能够被拦截的地方，一般是成员方法或者属性，它们都可以称之为连接点。
+2. 切点(PointCut): 具体定位的连接点，既然每个方法(或属性)都可以作为连接点，我们不可能对所有方法都进行增强，那么被我们匹配用来增强的方法就是切点。
+3. 增强/通知(Advice): 就是我们用来添加到特定切点上的逻辑代码，用于"增强"原有的功能。
+4. 切面(Aspect): 切面由切点和增强组成，就是定义你要在"什么地方"以"何种方式"做"什么事"。
+
 ```js
 const Aspects = function () {
   // 依赖前置
@@ -91,16 +98,16 @@ person.say("司徒正美");
 
 ```js
 const Aspects = function () {
-  // 依赖前置
   /**
    * target: 被注入的对象 ,
    * method: 被注入的对象的方法名 ,
    * advice: 通知函数（需要植入的我们的逻辑函数）
    */
-  this.before = function (target, method, advice, args) {
+  // 依赖前置
+  this.before = function (target, method, advice) {
     const original = target[method];
     target[method] = function () {
-      (advice)(args);
+      (advice)();
       original.apply(target, arguments);
     };
     return target;
@@ -110,7 +117,7 @@ const Aspects = function () {
       const original = target[method];
       target[method] = function () {
         original.apply(target, arguments);
-        (advice)(args);
+        (advice)();
       };
       return target;
     },
@@ -118,9 +125,9 @@ const Aspects = function () {
     this.around = function (target, method, advice) {
       const original = target[method];
       target[method] = function () {
-        (advice)(args);
+        (advice)();
         original.apply(target, arguments);
-        (advice)(args);
+        (advice)();
       };
       return target;
     }
@@ -132,9 +139,9 @@ function voice () {
 }
 const btn = document.getElementById("btn");
 const aspects1 = new Aspects;
-aspects1.before(btn, 'onclick', function (param) {
-  console.log('HELP！HELP！', param)
-}, '救命');
+aspects1.before(btn, 'onclick', function () {
+  console.log('HELP！HELP！')
+});
 
 // 实例二
 function Person () {
@@ -144,20 +151,12 @@ function Person () {
 }
 let person = new Person;
 const aspects2 = new Aspects;
-person = aspects2.before(person, 'say', function (param) {
-  console.log('请你介绍一下自己！', param)
-}, '帅气的小哥');
+person = aspects2.before(person, 'say', function () {
+  console.log('请你介绍一下自己！')
+});
 // 执行注入的方法的函数
 person.say('欧阳明日');
 ```
-
-**AOP的几个概念**：
-
-1. 连接点(JointPoint): 能够被拦截的地方，一般是成员方法或者属性，它们都可以称之为连接点。
-2. 切点(PointCut): 具体定位的连接点，既然每个方法(或属性)都可以作为连接点，我们不可能对所有方法都进行增强，那么被我们匹配用来增强的方法就是切点。
-3. 增强/通知(Advice): 就是我们用来添加到特定切点上的逻辑代码，用于"增强"原有的功能。
-4. 切面(Aspect): 切面由切点和增强组成，就是定义你要在"什么地方"以"何种方式"做"什么事"。
-
 
 ## IoC（Inversion of Control）依赖倒置（反转）
 

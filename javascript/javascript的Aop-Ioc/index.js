@@ -1,14 +1,14 @@
 const Aspects = function () {
-  // 依赖前置
   /**
    * target: 被注入的对象 ,
    * method: 被注入的对象的方法名 ,
    * advice: 通知函数（需要植入的我们的逻辑函数）
    */
-  this.before = function (target, method, advice, args) {
+  // 依赖前置
+  this.before = function (target, method, advice) {
     const original = target[method];
     target[method] = function () {
-      (advice)(args);
+      (advice)();
       original.apply(target, arguments);
     };
     return target;
@@ -18,7 +18,7 @@ const Aspects = function () {
       const original = target[method];
       target[method] = function () {
         original.apply(target, arguments);
-        (advice)(args);
+        (advice)();
       };
       return target;
     },
@@ -26,9 +26,9 @@ const Aspects = function () {
     this.around = function (target, method, advice) {
       const original = target[method];
       target[method] = function () {
-        (advice)(args);
+        (advice)();
         original.apply(target, arguments);
-        (advice)(args);
+        (advice)();
       };
       return target;
     }
@@ -41,9 +41,9 @@ function voice () {
 }
 const btn = document.getElementById("btn");
 const aspects1 = new Aspects;
-aspects1.before(btn, 'onclick', function (param) {
-  console.log('HELP！HELP！', param)
-}, '救命');
+aspects1.before(btn, 'onclick', function () {
+  console.log('HELP！HELP！')
+});
 
 // 实例二
 function Person () {
@@ -53,8 +53,8 @@ function Person () {
 }
 let person = new Person;
 const aspects2 = new Aspects;
-person = aspects2.before(person, 'say', function (param) {
-  console.log('请你介绍一下自己！', param)
-}, '帅气的小哥');
+person = aspects2.before(person, 'say', function () {
+  console.log('请你介绍一下自己！')
+});
 // 执行注入的方法的函数
 person.say('欧阳明日');
