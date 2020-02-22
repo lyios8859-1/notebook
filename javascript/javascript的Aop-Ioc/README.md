@@ -31,7 +31,7 @@ const Aspects = function () {
   /**
    * target: 被注入的对象 ,
    * method: 被注入的对象的方法名 ,
-   * advice: 通知函数
+   * advice: 通知函数（需要植入的我们的逻辑函数）
    */
   this.before = function (target, method, advice) {
     const original = target[method];
@@ -62,7 +62,6 @@ const Aspects = function () {
     }
 };
 
-
 // 实例一
 function voice () {
   console.log('救命啊！');
@@ -87,6 +86,72 @@ person = aspects2.before(person, 'say', function () {
 // 执行注入的方法的函数
 person.say("司徒正美");
 ```
+
+**为植入的函数传递参数**
+
+```js
+const Aspects = function () {
+  // 依赖前置
+  /**
+   * target: 被注入的对象 ,
+   * method: 被注入的对象的方法名 ,
+   * advice: 通知函数（需要植入的我们的逻辑函数）
+   */
+  this.before = function (target, method, advice, args) {
+    const original = target[method];
+    target[method] = function () {
+      (advice)(args);
+      original.apply(target, arguments);
+    };
+    return target;
+  },
+    // 依赖后置
+    this.after = function (target, method, advice) {
+      const original = target[method];
+      target[method] = function () {
+        original.apply(target, arguments);
+        (advice)(args);
+      };
+      return target;
+    },
+    // 依赖环绕
+    this.around = function (target, method, advice) {
+      const original = target[method];
+      target[method] = function () {
+        (advice)(args);
+        original.apply(target, arguments);
+        (advice)(args);
+      };
+      return target;
+    }
+};
+
+// 实例一
+function voice () {
+  console.log('救命啊！');
+}
+const btn = document.getElementById("btn");
+const aspects1 = new Aspects;
+aspects1.before(btn, 'onclick', function (param) {
+  console.log('HELP！HELP！', param)
+}, '救命');
+
+// 实例二
+function Person () {
+  this.say = function (name) {
+    console.log(`My name is ${name}`);
+  }
+}
+let person = new Person;
+const aspects2 = new Aspects;
+person = aspects2.before(person, 'say', function (param) {
+  console.log('请你介绍一下自己！', param)
+}, '帅气的小哥');
+// 执行注入的方法的函数
+person.say('欧阳明日');
+```
+
+PS: 这用方式有缺陷，对于传递参数处理不了
 
 ## IoC（Inversion of Control）依赖倒置（反转）
 

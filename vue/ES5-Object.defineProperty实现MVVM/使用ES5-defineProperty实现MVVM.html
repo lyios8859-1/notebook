@@ -190,7 +190,7 @@ Mvvm.prototype._compile = function (el) {
         // 如果是 数据是 "preson.foot" 该怎么处理
         if (placeholder.indexOf('.') !== -1) {
           // TODO
-          // 等待完成
+          // 等待完成嗯
         }
         // 判断是否有对应的订阅池，没有就创建
         if (getKeyName !== undefined && !getKeyName._directives) {
@@ -200,7 +200,7 @@ Mvvm.prototype._compile = function (el) {
 
         // 必须返回数据，去触发 get, 更新页面视图
         return placeholder.split('.').reduce((val, key) => {
-          return getObjValue(vm._data, key); // 获取数据的值, 触发 get 返回当前值
+          return vm._data[key]; // 获取数据的值, 触发 get 返回当前值
         }, vm.$el);
       });
     }
