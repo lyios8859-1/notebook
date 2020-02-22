@@ -6,7 +6,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 // 在模板自动添加一些额外的插件，比如打包后生成的 dll 文件 
 const AddAssetHtmWebpacklPlugin = require('add-asset-html-webpack-plugin');
 
-
 // 自动构建多入口entries函数
 const entries = function (srcDir) {
   const jsDir = path.resolve(__dirname, srcDir);

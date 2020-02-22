@@ -9,10 +9,11 @@
   ],
   "scripts": {
     "start": "http-server ./dist",
-    "build": "npm run build:dll && webpack --config config/webpack.prod.conf.js",
-    "dev-build": "npm run build:dll && webpack --config config/webpack.dev.conf.js",
+    "build": "webpack --config config/webpack.prod.conf.js",
+    "dev-build": "webpack --config config/webpack.dev.conf.js",
     "build:dll": "webpack --config config/webpack.dll.conf.js",
-    "dev": "webpack-dev-server --config config/webpack.dev.conf.js"
+    "dev": "webpack-dev-server --config config/webpack.dev.conf.js",
+    "node:build": "node build/build.js"
   },
   "keywords": [],
   "author": "",
