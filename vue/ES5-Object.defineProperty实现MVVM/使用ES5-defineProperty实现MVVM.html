@@ -8,12 +8,25 @@
 </head>
 <body>
   <div id="app">
-    <p>{{people}}</p>
+    <h1>人类：{{people}}</h1>
+    <h2>组成部分：</h2>
+    <ul>
+      <li>{{person.hande}}</li>
+      <li>{{person.foot}}</li>
+      <li>{{person.breast}}</li>
+    </ul>
+    <h2>描述：</h2>
     <p>{{describe}}</p>
     <p>
       prvAge: {{prvAge}},
       <br/>      
       nowAge: {{nowAge}}
+    </p>
+    
+    <p>
+        mounted: 
+        <br/>
+        <span>age: {{age}}</span>
     </p>
 
     <p>
@@ -174,6 +187,11 @@ Mvvm.prototype._compile = function (el) {
         // 获取对应 watch 数据的值 
         let getKeyName = getKeyNames[placeholder];
 
+        // 如果是 数据是 "preson.foot" 该怎么处理
+        if (placeholder.indexOf('.') !== -1) {
+          // TODO
+          // 等待完成
+        }
         // 判断是否有对应的订阅池，没有就创建
         if (getKeyName !== undefined && !getKeyName._directives) {
           getKeyName._directives = [];
@@ -194,9 +212,23 @@ const mvvm = new Mvvm({
   data: {
     username: 'Tom',
     people: '人类这种生物',
+    person: {
+      hande: '机智的头部',
+      foot: '行走的脚',
+      breast: '坦荡的胸'
+    },
     describe: '人呐就那样吧,什么都明白了...',
     prvAge: 22,
     nowAge: 1
+  },
+  computed: {
+    // 这里的计算属性，没有做到像 vue 那样一般情况下不允许下直接修改计算属性的值，例：这样是不允许的 mvvm.age = 34;
+    age() {
+      return this.nowAge + this.prvAge;
+    }
+  },
+  mounted() {
+    console.log('I am mounted', this.prvAge);
   }
 });
 </script>
