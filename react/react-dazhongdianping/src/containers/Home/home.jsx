@@ -9,7 +9,7 @@ function handleClick1(e) {
 }
 
 
-class App extends React.Component {
+class Home extends React.Component {
   constructor (props) {
     super(props);
     this.state = {isToggleOn: true};
@@ -54,7 +54,7 @@ class App extends React.Component {
       boxSizing: 'border-box'
     }
     return (
-      <div className="app" style={style}>
+      <div className="home" style={style}>
         <button className="btn1" onClick={handleClick1.bind(this)}>{this.state.isToggleOn ? 'ON' : 'OFF'}</button>
         <button className="btn2" onClick={this.handleClick2.bind(this)}>{this.state.isToggleOn ? 'ON' : 'OFF'}</button>
         <button className="btn2" onClick={this.handleClick3}>{this.state.isToggleOn ? 'ON' : 'OFF'}</button>
@@ -64,4 +64,4 @@ class App extends React.Component {
   
 }
 
-export default App;
+export default Home;
