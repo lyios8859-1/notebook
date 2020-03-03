@@ -1,0 +1,47 @@
+git config --global user.name "xxx"
+git config --global user.email "xxx"
+git config --global user.password "xxx" # 可不配置
+git config --global credential.helper store  # 记住用户名和密码
+
+通过命令的方式，查看设置的信息 git config --list
+user.name=xxx
+user.email=xxx
+user.password=xxx
+credential.helper=store
+
+
+通过文件的方式，查看设置的信息 /home/username
+cat .gitconfig 
+
+[user]
+	name = xxx
+	email = xxx
+	password = xxx
+[credential]
+	helper = store
+
+
+使用git config 命令用来配置git的配置文件，git配置级别主要有以下3类：
+1、仓库级别 local 【优先级最高】git 仓库级别对应的配置文件是当前仓库下的.git/config 
+2、用户级别 global【优先级次之】git 用户级别对应的配置文件是用户宿主目录【/home/username】下的~/.gitconfig 【宿主目录：C:\Users\username】
+3、系统级别 system【优先级最低】git系统级别对应的配置文件是git安装目录下的 /etc/gitconfig 【和git的安装位置有关】
+
+配置文件的权重是 仓库>全局>系统
+
+1、git config --local -l  -l/--list查看仓库配置【必须要进入到具体的目录下】
+2、git config --global -l 查看用户配置
+3、git config --system -l 查看系统配置
+4、git config -l 查看所有的配置信息，依次是系统级别、用户级别、仓库级别
+
+5、git config 常用配置选项
+	git config -e 编辑配置文件 
+	git config --local -e 编辑仓库级别配置文件
+	git config --global -e 编辑用户级别配置文件
+	git config --system -e 编辑系统级别配置文件
+6、git config 添加配置项目 
+	git config --global user.email “you@example.com”
+	git config --global user.name “Your Name”
+
+7、删除配置项
+	git config --global|--local|--system --unset user.password
+
