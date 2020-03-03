@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { Switch, Route, Link, BrowserRouter } from 'react-router-dom';
 import NoMatch from '../components/NotFound/404.jsx';
 import Home from '../containers/Home/home.jsx';
@@ -7,7 +7,7 @@ import Users from '../containers/Users/users.jsx';
 
 import Details from '../containers/Details/details.jsx';
 
-class RouteMap extends React.Component {
+class RouteMap extends Component {
 
   updateHandle() {
     console.log('每次路由变化后都触发');

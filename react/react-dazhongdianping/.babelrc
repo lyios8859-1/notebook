@@ -1,6 +1,7 @@
 {
   "presets": [
     [
+      // 解析 ES2015+ 的语法
       "@babel/preset-env",
       {
         "targets": {

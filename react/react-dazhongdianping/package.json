@@ -7,7 +7,7 @@
     "dev": "webpack-dev-server --open --config config/webpack.dev.config.js",
     "build": "webpack --config config/webpack.product.config.js"
   },
-  "author": "",
+  "author": "Tomly",
   "license": "ISC",
   "dependencies": {
     "core-js": "^3.6.4",
