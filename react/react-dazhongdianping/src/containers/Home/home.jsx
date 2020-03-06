@@ -1,67 +1,54 @@
-import React from 'react';
+import React, { Component } from 'react';
 
-function handleClick1(e) {
-  e.stopPropagation();
-  e.preventDefault();
-  this.setState(state => ({
-    isToggleOn: !state.isToggleOn
-  }));
-}
-
-
-class Home extends React.Component {
-  constructor (props) {
+class Home extends Component {
+  constructor(props) {
     super(props);
-    this.state = {isToggleOn: true};
-
-    // 必须使用这种方式绑定this，否者对应的函数中的this指向不是该组件实例
-    this.handleClick3 = this.handleClick3.bind(this);
+    this.state = {
+      form: {
+        nickname: '',
+        username: '',
+        password: ''
+      },
+    };
   }
-  handleClick2 (e) {
+
+
+  handleChange = (key, e) => {
     e.stopPropagation();
-    e.preventDefault();
-    this.setState(state => ({
-      isToggleOn: !state.isToggleOn
-    }));
+    // 这种方式可以让多个数据进行双向绑定
+    const form = this.state.form;
+    for (let item in this.state.form) {
+      if (item === key) {
+        form[item] = e.target.value
+        this.setState({ form: form })
+      }
+    }
   }
 
-  handleClick3 (e) {
-    e.stopPropagation();
-    e.preventDefault();
-    this.setState(state => ({
-      isToggleOn: !state.isToggleOn
-    }));
-  }
-
-  componentDidMount () {
-    // 渲染完成
-    // ajax 请求数据
-    console.log('componentDidMount');
-  }
-  componentDidUpdate (prevProps, prevState) {
-    // 触发更新
-    console.log('componentDidUpdate');
-  }
-  componentWillUnmount () {
-    // 组件即将消失 清空一些事件，setTimout 等
-  }
   render() {
     const style = {
-      border: this.state.isToggleOn ? '4px solid red' : '4px solid blue',
-      backgroundColor: this.state.isToggleOn ? 'blue' : 'red',
+      border: '1px solid blue',
       display: 'flex',
       justifyContent: 'center',
       boxSizing: 'border-box'
     }
+
     return (
       <div className="home" style={style}>
-        <button className="btn1" onClick={handleClick1.bind(this)}>{this.state.isToggleOn ? 'ON' : 'OFF'}</button>
-        <button className="btn2" onClick={this.handleClick2.bind(this)}>{this.state.isToggleOn ? 'ON' : 'OFF'}</button>
-        <button className="btn2" onClick={this.handleClick3}>{this.state.isToggleOn ? 'ON' : 'OFF'}</button>
+        <p>React 实现数据双向绑定</p>
+        {/* 给输入框绑定事件 */}
+        <input type="text" onChange={this.handleChange.bind(this, 'nickname')} placeholder="请输入昵称..." />
+        <input type="text" onChange={this.handleChange.bind(this, 'username')} placeholder="请输入姓名..." />
+        <input type="text" onChange={this.handleChange.bind(this, 'password')} placeholder="请输入密码..." />
+        <p>昵称：{this.state.form.nickname}</p>
+        <hr />
+        <p>姓名：{this.state.form.username}</p>
+        <hr />
+        <p>密码：{this.state.form.password}</p>
       </div>
     )
   }
-  
+
 }
 
 export default Home;
