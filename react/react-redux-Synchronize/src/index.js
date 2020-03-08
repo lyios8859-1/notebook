@@ -18,8 +18,7 @@ const store = Store({
   // 传递初始的数据
   user: {
     isLogin: false,
-    name: 'Tomly',
-    loading: false
+    name: 'Tomly'
   },
   city: {
     name: '天国'
