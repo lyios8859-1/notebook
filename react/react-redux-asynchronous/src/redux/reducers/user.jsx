@@ -1,7 +1,7 @@
 import * as userConstants from '../constants/user.jsx';
 
 export default function (state = {}, action) {
-
+  console.log(state, action)
   switch (action.type) {
     case userConstants.USER_LOGIN : {
       return {
