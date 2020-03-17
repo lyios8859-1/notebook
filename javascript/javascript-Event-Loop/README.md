@@ -38,7 +38,7 @@ Promise.then Promise.catch Promise.finally // （nodejs 浏览器）
 ```
 
 ```js
-// 宏任务，将其放到宏任务的【队列】里
+// 异步，宏任务，将其放到宏任务的【队列】里
 setTimeout(() => {
   console.log(1)
 });
@@ -49,7 +49,7 @@ new Promise(resolve => {
 }).then(() => {  // then方法,微任务,将其放到微任务的【队列】里
   console.log(3)
 });
-// 宏任务，将其放到宏任务的【队列】里
+// 异步，宏任务，将其放到宏任务的【队列】里
 var timer = setInterval(() => {
   console.log(4),
   clearInterval(timer);
