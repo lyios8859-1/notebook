@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <div id="root">
+    <input type="text" v-model="school.name">
+
+    <p>{{school.name}}</p>
+    <p>{{     school.age     }}</p>
+
+    <p>{{getName}}</p>
+
+    <p v-html="msg"></p>
+
+    <button v-on:click="change">按钮</button>
+  </div>
+  <script src="./mvvm.js"></script>
+  <script>
+    let vm = new Vue({
+      el: '#root',
+      data: {
+        msg: '<h1>v-html数据<h1>',
+        school: {
+          name: '社会大熔炉',
+          age: 999
+        }
+      },
+      computed: {
+        getName () {
+          return 'ly_' + this.school.name;
+        }
+      },
+      methods: {
+        change () {
+          this.school.name = 'Tom'
+        }
+      }
+    });
+  </script>
+</body>
+</html>
