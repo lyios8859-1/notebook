@@ -1,0 +1,30 @@
+{
+  "id": "284894",
+  "name": "森翔",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "2526",
+      "name": "D",
+      "font_class": "D",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "12924200",
+      "name": "口罩",
+      "font_class": "kouzhao",
+      "unicode": "e640",
+      "unicode_decimal": 58944
+    },
+    {
+      "icon_id": "12924201",
+      "name": "棉被",
+      "font_class": "mianbei",
+      "unicode": "e641",
+      "unicode_decimal": 58945
+    }
+  ]
+}

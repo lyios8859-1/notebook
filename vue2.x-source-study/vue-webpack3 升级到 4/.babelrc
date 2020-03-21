@@ -1,0 +1,17 @@
+{
+  "presets": [
+    [
+      "@babel/preset-env", // 编译基本的es6语法
+      {
+        "useBuiltIns": "usage", // 按需引入兼容的实现的es6的一些浏览器不支持的方法，这样就不需要在入口文件引入 import "babel-polyfill"; 造成文件体积增大
+        "corejs": {
+          "version": 3 // 配合使用一些不兼容的es6的函数实现
+        }
+        // targets: {"chrome": "67"} 这个配置放到package.json 中配置了 "browserslist":{}
+      }
+    ]
+  ],
+  "plugins": [
+    "@babel/plugin-transform-runtime"
+  ]
+}
