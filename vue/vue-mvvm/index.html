@@ -30,6 +30,9 @@
           age: 999
         }
       },
+      mounted () {
+        console.log(this.school.name);
+      },
       computed: {
         getName () {
           return 'ly_' + this.school.name;

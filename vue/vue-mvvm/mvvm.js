@@ -255,14 +255,14 @@ class Vue {
   constructor (options) {
     this.$el = options.el;
     this.$data = options.data;
-
-    const computed = options.computed;
+    
     if (this.$el) {
       // 数据劫持
       new Observer(this.$data);
       
       // 监听计算属性
       const _this = this;
+      const computed = options.computed;
       for (const key in computed) {
         Object.defineProperty(this.$data, key, {
           get () {
@@ -271,8 +271,8 @@ class Vue {
         });
       }
 
+      // 监听方法
       const methods = options.methods;
-
       for (const key in methods) {
         Object.defineProperty(this, key, {
           get () {
@@ -281,11 +281,14 @@ class Vue {
         });
       }
 
-      // 把 vm.$data 都代理到 vm上，直接 通过 vm.xxx获取数据，不代理的话，必须 vm.$data.xxx
+      // 把 vm.$data 都代理到 vm 上，直接 通过 vm.xxx获取数据，不代理的话，必须 vm.$data.xxx
       this.proxyVm(this.$data);
 
       // 编译模板，数据动态替换
       new Compiler(this.$el, this);
+
+      // 所有事情处理好后执行 mounted 钩子函数
+      options.mounted.call(this); // 这就实现了 mounted 钩子函数
     }
   }
   proxyVm (data) {
