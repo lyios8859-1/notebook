@@ -8,7 +8,7 @@
 </head>
 <body>
   <div id="app">
-    <h1>人类：{{people}}</h1>
+    <h1>人类：{{ people    }}</h1>
     <h2>组成部分：</h2>
     <ul>
       <li>{{person.hande}}</li>
@@ -17,7 +17,7 @@
     </ul>
     <h2>描述：</h2>
     <p>{{describe}}</p>
-    <p>prvAge: {{prvAge}},
+    <p>prvAge: {{ prvAge }},
       <br/>      
       nowAge: {{nowAge}}
       <br/>
@@ -115,7 +115,7 @@ class Compile {
     Array.from(frag.childNodes).forEach(node => {
       const txt = node.textContent;
 
-      // 这个正则匹配 {{}} 需要优化， 
+      // 正则匹配 {{}} 
       const reg = /\{\{(.*?)\}\}/g;
       if (node.nodeType === 1) {
         const nodeAttr = node.attributes;
@@ -137,7 +137,7 @@ class Compile {
           node.textContent = txt.replace(reg, (matched, placeholder) => {
             new Watcher(vm, placeholder, replaceTxt); // 监听变化，进行匹配替换内容
             return placeholder.split('.').reduce((val, key) => {
-              return val[key];
+              return val[key.trim()];
             }, vm);
           });
         }
