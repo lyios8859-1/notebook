@@ -19,8 +19,6 @@
     "url": "https://github.com/lyios8859-1/notebook/issues"
   },
   "homepage": "https://github.com/lyios8859-1/notebook#readme",
-  "devDependencies": {
-  },
-  "dependencies": {
-  }
+  "devDependencies": {},
+  "dependencies": {}
 }

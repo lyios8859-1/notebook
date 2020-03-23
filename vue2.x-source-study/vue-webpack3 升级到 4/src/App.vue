@@ -2,6 +2,7 @@
   <div id="app">
     <img src="./assets/logo.png">
     <HelloWorld/>
+    <div ref="imgRefs"></div>
   </div>
 </template>
 
@@ -12,6 +13,12 @@ export default {
   name: 'App',
   components: {
     HelloWorld
+  },
+  mounted () {
+    const imgSrc = require('./assets/logo.png')
+    const img = new Image()
+    img.setAttribute('src', imgSrc)
+    this.$refs.imgRefs.appendChild(img)
   }
 }
 </script>
