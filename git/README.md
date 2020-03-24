@@ -1,12 +1,20 @@
 # git 工作流程
 
-![git 工作流程](./git工作流程.png "git工作流程图")
+![git工作流程](./git工作流程.png "git工作流程图")
+
+![git简易流程](./git简易流程.png "git简易流程")
 
 说明：
 
 - 工作区就是创建仓库的文件夹如（`notebook` 文件夹就是一个工作区）
 - 版本库就是工作区的隐藏目录.git,版本库中有暂存区（stage/index）和分支（master）
 - `git add` 实际是把文件添加到暂存区，`git commit` 把暂存区的内容提交到当前分支
+
+## ~ 与 ^
+
+1. `^` 代表父提交,当一个提交有多个父提交时，可以通过在 `^` 后面跟上一个数字，表示第几个父提交，`^` 相当于 `^1`.
+2. `~<n>` 相当于连续的 `<n>` 个 `^`.
+3. `checkout` 只会移动 `HEAD` 指针，`reset` 会改变 `HEAD` 的引用值。
 
 ## 创建版本库
 
@@ -22,57 +30,59 @@ mkdir notebook && cd notebook
 git init
 ```
 
-3、 工作区添加文件并提交到暂存区
+3、 工作区添加 `add` 文件并暂存区，再 提交 `commit` 到仓库
 
 ```shell
 # 创建文件并添加一些内容
 echo "lean git" >> README.md
 
-# 添加到仓库暂存区，在暂存区的文件会变绿
+# 添加到仓库暂存区，在暂存区的文件，绿色标识
 git add README.md   （如果是 “.” 表示修改的文件全部添加到赞存区）
 
-# 提交 README.md 文件到当前分支, -m "提交说明"(只有进行 git add 后 go commit 命令才有效)
+# 提交 README.md 文件到当前分支的仓库中, -m "提交说明"(只有进行 git add 后 git commit 命令才能提交到仓库，接下来才可以 通过 git push origin 分支名 提交到远程仓库中)
 git commit -m "add README.md"
 ```
 
 4、工作区修改文件
 
 ```shell
-# 修改完成文件后，执行 git status 查看仓库状态
+# 修改完成文件后，执行 git status 查看当前工作区中的文件状态，红色标识
 git status
 
 # 添加到仓库暂存区，并提交到当前分支（这里需要多次的添加到暂存区并提交到当前分支，因为需要不断的修改文件）
-git add README.m）
-# 提交到当前分支）
+git add README.md
+
+# 提交到当前分支的仓库中
 git commit -m "modify README.md"
 ```
 
-5、撤销修改文件（未提交到分支）
+5、撤销修改文件（未提交到远程分支）
 
-- **当文件在工作区时**，执行撤销命令
+- **当文件在工作区时**，执行撤销命令，使使文件返回到工作区
 
 ```shell
+# 这个命令覆盖工作区的已修改的内容，要谨慎使用，否则你修改的一些内容全部付诸东流，个人一般不用，一般先 git add
 git checkout -- README.md
 ```
 
 - **当文件在暂存区时**, 首先使文件回到工作区， 再执行撤销命令
 
 ```shell
-# 使文件返回到工作区
-git reset HEAD README.md
+# 使文件返回到暂存区，~ 一个表示上一次 commit 的版本，~~ 两个表示上上一次 commit 的版本，默认参数 --mixed，如： git reset --mixed HEAD^ README.md
+git reset HEAD~ README.md
 
-# 再执行撤销命令
+# 再执行撤销命令，使文件返回到工作区（谨慎使用，会覆盖当前工作去所有的修改）
 git checkout -- README.md
 ```
 
 ## 版本控制 （无限次后悔）
 
-> 在 Git 中， HEAD 表示当前版本库， HEAD^ 表示上一个版本库， HEAD^^ 表示上一个的上一个版本库
+> 在 Git 中， `HEAD` 表示当前版本库， `HEAD^` 表示上一个版本库(commit 提交时的状态)， `HEAD^^` 表示上一个的上一个版本库
 
 1、查看提交的完整日志
 
 ```shell
-  git log
+git log [--graph]
 ```
 
 2、查看提交的简要日志
@@ -347,3 +357,51 @@ git push origin :refs/tags/v0.9
 - 方法二
 
 > git config --global credential.helper store
+
+
+## git reset 回滚命令
+
+> `git reset [--mixed | --soft | --hard] HEAD~`
+
+1. `--mixed`: 默认参数，移动仓库中 `HEAD` 的指向，将其指向上一个快照，将移动后指向的快照回滚到上一次`commit` 提交的暂存区，**会回滚到暂存区**。
+2. `--soft`: 移动仓库中 `HEAD` 的指向，将其指向上一个快照，**不会回滚到暂存区**
+3. `--hard`: 移动仓库中 `HEAD` 的指向，将其指向上一个快照，将移动后指向的快照回滚到上一次`commit` 提交的暂存区，**会回滚到暂存区**，而且还将暂存区的文件**还原到工作目录**中。
+
+**注意**：如果使用命令 `git reset --hard HEAD`，要谨慎，这样会对已经修改的文件内容也还原了。即修改的内容就不存在了。
+
+回滚到某一次的 `commit`, 通过 `git log` 或者 `git log --oneline` 获取到 hash 值，一般复制前 7 位即可
+
+```shell
+git log
+
+git reset f81fca8e
+```
+
+## git diff 文件对比命令
+
+用到 vim 的一些命令
+
+* 比较工作目录和本地仓库的某次 `commit` 的差异
+
+```shell
+# 比较工作目录和本地仓库的最后一次的 `commit` 的差异
+git diff
+
+#比较不同历史提的本地仓库的 `commit` 的差异
+git diff f7b2a54 b1549f9
+
+# 比较工作目录中的修改和 Git 本地仓库的 `commit` 的差异
+git diff f7b2a54
+```
+
+* 比较暂存区和 Git 本地仓库的 `commit` 的差异
+
+```shell
+# 比较暂存区和本地仓库的最后一次的 `commit` 的差异
+git diff --cached
+
+# 比较暂存区与本地仓库的某次的 `commit` 的差异
+git diff --cached f7b2a54
+
+```
+
