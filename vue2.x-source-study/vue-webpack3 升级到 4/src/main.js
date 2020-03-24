@@ -12,4 +12,4 @@ new Vue({
   template: '<App/>'
 })
 
-console.log('*'.repeat(100)); // eslint-disable-line
+console.log('*'.repeat(100))
