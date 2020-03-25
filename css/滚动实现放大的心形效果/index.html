@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      min-height: 3000px;
+    }
+    .banner {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+    }
+    .banner img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    } 
+    .banner #bg {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: url('./heart.svg') #fff;
+      background-repeat: no-repeat;
+      background-position: center;
+      background-size: 100px;
+      mix-blend-mode: screen;
+    }
+  </style>
+  <div class="banner">
+    <img src="./timg.jpeg" alt="" srcset="">
+    <div id="bg"></div>
+  </div>
+  <script>
+    const bg = document.querySelector('#bg');
+    window.addEventListener('scroll', () => {
+      let v = window.scrollY;
+      bg.style.backgroundSize = 100 + v * 2 + 'px';
+    });
+  </script>
+</body>
+</html>
