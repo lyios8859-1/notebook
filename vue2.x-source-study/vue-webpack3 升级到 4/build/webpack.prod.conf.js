@@ -61,7 +61,7 @@ const webpackConfig = merge(baseWebpackConfig, {
     runtimeChunk: true
   },
   plugins: [
-    new webpack.ProgressPlugin(),
+    // new webpack.ProgressPlugin(),
     new VueLoaderPlugin(),
     // http://vuejs.github.io/vue-loader/en/workflow/production.html
     new webpack.DefinePlugin({
