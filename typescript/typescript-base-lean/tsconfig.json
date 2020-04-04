@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "es2015",
+      "dom"
+    ],
+    "noEmitOnError": true // 编译报错时，不输出文件
+  }
+}

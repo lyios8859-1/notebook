@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>测试</title>
+</head>
+<body>
+    <div id="box">dfs</div>
+
+    <script src="./lyQuery.js"></script>
+    <script>
+        $(function (){
+            var i = 0;
+           $('#box').css('background', 'red').css('width', '200px').css('height', '200px').css('margin', '10px');
+
+           $(document).mousemove(function(){
+            this.onclick = function(ev) {
+                console.log( mousePos(ev) )
+            };
+        });
+        
+        });
+
+        
+        
+    </script>
+</body>
+</html>

@@ -1,10 +1,16 @@
-function test (name: string | null): string {
-  function postfix (epithet: string) {
-    // 这里明确调用时不可能为null，所以使用 ’!‘ 类型断言
-    // 否则 tsc index.ts --strictNullChecks 编译时就报错：Object is possibly 'null'.
-    return name.charAt(0) + '. The ' + epithet;
-  }
-
-  name = name || 'Tom';
-  return postfix(name);
+interface Person {
+  readonly name: string;
+  age: number;
+  [propName: string]: any; // 表示可以扩展多个属性，如果不设置，下面的sex就会编译出错
 }
+
+const person: Person = {
+  name: 'tom',
+  age: 34,
+  sex: 'male'
+};
+
+function getMsg (person: Person) {
+  console.log(person)
+}
+getMsg(person);

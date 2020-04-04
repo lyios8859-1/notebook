@@ -1,5 +1,19 @@
 # TypeScript 的基础学习
 
+> TypeScript 是 JavaScript 的 超集
+
+* type annotation (类型注解)：开发人员告诉 TS 变量是什么类型 `let count: number; count = 124;`
+* type inference (类型推断)：开发人员不指定变量的类型，让 TS 自动分析变量类型 `let count = 124;`
+
+**注意**： 这种情况是无法自动推断的
+```js
+let count;
+count = 34;
+```
+
+1. 基础类型： `boolean`、`number`、`string`、`void`、`null`、`undefined`、`symbol`。
+2. 对象类型：`{}`、`Class`、`function`、`[]`, `Date`
+
 ## 基础类型
 
 ```typescript
@@ -14,10 +28,17 @@ const num: number = 12;
 const list: number[] = [1, 3, 4];
 const list1: Array<number> = [1, 3, 4];
 
-// Tuple 元组类型
+// Tuple 元组类型，固定的长度，固定的类型
 const x: [string, number] = ['Tom', 34];
 x[1] = '34'; // 不允许
 x[4] = 12; // 越界,不允许
+
+// 元组，实例
+// CSV 的文件内容格式比较固定
+const tupleArr: [string, string, number][] = [
+  ['Tom', 'male', 34],
+  ['Jerry', 'female', 34]
+];
 
 // 枚举
 enum Color {
@@ -270,6 +291,10 @@ console.log(myWorld2.findWoldPositon('Helle ', myWorld2.country));
 let add1: (value1: number, value2: number) => number = function (x, y) {
   return x + y;
 };
+// 简写方式
+let add1: (value1: number, value2: number) => number = (x, y) => {
+  return x + y;
+};
 
 // 方式二
 let add2: (value1: number, value2: number) => number = function (x: number, y: number): number {
@@ -285,6 +310,21 @@ let add3 = function (x: number, y: number): number {
 function getName (x: number, y: number): number {
   return x + y;
 }
+```
+
+* 函数的参数的解构赋值
+
+```js
+function getAge1 ({ x, y }: { x: number, y: number }): number {
+  return x + y;
+}
+
+function getAge2 ({ x }: { x: number }): number {
+  return x;
+}
+
+const age1: number = getAge1({ x: 2, y: 3 });
+const age2: number = getAge2({ x: 23 });
 ```
 
 ## 可选参数
@@ -392,6 +432,65 @@ pet.layEggs();
 // pet.swim(); //编译报错， 只能是调用共有的属性或方法
 ```
 
+* 数组的联合类型
+
+```js
+const arr: (number | string)[] = [1, 2, '3'];
+
+
+// 对象数组类型
+const arr1: {name: string, age: number}[] = [
+  {
+    name: 'tom',
+    age: 34
+  }, {
+    name: 'jerry',
+    age: 334
+  }
+];
+
+// 等价于
+// 定义类型别名 (type alias)
+type User = { name: string, age: number };
+// 使用类型别名 User
+const arr2: User[] = [
+  {
+    name: 'tom',
+    age: 34
+  }, {
+    name: 'jerry',
+    age: 334
+  }
+];
+```
+
+```js
+// 定义类型别名 (type alias)
+
+type User1 = { name: string, age: number };
+const arr1: User1[] = [
+  {
+    name: 'tom',
+    age: 34
+  }, {
+    name: 'jerry',
+    age: 334
+  }
+];
+
+class User2 {
+  name: string;
+  age: number;
+}
+const arr2: User2[] = [
+  new User2(),
+  {
+    name: 'Tom',
+    age: 33
+  }
+];
+```
+
 ## 类型保护
 
 ```typescript
@@ -497,4 +596,78 @@ function broken(name: string | null): string {
   name = name || 'Tom';
   return postfix(name);
 }
+```
+
+## type alias (类型别名) 与 interface (接口) 区别
+
+* 类型别名
+
+> 不仅可以定义的是单个变量，还可以是对象
+
+```js
+type str = string;
+
+type Person = {
+  name: string;
+  age: number
+}
+
+const first_name: str = '34';
+console.log(first_name);
+const person: Person = {
+  name: 'tom',
+  age: 34
+};
+console.log(person)
+```
+
+* 接口
+
+> 只能定义对象
+
+```js
+interface str = string; // 不允许，报错
+
+interface Person {
+  name: string;
+  age: number
+}
+```
+
+## 只读 readonly
+
+```js
+interface Person {
+  readonly name: string;
+  age: number
+}
+
+const person: Person = {
+  name: 'tom',
+  age: 34
+};
+
+person.name = 'jerry'; // 报错，只允许读取
+console.log(person)
+```
+
+## 可扩展属性 propName
+
+```js
+interface Person {
+  readonly name: string;
+  age: number;
+  [propName: string]: any; // 表示可以扩展多个属性，如果不设置，下面的sex就会编译出错
+}
+
+const person: Person = {
+  name: 'tom',
+  age: 34,
+  sex: 'male'
+};
+
+function getMsg (person: Person) {
+  console.log(person)
+}
+getMsg(person);
 ```
