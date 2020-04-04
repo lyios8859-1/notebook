@@ -164,6 +164,91 @@ let greeter: Greeter = new greeterMaker();
 console.log(greeter.getGreeting());
 ```
 
+## 类继承
+
+1. 继承
+
+```js
+class Person {
+  name: string = '';
+  constructor (name: string) {
+    this.name = name;
+  }
+  getMsg (): string {
+    return this.name;
+  }
+}
+
+// 继承
+class Child extends Person {
+  age: number = 0;
+  constructor (name: string, age: number) {
+    super(name); // 调用父类构造函数
+    this.age = age;
+  }
+}
+
+const child = new Child('Tom', 33);
+console.log(child.getMsg()); // 调用父类方法 
+```
+
+2. 重写父类方法
+
+```js
+class Person {
+  private type: string = 'Person'; // private 只能在当前类的内部被调用
+  protected name: string = ''; // protected 当前类的内部被调用，可以在子类中调用
+  public count: number = 0; // public 当前类的内部被调用，可以在子类中调用，也可以在内外部调用 
+  constructor (name: string) {
+    this.name = name;
+  }
+  getMsg (): string {
+    return this.name;
+  }
+}
+
+// 继承
+class Child extends Person {
+  age: number = 0;
+  constructor (name: string, age: number) {
+    super(name); // 调用父类构造函数
+    this.age = age;
+  }
+  // 重写父类的方法
+  getMsg (): string {
+    // 调用父类的 name 属性
+    return `My name is ${this.name}, age is ${this.age}.`;
+  }
+}
+
+const child = new Child('Tom', 33);
+console.log(child.getMsg()); // 如果重写了父类方法，调用的是子类的和父类同名的方法 
+```
+
+3. 静态属性和方法
+
+```js
+// 静态变量是所有的类对象共享的数据，只能通过类名调用静态方法和属性
+class Person {
+  private name: string = '';
+  private static count: number = 0;
+  constructor (name: string) {
+    this.name = name;
+  }
+  getMsg () {
+    return this.name;
+  }
+  static getCount (): number {
+    return this.count++;
+  }
+}
+
+const person1 = new Person('tom');
+console.log(person1.getMsg(), Person.getCount()); // tom 0
+const person2 = new Person('jerry');
+console.log(person2.getMsg(), Person.getCount()); // tom 1
+```
+
 ## 泛型
 
 ```typescript

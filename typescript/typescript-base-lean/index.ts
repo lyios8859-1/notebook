@@ -1,16 +1,19 @@
-interface Person {
-  readonly name: string;
-  age: number;
-  [propName: string]: any; // 表示可以扩展多个属性，如果不设置，下面的sex就会编译出错
+// 静态变量是所有的类对象共享的数据，只能通过类名调用静态方法和属性
+class Person {
+  private name: string = '';
+  private static count: number = 0;
+  constructor (name: string) {
+    this.name = name;
+  }
+  getMsg () {
+    return this.name;
+  }
+  static getCount (): number {
+    return this.count++;
+  }
 }
 
-const person: Person = {
-  name: 'tom',
-  age: 34,
-  sex: 'male'
-};
-
-function getMsg (person: Person) {
-  console.log(person)
-}
-getMsg(person);
+const person1 = new Person('tom');
+console.log(person1.getMsg(), Person.getCount()); // tom 0
+const person2 = new Person('jerry');
+console.log(person2.getMsg(), Person.getCount()); // tom 1

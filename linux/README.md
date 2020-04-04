@@ -22,3 +22,11 @@ ln -s /usr/software/nodejs/bin/tsc /usr/local/bin/
 ln /usr/software/nodejs/bin/tsc /usr/local/bin/
 ```
 
+## 删除软链接
+
+```bash
+ln /usr/software/nodejs/bin/tsc /usr/local/bin/
+rm -rivf tsc 
+```
+
+**注意**：删除的时候，后面千万有一个反斜杠'/'（例如：`tsc/`）, 就会删除到文件夹下的文件, 这样操作很危险，正确操作是不要带有反斜杠 '/' 
