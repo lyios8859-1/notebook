@@ -47,6 +47,32 @@ enum Color {
   Blue
 }
 
+
+function test (status: number) {
+  if (status === const_status.OFF_LINE) {
+    console.log(0);
+  } else if (status === const_status.ON_LINE) {
+    console.log(1);
+  }
+}
+
+const const_status = {
+  OFF_LINE: 0,
+  ON_LINE: 1
+};
+
+test(1);
+test(0);
+
+// 使用枚举类型替代上面的这个 const_status, 如果不赋值给 enmu 类型的属性，那么值是从 0 开始递增
+enum enum_status {
+  OFF_LINE,
+  ON_LINE
+};
+
+test(enum_status.OFF_LINE);
+test(enum_status.ON_LINE);
+
 // null 和 undefined 类型
 let u: undefined = undefined;
 let u: null = undefined;
@@ -283,6 +309,13 @@ function indentity<T extends LengthInterface>(arg: T): T {
 indentity({ length: 2 }); // 编译通过
 indentity(2); // 编译报错：类型“2”的参数不能赋给类型“LengthInterface”的参数。
 
+// 多个类型的泛型
+function test<T, K> (name: T, age: K): void {
+  console.log(`姓名：${name}, 年龄：${age}`);
+}
+test<string, number>('Tom', 34); // 开发人员指定了泛型的类型
+test('Tom', 34); // 使用了类型推断
+
 // 泛型约束2
 // K 受到 T 的类型约束
 function  getProperty<T, K extends keyof T>(obj: T, key: K) {
@@ -375,7 +408,46 @@ myWorld2.findWoldPositon = function (x: string, y: string) {
 console.log(myWorld2.findWoldPositon('Helle ', myWorld2.country));
 ```
 
+```ts
+// 泛型继承另一个类型
+
+interface Item {
+  name: string,
+  age: number
+}
+
+class DataManger<T extends number | string | Item> {
+  constructor (private data: T[]) {}
+
+  getItem (index: number): T {
+    return this.data[index];
+  }
+}
+
+new DataManger([1]);
+new DataManger(['3']);
+new DataManger([
+  {
+    name: 'Tom',
+    age: 34
+  }
+])
+```
+
 ## 函数
+
+```ts
+// 返回一个 T 类型的函数
+const func: <T>(params: T) => T = (params) => {
+  return params;
+}
+
+ // 等价于
+function test<T> (params: T) {
+  return params;
+}
+const func: <T>(params: T) => T = test;
+```
 
 ```ts
 // a: 表达式, 有3种方式
@@ -587,6 +659,7 @@ const arr2: User2[] = [
 ## 类型保护
 
 ```ts
+// typeof 的类型保护
 function  padingLeft(value: string, padding: string | number) {
   if (typeof padding === 'number') {
     return Array(padding + 1).join(' ') + value;
@@ -609,9 +682,8 @@ interface Fish {
 }
 
 function getSmallPet(): Fish | Bird {
-  // TODO
-  let type: Fish | Bird;
-  return type;
+  let type!: Fish | Bird; // 如果我们已经确定它已经被赋值了，这个时候就需要 ! 来标识
+  return type; // 如果不加 “!”，报错：变量“类型”在分配之前使用
 }
 
 let pet = getSmallPet();
@@ -653,7 +725,19 @@ class Bird1 {
     console.log('Brid Lay Eggs.')
   };
 }
+
+// 解决方案四：
+// 类型保护之 in
+function getSmallPet (pet: Bird | Fish) {
+  if ('fly' in pet) {
+    pet.fly();
+  } else {
+    pet.layEggs();
+  }
+}
 ```
+
+PS： 一般使用 联合类型，都要做类型保护处理。
 
 ## null 与 undefined
 
@@ -928,4 +1012,189 @@ console.log(singleton2.age);
 // singleton2.age = 3433; // 编译报错，只读属性不能修改
 
 console.log('singleton1 === singleton2', singleton1 === singleton2);
+```
+
+## namespace 命名空间
+
+> 编译后形成一个闭包的代码模块, 不污染全局变量，导致全局变量冲突。
+> 命名空间可以嵌套，可以导出接口 (`interface`), 变量，命名空间 (`namespace`)，
+
+```ts
+namespace index {
+  class Header {
+    constructor () {
+      const headerDom = document.createElement('header'); // 自动类型推断
+      headerDom.innerHTML = '我是头部';
+      document.body.appendChild(headerDom);
+    }
+  }
+
+  class Main {
+    constructor () {
+      const mainDom = document.createElement('main'); // 自动类型推断
+      mainDom.innerHTML = '我是内容';
+      document.body.appendChild(mainDom);
+    }
+  }
+
+  class Footer {
+    constructor () {
+      const footerDom = document.createElement('footer'); // 自动类型推断
+      footerDom.innerHTML = '我是底部';
+      document.body.appendChild(footerDom);
+    }
+  }
+
+  // 如果需要外部使用，需要导出
+  export class CreatePage {
+    constructor () {
+      new Header();
+      new Main();
+      new Footer();
+    }
+  }
+}
+```
+
+编译成 js 后：
+
+```js
+"use strict";
+var index;
+(function (index) {
+    var Header = /** @class */ (function () {
+        function Header() {
+            var headerDom = document.createElement('header'); // 自动类型推断
+            headerDom.innerHTML = '我是头部';
+            document.body.appendChild(headerDom);
+        }
+        return Header;
+    }());
+    var Main = /** @class */ (function () {
+        function Main() {
+            var mainDom = document.createElement('main'); // 自动类型推断
+            mainDom.innerHTML = '我是内容';
+            document.body.appendChild(mainDom);
+        }
+        return Main;
+    }());
+    var Footer = /** @class */ (function () {
+        function Footer() {
+            var footerDom = document.createElement('footer'); // 自动类型推断
+            footerDom.innerHTML = '我是底部';
+            document.body.appendChild(footerDom);
+        }
+        return Footer;
+    }());
+    // 如果需要外部使用，需要导出
+    var CreatePage = /** @class */ (function () {
+        function CreatePage() {
+            new Header();
+            new Main();
+            new Footer();
+        }
+        return CreatePage;
+    }());
+    index.CreatePage = CreatePage;
+})(index || (index = {}));
+```
+
+* 分成多个模块引用, 方案一
+
+components.ts 模块的代码：
+
+```ts
+namespace Component {
+  export class Header {
+    constructor () {
+      const headerDom = document.createElement('header'); // 自动类型推断
+      headerDom.innerHTML = '我是头部';
+      document.body.appendChild(headerDom);
+    }
+  }
+
+  export class Main {
+    constructor () {
+      const mainDom = document.createElement('main'); // 自动类型推断
+      mainDom.innerHTML = '我是内容';
+      document.body.appendChild(mainDom);
+    }
+  }
+
+  export class Footer {
+    constructor () {
+      const footerDom = document.createElement('footer'); // 自动类型推断
+      footerDom.innerHTML = '我是底部';
+      document.body.appendChild(footerDom);
+    }
+  }
+}
+```
+
+index.ts 模块的代码：
+
+**注意**：模块 `componts.ts` 的引入方式的标志： `<reference path="./componts.ts" />`
+
+```ts
+/// <reference path="./componts.ts" />
+
+namespace index {
+  // 如果需要外部使用，需要导出
+  export class CreatePage {
+    constructor () {
+      new Component.Header();
+      new Component.Main();
+      new Component.Footer();
+    }
+  }
+}
+```
+
+
+* 分成多个模块引用, 方案二
+
+components.ts 模块的代码：
+
+```ts
+export class Header {
+  constructor () {
+    const headerDom = document.createElement('header'); // 自动类型推断
+    headerDom.innerHTML = '我是头部';
+    document.body.appendChild(headerDom);
+  }
+}
+
+export class Main {
+  constructor () {
+    const mainDom = document.createElement('main'); // 自动类型推断
+    mainDom.innerHTML = '我是内容';
+    document.body.appendChild(mainDom);
+  }
+}
+
+export class Footer {
+  constructor () {
+    const footerDom = document.createElement('footer'); // 自动类型推断
+    footerDom.innerHTML = '我是底部';
+    document.body.appendChild(footerDom);
+  }
+}
+```
+
+index.ts 模块的代码：
+
+
+**注意**：模块 `componts.ts` 的引入方式的标志： ES6的模块导出，引入方式（强烈推荐）`import { Header, Main, Footer} from './componts';`
+
+```ts
+import { Header, Main, Footer} from './componts';
+
+// 如果需要外部使用，需要导出
+export class CreatePage {
+  constructor () {
+    new Header();
+    new Main();
+    new Footer();
+  }
+}
 ```
