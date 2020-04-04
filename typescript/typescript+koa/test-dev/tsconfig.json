@@ -1,0 +1,8 @@
+{
+ "compilerOptions": {
+   "outDir": "./dist", // 编译后的文件存放路径（和webpack配置的打包后的存放路径一致）
+   "module": "es6", // 使用 ES Module 的方式引入各个模块js，如：import * as _ from 'lodash';
+   "target": "ES3",  // 编译后的支持 可以ES3,ES5等
+   "allowJs": true  // 允许在typescript模块中js文件
+ } 
+}
