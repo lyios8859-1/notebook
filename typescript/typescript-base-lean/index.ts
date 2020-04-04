@@ -1,19 +1,42 @@
-// 静态变量是所有的类对象共享的数据，只能通过类名调用静态方法和属性
-class Person {
-  private name: string = '';
-  private static count: number = 0;
-  constructor (name: string) {
-    this.name = name;
-  }
-  getMsg () {
-    return this.name;
-  }
-  static getCount (): number {
-    return this.count++;
-  }
+
+// 接口(提取出共性的属性)继承
+interface Person {
+  name: string
 }
 
-const person1 = new Person('tom');
-console.log(person1.getMsg(), Person.getCount()); // tom 0
-const person2 = new Person('jerry');
-console.log(person2.getMsg(), Person.getCount()); // tom 1
+interface Teacher extends Person {
+  teaching_age: number
+}
+
+interface Student extends Person {
+  age: number
+}
+
+interface Driver extends Person {
+  driver_age: number,
+  occupation: string
+}
+
+const teach: Teacher = {
+  name: 'Tom',
+  teaching_age: 4
+}
+
+const student: Student = {
+  name: '小明',
+  age: 16
+}
+
+const driver: Driver = {
+  name: '李师傅',
+  occupation: '司机',
+  driver_age: 3
+}
+
+const getMsg = (msg: Person) => {
+  console.log(JSON.stringify(msg, null, 2));
+}
+
+getMsg(teach);
+getMsg(student);
+getMsg(driver);

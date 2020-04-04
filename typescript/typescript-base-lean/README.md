@@ -6,7 +6,7 @@
 * type inference (类型推断)：开发人员不指定变量的类型，让 TS 自动分析变量类型 `let count = 124;`
 
 **注意**： 这种情况是无法自动推断的
-```js
+```ts
 let count;
 count = 34;
 ```
@@ -16,7 +16,7 @@ count = 34;
 
 ## 基础类型
 
-```typescript
+```ts
 // Blooean类型
 const isMark: boolean = false;
 // String类型
@@ -97,17 +97,23 @@ let strLength: number = (someValue as string).length;
 ## 抽象类
 
 > 不可以直接实例化，通常作为其他派生类（子类）的基类（父类）
-> abstract 标识
+> `abstract` 标识
+> 主要作用：表示其他子类的共性的属性和方法，在继承抽象方法时，必须实现其抽象属性和方法。
 
-```typescript
+```ts
 abstract class Animal {
+  // 抽象的方法
   abstract makeSoun(): void;
+  // 实际的方法可以在子类中不必须实现
   run () {
     console.log('The animal run...');
   }
 }
+```
 
-// 例
+例:
+
+```ts
 abstract class Department {
   name: string = 'Tom';
   constructor (name: string) {
@@ -134,41 +140,16 @@ class AccountingDepartment extends Department {
 let department: Department = new AccountingDepartment();
 department.printMeeting();
 department.printName();
-// 因为我们规定了AccountingDepartment实例是一个抽象的Department，
-// 因此department.genterteReports();会编译报错
+// 因为我们规定了 AccountingDepartment 实例是一个抽象的 Department，
+// 因此 department.genterteReports(); 会编译报错
 // department.genterteReports();
-
-// 静态属性和修改静态属性
-class Greeter {
-  static standarGreeting: string = 'Hello, Tom!!!';
-  greeting: string = '';
-  constructor (msg?: string) {
-    this.greeting = msg;
-  }
-  getGreeting () {
-    return this.greeting ? `Hello, ${this.greeting}!!!` : Greeter.standarGreeting;
-  }
-}
-
-let greeter1: Greeter = new Greeter('Jerry');
-console.log(greeter1.getGreeting()); // Hello, Jerry!!!
-
-let greeter2: Greeter = new Greeter();
-console.log(greeter2.getGreeting()); // Hello, Tom!!!
-
-// 修改静态属性
-let greeterMaker: typeof Greeter = Greeter;
-greeterMaker.standarGreeting = 'Hi Tom.'
-
-let greeter: Greeter = new greeterMaker();
-console.log(greeter.getGreeting());
 ```
 
 ## 类继承
 
 1. 继承
 
-```js
+```ts
 class Person {
   name: string = '';
   constructor (name: string) {
@@ -194,7 +175,7 @@ console.log(child.getMsg()); // 调用父类方法
 
 2. 重写父类方法
 
-```js
+```ts
 class Person {
   private type: string = 'Person'; // private 只能在当前类的内部被调用
   protected name: string = ''; // protected 当前类的内部被调用，可以在子类中调用
@@ -227,7 +208,7 @@ console.log(child.getMsg()); // 如果重写了父类方法，调用的是子类
 
 3. 静态属性和方法
 
-```js
+```ts
 // 静态变量是所有的类对象共享的数据，只能通过类名调用静态方法和属性
 class Person {
   private name: string = '';
@@ -249,9 +230,36 @@ const person2 = new Person('jerry');
 console.log(person2.getMsg(), Person.getCount()); // tom 1
 ```
 
+```ts
+// 静态属性和修改静态属性
+class Greeter {
+  static standarGreeting: string = 'Hello, Tom!!!';
+  greeting: string = '';
+  constructor (msg?: string) {
+    this.greeting = msg;
+  }
+  getGreeting () {
+    return this.greeting ? `Hello, ${this.greeting}!!!` : Greeter.standarGreeting;
+  }
+}
+
+let greeter1: Greeter = new Greeter('Jerry');
+console.log(greeter1.getGreeting()); // Hello, Jerry!!!
+
+let greeter2: Greeter = new Greeter();
+console.log(greeter2.getGreeting()); // Hello, Tom!!!
+
+// 修改静态属性
+let greeterMaker: typeof Greeter = Greeter;
+greeterMaker.standarGreeting = 'Hi Tom.'
+
+let greeter: Greeter = new greeterMaker();
+console.log(greeter.getGreeting());
+```
+
 ## 泛型
 
-```typescript
+```ts
 // 泛型函数
 function indentity<T>(arg: T): T {
   return arg;
@@ -369,7 +377,7 @@ console.log(myWorld2.findWoldPositon('Helle ', myWorld2.country));
 
 ## 函数
 
-```typescript
+```ts
 // a: 表达式, 有3种方式
 // 参数类型, 箭头后面的是返回值类型
 // 方式一
@@ -399,7 +407,7 @@ function getName (x: number, y: number): number {
 
 * 函数的参数的解构赋值
 
-```js
+```ts
 function getAge1 ({ x, y }: { x: number, y: number }): number {
   return x + y;
 }
@@ -419,7 +427,7 @@ const age2: number = getAge2({ x: 23 });
 > 2, 最好对可选参数判断，或者默认设置
 > 3, 对于使用默认非可选参数，显示传递 `undefined` 才可以
 
-```typescript
+```ts
 function getInfo (id: number = 0, name: string, sex?: string): string {
  return `序号： ${id}, 名字： ${name}, 性别： ${sex ? sex : '男'}`; 
 }
@@ -431,7 +439,7 @@ console.log(getInfo(1, 'Cat')); // 序号： 1, 名字： Cat, 性别： 男
 
 ## 剩余参数
 
-```typescript
+```ts
 function getInfo (id: number = 0, name: string, ...restInfo: string[] ): string {
   return `序号： ${id}, 名字： ${name}, 剩余信息: ${restInfo}`; 
 }
@@ -446,7 +454,7 @@ console.log(getMessage(3, 'Tiger', '吃人'));
 
 ## 交叉类型
 
-```typescript
+```ts
 // 交叉类型
 function extend<T, U>(first: T, second: U): T & U {
   let result = {} as T & U;
@@ -484,7 +492,7 @@ tom.log(); // 可以访问 ConsoleLooger 的相关属性、方法
 
 ## 联合类型
 
-```typescript
+```ts
 function  padingLeft(value: string, padding: string | number) {
   if (typeof padding === 'number') {
     return Array(padding + 1).join(' ') + value;
@@ -519,7 +527,7 @@ pet.layEggs();
 
 * 数组的联合类型
 
-```js
+```ts
 const arr: (number | string)[] = [1, 2, '3'];
 
 
@@ -549,7 +557,7 @@ const arr2: User[] = [
 ];
 ```
 
-```js
+```ts
 // 定义类型别名 (type alias)
 
 type User1 = { name: string, age: number };
@@ -578,7 +586,7 @@ const arr2: User2[] = [
 
 ## 类型保护
 
-```typescript
+```ts
 function  padingLeft(value: string, padding: string | number) {
   if (typeof padding === 'number') {
     return Array(padding + 1).join(' ') + value;
@@ -651,7 +659,7 @@ class Bird1 {
 
 > 编译时 `--strictNullChecks` 参数的影响
 
-```typescript
+```ts
 // 如下代码，执行 tsc index.ts直接编译没问题
 let s1 = 'foo';
 s1 = null;
@@ -670,7 +678,7 @@ PS：
 - 1, `null` 不能赋值给联合类型变量，或 `undefinde`
 - 2, 闭包里明确确保不会为 `null`
 
-```typescript
+```ts
 function broken(name: string | null): string {
   function postfix (epithet: string) {
     // 这里明确调用时不可能为null，所以使用 ’!‘ 类型断言
@@ -683,13 +691,105 @@ function broken(name: string | null): string {
 }
 ```
 
+## interface 接口的继承
+
+```ts
+// 原始写法
+interface Teacher {
+  name: string,
+  teaching_age: number
+}
+
+interface Student {
+  name: string,
+  age: number
+}
+
+interface Driver {
+  name: string,
+  driver_age: number,
+  occupation: string
+}
+
+const teach: Teacher = {
+  name: 'Tom',
+  teaching_age: 4
+}
+
+const student: Student = {
+  name: '小明',
+  age: 16
+}
+
+const driver: Driver = {
+  name: '李师傅',
+  occupation: '司机',
+  driver_age: 3
+}
+
+const getMsg = (msg: Teacher | Student | Driver) => {
+  console.log(JSON.stringify(msg, null, 2));
+}
+
+getMsg(teach);
+getMsg(student);
+getMsg(driver);
+```
+
+```ts
+// 优化写法
+
+
+// 接口(提取出共性的属性)继承
+interface Person {
+  name: string
+}
+
+interface Teacher extends Person {
+  teaching_age: number
+}
+
+interface Student extends Person {
+  age: number
+}
+
+interface Driver extends Person {
+  driver_age: number,
+  occupation: string
+}
+
+const teach: Teacher = {
+  name: 'Tom',
+  teaching_age: 4
+}
+
+const student: Student = {
+  name: '小明',
+  age: 16
+}
+
+const driver: Driver = {
+  name: '李师傅',
+  occupation: '司机',
+  driver_age: 3
+}
+
+const getMsg = (msg: Person) => {
+  console.log(JSON.stringify(msg, null, 2));
+}
+
+getMsg(teach);
+getMsg(student);
+getMsg(driver);
+```
+
 ## type alias (类型别名) 与 interface (接口) 区别
 
 * 类型别名
 
 > 不仅可以定义的是单个变量，还可以是对象
 
-```js
+```ts
 type str = string;
 
 type Person = {
@@ -710,7 +810,7 @@ console.log(person)
 
 > 只能定义对象
 
-```js
+```ts
 interface str = string; // 不允许，报错
 
 interface Person {
@@ -721,7 +821,7 @@ interface Person {
 
 ## 只读 readonly
 
-```js
+```ts
 interface Person {
   readonly name: string;
   age: number
@@ -738,7 +838,7 @@ console.log(person)
 
 ## 可扩展属性 propName
 
-```js
+```ts
 interface Person {
   readonly name: string;
   age: number;
@@ -755,4 +855,77 @@ function getMsg (person: Person) {
   console.log(person)
 }
 getMsg(person);
+```
+
+## class 中的 getter/setter
+
+```ts
+// setter 和 getter
+class Person {
+  private _name: string = '';
+
+  constructor (name: string) {
+    this._name = name;
+  }
+
+  get name (): string {
+    return this._name;
+  }
+
+  set name (name: string) {
+    this._name = name;
+  }
+}
+
+const person = new Person('tom');
+console.log(person.name)
+person.name = 'jerry';
+console.log(person.name);
+```
+
+## ES5 的单例模式实现
+
+```ts
+// 单例模式
+class Singleton {
+  // 只读属性
+  readonly age: number = 0;
+
+  private static instance: Singleton;
+
+  private _name: string;
+
+  private constructor (age: number) {
+    this.age = age;
+  }
+
+  get name (): string {
+    return this._name;
+  }
+
+  set name (name: string) {
+    this._name = name;
+  }
+
+  static getInstance (age: number) {
+    if (!this.instance) {
+      this.instance = new this(age); // 这里 new 的 this 指向 Singleton 的实例对象
+    }
+    return this.instance;
+  }
+}
+
+const singleton1 = Singleton.getInstance(34);
+singleton1.name = 'tom';
+console.log(singleton1.name);
+console.log(singleton1.age);
+// singleton1.age = 3433; // 编译报错，只读属性不能修改
+
+const singleton2 = Singleton.getInstance(56);
+singleton2.name = 'jerry';
+console.log(singleton2.name);
+console.log(singleton2.age);
+// singleton2.age = 3433; // 编译报错，只读属性不能修改
+
+console.log('singleton1 === singleton2', singleton1 === singleton2);
 ```
