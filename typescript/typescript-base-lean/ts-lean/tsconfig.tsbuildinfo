@@ -21,13 +21,9 @@
         "version": "b9faa17292f17d2ad75e34fac77dd63a6403af1dba02d39cd0cbb9ffdf3de8b9",
         "signature": "b9faa17292f17d2ad75e34fac77dd63a6403af1dba02d39cd0cbb9ffdf3de8b9"
       },
-      "./src/componts.ts": {
-        "version": "5e7b4ddd01dc06e6eb7c68f248ab8945434da96f18365b6723b83db99b860e6d",
-        "signature": "f046b42ef035dab66a3ded871e17b867d9e0af024e3014dfa7c5ac64de075a66"
-      },
       "./src/index.ts": {
-        "version": "79024f0cd1692850a5a6027f4180842b3f0af98f4fe18c7586e856359ef9e4af",
-        "signature": "8b67d5e52fc34d05ead0000e4d2a0229ab1ad429386f2cfb97a17c791aa8dc27"
+        "version": "e0c4319617d6c04096d4431c8fa18d37a1d095c4bfa2a41ee54181d0b9da3007",
+        "signature": "d1d4cdf591c67ea084a178c725e3b858fb5e8347064c25434a03b0ebdb3d115b"
       }
     },
     "options": {
@@ -42,23 +38,20 @@
       "removeComments": true,
       "strict": true,
       "esModuleInterop": true,
+      "experimentalDecorators": true,
+      "emitDecoratorMetadata": true,
       "forceConsistentCasingInFileNames": true,
       "configFilePath": "./tsconfig.json"
     },
-    "referencedMap": {
-      "./src/index.ts": [
-        "./src/componts.ts"
-      ]
-    },
+    "referencedMap": {},
     "exportedModulesMap": {},
     "semanticDiagnosticsPerFile": [
+      "./src/index.ts",
       "./node_modules/typescript/lib/lib.d.ts",
       "./node_modules/typescript/lib/lib.es5.d.ts",
       "./node_modules/typescript/lib/lib.dom.d.ts",
       "./node_modules/typescript/lib/lib.webworker.importscripts.d.ts",
-      "./node_modules/typescript/lib/lib.scripthost.d.ts",
-      "./src/componts.ts",
-      "./src/index.ts"
+      "./node_modules/typescript/lib/lib.scripthost.d.ts"
     ]
   },
   "version": "3.8.3"

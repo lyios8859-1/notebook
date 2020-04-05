@@ -1099,7 +1099,7 @@ var index;
 })(index || (index = {}));
 ```
 
-* 分成多个模块引用, 方案一
+* 分成多个模块引用, 方案一: namespace
 
 components.ts 模块的代码：
 
@@ -1151,7 +1151,7 @@ namespace index {
 ```
 
 
-* 分成多个模块引用, 方案二
+* 分成多个模块引用, 方案二: ES6
 
 components.ts 模块的代码：
 
@@ -1197,4 +1197,291 @@ export class CreatePage {
     new Footer();
   }
 }
+```
+
+## 类的装饰器
+
+> 类的装饰器函数接收的参数是类的构造函数，对原始类的一些扩展和修改。
+
+一般装饰器的写法（ts的编辑器提示不友好）
+
+```ts
+function decorator (constructor: any) {
+  console.log('decotator');
+}
+
+@decorator
+class Test { }
+
+const test = new Test();
+
+// 如果传递参数
+function decorator (flag: boolean) {
+  if (flag) {
+    return function (constructor: any) {
+      constructor.prototype.getName = () => {
+        console.log('tom');
+      }
+    }
+  } else {
+    return function (constructor: any) {}
+  }
+}
+
+@decorator(true)
+class Test { }
+const test = new Test();
+(test as any).getName(); // 不做类型断言就编译不通过
+```
+
+通用的写法：（ts的编辑器提示也不友好）
+
+```ts
+function dectorator<T extends new (...args: any[]) => any> (constructor: T) {
+  return class extends constructor {
+    name = '修改了原始类的name属性值';
+    getName (): void {
+      console.log('Jerry');
+    }
+  }
+}
+
+@dectorator
+class Test {
+  name: string;
+  constructor () {
+    this.name = 'tom';
+  }
+}
+
+const test = new Test();
+console.log(test); // class_1 { name: '修改了原始类的name属性值' }
+(test as any).getName(); // 不做类型断言就编译不通过
+```
+
+工厂模式使得编辑器提示更加友好，可以把装饰器中的属性和方法提示出来（推荐）
+
+```ts
+function dectorator () {
+  return function <T extends new (...args: any[]) => any> (constructor: T) {
+    return class extends constructor {
+      name = '修改了原始类的name属性值';
+      getName (): void {
+        console.log('Jerry');
+      }
+    }
+  }
+}
+
+const Test = dectorator()(class {
+  name: string;
+  constructor () {
+    this.name = 'tom';
+  }
+})
+
+const test = new Test();
+console.log(test); // class_1 { name: '修改了原始类的name属性值' }
+test.getName(); // 这样就不需要类型断言了
+```
+
+## 类方法装饰器
+
+```ts
+// 参数和这个原生的基本没啥区别  Object.defineProperty(target, key, descriptor);
+
+function getNameDecorator (target: any, key: string, descriptor: PropertyDescriptor) {
+  // target：是要装饰的函数，key：是要装饰的函数的名字， descriptor：约束要装饰的函数的一些特性
+  descriptor.writable = true;
+
+}
+
+class Test {
+  name: string;
+  constructor (name: string) {
+    this.name = name;
+  }
+
+  @getNameDecorator
+  getName () {
+    return this.name;
+  }
+}
+
+const test = new Test('tom');
+```
+
+## set/get 访问器的装饰器
+
+```ts
+// 参数和这个原生的基本没啥区别  Object.defineProperty(target, key, descriptor);
+
+function setDecorator (target: any, key: string, descriptor: PropertyDescriptor) {
+  // target：是要装饰的函数，key：是要装饰的函数的名字， descriptor：约束要装饰的函数的一些特性
+  descriptor.writable = false;
+}
+
+class Test {
+  private _name: string;
+  constructor (name: string) {
+    this._name = name;
+  }
+
+  get name () {
+    return this._name;
+  }
+
+  @setDecorator
+  set name (name: string) {
+    this._name = name;
+  }
+}
+
+const test = new Test('tom');
+// test.name = '343'; // descriptor.writable = false; 装饰器设置不可修改，运行时报错。
+console.log(test.name)
+```
+
+## 类属性的装饰器
+
+```ts
+function nameDecorator (target: any, key: any): any {
+  const descriptor: PropertyDescriptor = {
+    writable: false
+  };
+  return descriptor;
+}
+
+class Test {
+  @nameDecorator
+  name: string;
+  constructor () {
+    this.name = 'tom'
+  }
+}
+
+const test = new Test();
+console.log(test.name);
+test.name = 'jerry'; // 这是不允许修改的，在装饰器中设置了不可修改
+console.log(test.name);
+```
+
+如果在装饰器修改属性的值，是无效的。
+
+```ts
+function nameDecorator (target: any, key: any): any {
+  // 修改原始类的属性的值，但是访问时却没有效果
+  target[key] = '3333';
+}
+
+class Test {
+  @nameDecorator
+  name: string;
+  constructor () {
+    this.name = 'tom'
+  }
+}
+
+const test = new Test();
+console.log(test.name); // 这个name是挂载在类实例上的。这样是访问不到装饰器修改的值的，因为装饰器的值修改后是挂载到原型上了，因此通过原型(__proto__)可以访问到
+console.log((test as any).__proto__.name); // 访问到了装饰器的修改的属性值
+```
+
+## 类方法参数的装饰器
+
+```ts
+/**
+ * 
+ * @param target 原型
+ * @param methods 方法名
+ * @param paramIndex 参数的位置
+ */
+function paramDecorator (target: any, methods: string, paramIndex: number) {
+  console.log(target, methods, paramIndex);
+}
+
+class Test {
+  name: string;
+  constructor () {
+    this.name = 'tom'
+  }
+
+  getMsg (@paramDecorator name: string) {
+    return name + this.name;
+  }
+}
+
+const test = new Test();
+console.log(test.getMsg('ly_'));
+```
+
+## 装饰器实现一个异常捕获实例
+
+不使用装饰器：
+
+```ts
+class Test {
+  userInfo: any = undefined;
+
+  getName () {
+    try {
+      return this.userInfo.name;
+    } catch (error) {
+      return 'userInfo.name 不存在';
+    }
+  }
+  getAge () {
+    try {
+      return this.userInfo.age;
+    } catch (error) {
+      return 'userInfo.age 不存在';
+    }
+  }
+}
+
+const test = new Test();
+console.log(test.getName());
+```
+
+使用装饰器：
+
+```ts
+function catchError (msg: string) {
+  /**
+   * 
+   * @param target 原型
+   * @param methods 方法名
+   * @param descriptor 扩展信息
+   */
+  return function (target: any, methods: string, descriptor: PropertyDescriptor) {
+    // console.log(target, methods, descriptor);
+    const fn = descriptor.value; // 拿到对应的函数
+    // 重写对应的函数
+    descriptor.value = function () {
+      try {
+        fn();
+      } catch (error) {
+        console.log(msg);
+      }
+    }; 
+  }
+}
+
+class Test {
+  userInfo: any = undefined;
+
+  @catchError('userInfo.name 不存在')
+  getName () {
+    return this.userInfo.name;
+  }
+
+  @catchError('userInfo.age 不存在')
+  getAge () {
+    return this.userInfo.age;
+  }
+}
+
+const test = new Test();
+test.getName();
+test.getAge();
 ```
