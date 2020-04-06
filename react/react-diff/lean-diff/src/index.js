@@ -10,7 +10,7 @@ const virtualDom1 = createElement('ul', {class: 'list'}, [
 ]);
 
 const virtualDom2 = createElement('ul', {class: 'list-group'}, [
-  createElement('li', {class: 'item'}, ['D']),
+  createElement('li', {class: 'item', style: 'color: red;'}, ['D']),
   createElement('li', {class: 'item2'}, ['B']),
   createElement('div', {class: 'item'}, ['e']),
 ]);
