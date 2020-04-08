@@ -47,7 +47,6 @@ enum Color {
   Blue
 }
 
-
 function test (status: number) {
   if (status === const_status.OFF_LINE) {
     console.log(0);
