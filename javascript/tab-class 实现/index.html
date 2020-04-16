@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <style>
+  .icon-guanbi {
+    font-size: 28px;
+    cursor: pointer;
+  }
+  .firstnav {
+    border: 1px solid red;
+  }
+  ul {
+    display: flex;
+    -moz-user-select: none;
+    user-select: none;
+  }
+  ul li {
+    list-style: none;
+    border: 1px solid yellow;
+    margin: 10px;
+  }
+  .tabadd {
+    width: 24px;
+    height: 24px;
+    border: 1px solid blue;
+    margin: 0 auto;
+    text-align: center;
+    line-height: 24px;
+  }
+  .icon-guanbi {
+    margin-left: 10px;
+  }
+  .tabscon {
+    border: 1px solid blanchedalmond;
+    height: 400px;
+  }
+  section {
+    background: #ccc;
+    border: 1px solid palevioletred;
+    height: 400px;
+    display: none;
+    -moz-user-select: none;
+    user-select: none;
+  }
+  .conactive {
+    display: block;
+  }
+  .liactive {
+    background: red;
+    color: #fff;
+  }
+  </style>
+  <div class="tabsbox" id="tab">
+    <nav class="firstnav">
+      <ul>
+        <li class="liactive"><span>测试1</span><span class="icon-guanbi">x</span></li>
+        <li><span>测试2</span><span class="icon-guanbi">x</span></li>
+        <li><span>测试3</span><span class="icon-guanbi">x</span></li>
+      </ul>
+    </nav>
+      <div class="tabadd">
+        <span>+</span>
+      </div>
+
+    <div class="tabscon">
+      <section class="conactive">测试1</section>
+      <section>测试2</section>
+      <section>测试3</section>
+    </div>
+  </div>
+  <script src="./index.js"></script>
+</body>
+</html>
