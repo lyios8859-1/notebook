@@ -1,8 +1,3 @@
-interface Content {
-  content: string;
-  [propsName: string]: any;
-};
-
 class DataHelper {
   private dataKey: string;
   private primarykey: string;
@@ -25,16 +20,14 @@ class DataHelper {
     return arrDate;
   }
 
-  addData (contenStr: string): number {
+  addData (contentObj: any): number {
     const arr: any[] = this.getData();
-    const obj: Content = {
-      content: contenStr
-    };
+
     const newId = arr.length > 0 ? arr[arr.length - 1][this.primarykey] + 1 : 1;
 
-    obj[this.primarykey] = newId;
+    contentObj[this.primarykey] = newId;
 
-    arr.push(obj);
+    arr.push(contentObj);
     this.saveData(arr);
     return newId;
   }

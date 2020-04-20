@@ -1,7 +1,5 @@
 import Category from './CategoryEnum';
-import it from '../store/DataHelper';
-(window as any).it = it;
-console.log(it);
+
 interface Timer {
   'M+': number; // 月份
   'd+': number; // 日
@@ -14,11 +12,11 @@ interface Timer {
 };
 
 class ItemData {
-  id!: number;
-  categoryId!: Category;
-  title!: string;
-  content!: string;
-  createTime!: string;
+  id: number;
+  categoryId: Category;
+  title: string;
+  content: string;
+  createTime: string;
 
   constructor (id = -1, categoryId: Category = -1, title = '', content = '') {
     this.id = id;

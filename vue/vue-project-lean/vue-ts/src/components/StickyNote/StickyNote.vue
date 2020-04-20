@@ -7,7 +7,7 @@
         <div class="sticky-note__category">
           全部 <span>3</span>
           <ul class="options" @click="setCategory">
-            <li data-index="-1">全部<span>9</span></li>
+            <li data-index="-1">全部 <span>9</span></li>
             <li data-index="0">工作 <span>3</span></li>
             <li data-index="1">学习 <span>3</span></li>
             <li data-index="2">生活 <span>3</span></li>
@@ -17,32 +17,6 @@
     </header>
     <main>
       <section>
-        <div class="header">
-          <h3>titletitl</h3>
-          <div>
-            <span @click="editNote">编辑</span>
-            <span class="empty"></span>
-            <span @click="deleteNote">删除</span>
-          </div>
-        </div>
-        <article>
-          cont
-        </article>
-      </section>
-       <section>
-        <div class="header">
-          <h3>titletitl</h3>
-          <div>
-            <span @click="editNote">编辑</span>
-            <span class="empty"></span>
-            <span @click="deleteNote">删除</span>
-          </div>
-        </div>
-        <article>
-          cont
-        </article>
-      </section>
-       <section>
         <div class="header">
           <h3>titletitl</h3>
           <div>
