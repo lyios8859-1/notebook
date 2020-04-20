@@ -15,37 +15,47 @@
         </div>
       </div>
     </header>
-    <div class="note-conte__container">
-      <NoteList/>
-    </div>
-
-    <NoteEdit v-if="$store.state.isShowConfirm"/>
+    <main>
+      <section>
+        <div class="header">
+          <h3>titletitl</h3>
+          <div>
+            <span @click="editNote">编辑</span>
+            <span class="empty"></span>
+            <span @click="deleteNote">删除</span>
+          </div>
+        </div>
+        <article>
+          cont
+        </article>
+      </section>
+    </main>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 
-import NoteList from './NoteList.vue';
-import NoteEdit from './NoteEdit.vue';
-
 @Component({
-  name: 'StickyNote',
-  components: {
-    NoteList,
-    NoteEdit
-  }
+  name: 'StickyNote'
 })
 export default class StickyNote extends Vue {
   msg = 'StickyNote';
 
   newNote () {
     console.log('newNote');
-    this.$store.state.isShowConfirm = true;
   }
 
   setCategory (ev: any) {
     console.dir(ev.target.dataset.index);
+  }
+
+  editNote () {
+    console.log('editNote');
+  }
+
+  deleteNote () {
+    console.log('deleteNote');
   }
 }
 </script>
@@ -98,5 +108,26 @@ ul.options li {
   color:rosybrown;
   cursor: pointer;
 }
-
+main {
+  display: grid;
+  grid-template-areas: "a a a";
+  grid-gap: 6px;
+}
+section {
+  height: 370px;
+  border: 1px solid forestgreen;
+}
+.header {
+  border: 1px solid blanchedalmond;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10px
+}
+.empty {
+  display: inline-block;
+  width: 20px;
+}
+.header:hover span {
+  cursor: pointer;
+}
 </style>

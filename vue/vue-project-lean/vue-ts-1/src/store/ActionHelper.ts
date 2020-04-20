@@ -1,6 +1,5 @@
 import DataHelper from './DataHelper';
 import ItemData from '../model/ItemData';
-import Category from '@/model/CategoryEnum';
 
 class ActionHelper {
   dataHelper: DataHelper = new DataHelper('notedata', 'id');
@@ -8,11 +7,6 @@ class ActionHelper {
 
   constructor () {
     this.dataList = this.getData();
-  }
-
-  getCategory (categoryId: Category): string {
-    const categoryList = ['工作', '生活', '学习'];
-    return categoryList[categoryId];
   }
 
   getData (): ItemData[] {
