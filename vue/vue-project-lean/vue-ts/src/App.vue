@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    dfsdf
+    <StickyNote></StickyNote>
     <!-- <div id="nav">
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link>
@@ -10,18 +10,18 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue } from 'vue-property-decorator';
 
-import MenuBar from './components/MenuBar.vue'
+import StickyNote from './components/StickyNote/StickyNote.vue';
 
 @Component({
   components: {
-    MenuBar
+    StickyNote
   }
 })
 export default class App extends Vue {
 
-}
+};
 </script>
 
 <style lang="less">
