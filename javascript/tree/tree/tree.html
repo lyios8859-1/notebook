@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link rel="stylesheet" href="./tree.css">
+</head>
+<body>
+  <div class="ly_tree_container" id="ly_tree_container"></div>
+  <script src="./tree.js"></script>
+  <script>
+    const data = [
+      { id: 1, name: '办公管理', pid: 0 },
+      { id: 2, name: '请假申请', pid: 1 },
+      { id: 3, name: '出差申请', pid: 1 },
+      { id: 4, name: '请假记录', pid: 2 },
+      { id: 5, name: '系统设置', pid: 0 },
+      { id: 6, name: '权限管理', pid: 5 },
+      { id: 7, name: '用户角色', pid: 6 },
+      { id: 8, name: '菜单设置', pid: 6 }
+    ];
+
+  const treeHtml = treeUtil.GetData(0, data, function(obj) {
+    console.log(obj.massage);
+  });
+  document.getElementById("ly_tree_container").appendChild(treeHtml);
+  </script>
+</body>
+</html>
