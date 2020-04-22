@@ -101,11 +101,33 @@ const treeUtil = {
     if (childArry.length > 0) {
       rootUl = document.createElement('ul');
       rootUl.style.paddingLeft = id === 0 ? '0px' : '16px';
-      rootUl.onclick = function (ev) {
-        // 这里点击时候要判断点记的是那个元素
+      rootUl.style.display = id === 0 ? 'block' : 'none';
+
+      rootUl.onmousedown = function (ev) {
         ev.stopPropagation();
+        if (ev.target.nodeName.toLowerCase() === 'p') {
+          ev.target.parentElement.setAttribute('draggable', true);
+        }
+      };
+      rootUl.onmouseup = function (ev) {
+        ev.stopPropagation();
+        if (ev.target.nodeName.toLowerCase() === 'p') {
+          // 抬起鼠标后干掉,移动结束有也要干掉
+          ev.target.parentElement.removeAttribute('draggable');
+        }
+      };
+
+      rootUl.onclick = function (ev) {
+        ev.stopPropagation();
+        // 这里点击时候要判断点记的是那个元素
         if (ev.target.nodeName.toLowerCase() !== 'p') return;
-        debugger;
+
+        if (ev.target.nextElementSibling) {
+          let display = ev.target.nextElementSibling.style.display;
+          display = display === 'none' ? 'block' : 'none';
+          ev.target.nextElementSibling.style.display = display;
+        }
+
         callback && callback({
           el: ev.target,
           massage: arry[ev.target.parentElement.dataset.key.split('-').pop() * 1 - 1]
