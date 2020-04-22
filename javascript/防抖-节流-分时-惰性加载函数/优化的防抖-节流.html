@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+  <style>
+    .box {
+      width: 800px;
+      height: 300px;
+      background: #000;
+      color: #fff;
+      font-size: 24px;
+      font-weight: bold;
+      text-align: center;
+      line-height: 300px;
+      margin: 20px;
+    }
+  </style>
+  <div id="debounce" class="box">防抖: 0</div>
+  <button id="btn">防抖取消</button>
+  <script>
+{
+  /**
+   * 防抖函数: 应用场景: scroll滚动事件触发, 智能搜索框, 表单实时验证, 按钮提交事件, 浏览器窗口缩放的resize事件
+   * func: 需要执行的函数
+   * wait: 多久后才执行函数
+   * isFirstRun: 是否首次就执行函数
+  */
+  function debounce (func, wait, immediate) {
+    let timer = null;
+    let result;
+    const _debounce = function () {
+      clearTimeout(timer);
+      const context = this;
+      const args = arguments;
+      if (immediate) { // 立即执行
+        let callNow = !timer; //控制立即执行以后就不要在这里执行了,执行 immediate=false 的
+        timer = setTimeout(() => {
+          timer = null;
+        }, wait);
+        callNow && func && (result = func.apply(context, args));
+      } else {
+        // 不立即执行
+        timer = setTimeout(function () {
+          func && (result = func.apply(context, args));
+        }, wait);
+      }
+      return result;
+    }
+    // 取消防抖
+    _debounce.cancel = function () {
+      clearTimeout(timer);
+      timer = null;
+    };
+    return _debounce;
+  }
+  // 防抖(debounce):
+  // 事件响应函数在一段时间后才执行,如果在这段时间内,再次调用,则重新计算执行时间,
+  // (也就是说这时间间隔内,一直触发这个事件,都不会去执行函数的,之后等过了一段时间后,时间间隔到预订的时间后才会去执行该函数.)
+
+  let moveD = document.getElementById('debounce');
+  let btnD = document.getElementById('btn');
+  const doSome = debounce(move, 1000, false);
+  btnD.onclick = function () {
+    // 取消防抖
+    doSome.cancel();
+  };
+  let count = 0;
+  function move (ev) {
+    this.innerHTML = '防抖:' + (++count);
+  }
+  moveD.onmousemove = doSome;
+}
+  </script>
+
+  <div id="throttle" class="box">节流: 0</div>
+  <button id="btn2">节流取消</button>
+  <script>
+{
+
+  // 首次触发执行函数,最后不触发执行函数
+  function throttle1 (func, wait) {
+    // 之前的时间戳
+    let old = 0;
+    return function () {
+      const context = this;
+      const args = arguments;
+      // 获取当前的时间戳
+      let now = new Date().valueOf();
+      if (now - old > wait) {
+        // 立即执行
+        func && func.apply(context, args);
+        old = now;
+      }
+    }
+  }
+
+  // 首次不触发执行函数,最后触发执行函数
+  function throttle2 (func, wait) {
+    let timer = null;
+    return function () {
+      const context = this;
+      const args = arguments;
+      if (!timer) {
+        timer = setTimeout(() => {
+          timer = null; // 保证下一次继续触发
+          func && func.apply(context, args);
+        }, wait);
+      }
+    }
+  }
+
+
+  // 首次触发执行函数,最后触发执行函数
+  function throttle3 (func, wait) {
+    let timer = null;
+    let old = 0; // 时间戳
+    return function () {
+      const context = this;
+      const args = arguments;
+
+      // 获取当前的时间戳
+      let now = new Date().valueOf();
+      // 保证第一次执行
+      if (now - old > wait) {
+        if (timer) {
+          clearTimeout(timer);
+          timer = null;
+        } 
+        // 立即执行
+        func && func.apply(context, args);
+        old = now;
+      }
+      // 保证最有一次执行
+      if (!timer) {
+        timer = setTimeout(() => {
+          old = new Date().valueOf();
+          timer = null; // 保证下一次继续触发
+          func && func.apply(context, args);
+        }, wait);
+      }
+    }
+  }
+
+  // 首次触发执行函数,最后不触发执行函数 {start: true, end: false}
+  // 首次不触发执行函数,最后触发执行函数 {start: false, end: true}
+  // 首次触发执行函数,最后触发执行函数 {start: true, end: true}
+  // 不能实现,首次触不发执行,最后一次也不执行 {start: false, end: false} 这种是不成立的 (注意:underscore也没有没有做到)
+  function throttle (func, wait, options) {
+    if (options) {
+      const mark =  !options.end && !options.start;
+      if (mark) {
+        console.log('start 和 end 不能同时为 false');
+        return;
+      }
+    }
+    if (!options) options = {
+      start: false,
+      end: true
+    };
+    let timer = null;
+    let old = 0; // 时间戳
+    return function () {
+      const context = this;
+      const args = arguments;
+      // 获取当前的时间戳
+      let now = new Date().valueOf();
+
+      if (!options.start) {
+        // 保证首次不触发,执行函数
+        old = now;
+      }
+      // 保证第一次执行
+      if (now - old > wait && !old) {
+        if (timer) {
+          clearTimeout(timer);
+          timer = null;
+        } 
+        // 立即执行
+        func && func.apply(context, args);
+        old = now;
+      }
+      // 保证最有一次执行
+      if (!timer && options.end) {
+        timer = setTimeout(() => {
+          old = new Date().valueOf();
+          timer = null; // 保证下一次继续触发
+          func && func.apply(context, args);
+        }, wait);
+      }
+    }
+  }
+  // 节流: throttle, 应用场景: DOM元素的拖拽, 射击游戏, 计算鼠标的移动距离, 监听 scroll 滚动事件
+  // 事件响应函数在一段时间内频繁触发也不执行函数,只有等预订的时间到了才执行, 
+  // 也就是说只要不断触发函数,但是也不会执行函数,只有等对应的时间到了才执行函数,
+  let moveD = document.getElementById('throttle');
+  let btnD = document.getElementById('btn2');
+  const doSome = throttle(move, 4000, { start: false, end: true });
+
+  let count = 0;
+  function move (ev) {
+    this.innerHTML = '节流:' + (++count);
+  }
+  moveD.onmousemove = doSome;
+
+}
+  </script>
+</body>
+</html>
