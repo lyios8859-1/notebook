@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link rel="stylesheet" href="./tree.css">
+</head>
+<body>
+  <div class="ly_tree_container" id="ly_tree_container"></div>
+  <script>
+
+    // 把扁平画数组数据转换成tree结构的容易识别的数据结构 
+    /*
+    [
+      { id: 1, name: '办公管理', pid: 0 },
+      { id: 2, name: '请假申请', pid: 1 },
+      { id: 3, name: '出差申请', pid: 1 },
+      { id: 4, name: '请假记录', pid: 2 },
+      { id: 5, name: '系统设置', pid: 0 },
+      { id: 6, name: '权限管理', pid: 5 },
+      { id: 7, name: '用户角色', pid: 6 },
+      { id: 8, name: '菜单设置', pid: 6 }
+    ]
+    转化成:
+    [
+      {
+        "id": 1,
+        "name": "办公管理",
+        "pid": 0,
+        "children": [
+          {
+            "id": 2,
+            "name": "请假申请",
+            "pid": 1,
+            "children": [
+              {
+                "id": 4,
+                "name": "请假记录",
+                "pid": 2
+              }
+            ]
+          },
+          {
+            "id": 3,
+            "name": "出差申请",
+            "pid": 1
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "name": "系统设置",
+        "pid": 0,
+        "children": [
+          {
+            "id": 6,
+            "name": "权限管理",
+            "pid": 5,
+            "children": [
+              {
+                "id": 7,
+                "name": "用户角色",
+                "pid": 6
+              },
+              {
+                "id": 8,
+                "name": "菜单设置",
+                "pid": 6
+              }
+            ]
+          }
+        ]
+      }
+    ]
+    */
+    function toTree (data) {
+      // 删除 所有 children,以防止多次调用
+      data.forEach(function (item) {
+        delete item.children;
+      });
+
+      // 将数据存储为 以 id 为 KEY 的 map 索引数据列
+      const map = {};
+      data.forEach(function (item) {
+        map[item.id] = item;
+      });
+      const val = [];
+      data.forEach(function (item) {
+        // 以当前遍历项，的pid,去map对象中找到索引的id
+        const parent = map[item.pid];
+        // 好绕啊，如果找到索引，那么说明此项不在顶级当中,那么需要把此项添加到，他对应的父级中
+        if (parent) {
+          (parent.children || (parent.children = [])).push(item);
+        } else {
+          // 如果没有在map中找到对应的索引ID,那么直接把 当前的item添加到 val结果集中，作为顶级
+          val.push(item);
+        }
+      });
+      return val;
+    };
+    function toTreeHtml (treeData) {
+      console.log(treeData);;
+      const rootUl = document.createElement('ul');
+      rootUl.style.paddingLeft = treeData[0].pid === 0 ? '0px' : '20px';
+      for (let i = 0, len = treeData.length; i < len; i++ ) {
+        const li = document.createElement('li');
+        li.innerHTML = treeData[i].name;
+        rootUl.append(li);
+        if (treeData[i].children && treeData[i].children.length) {
+          const childUl = toTreeHtml(treeData[i].children);
+          li.append(childUl);
+        }
+      }
+      return rootUl;
+    }
+    const data = [
+      { id: 1, name: '办公管理', pid: 0 },
+      { id: 2, name: '请假申请', pid: 1 },
+      { id: 3, name: '出差申请', pid: 1 },
+      { id: 4, name: '请假记录', pid: 2 },
+      { id: 5, name: '系统设置', pid: 0 },
+      { id: 6, name: '权限管理', pid: 5 },
+      { id: 7, name: '用户角色', pid: 6 },
+      { id: 8, name: '菜单设置', pid: 6 }
+    ];
+    const treeData = toTree(data);
+    const treeHtml = toTreeHtml(treeData);
+    document.getElementById("ly_tree_container").append(treeHtml);
+  </script>
+</body>
+</html>

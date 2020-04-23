@@ -77,22 +77,6 @@ function toTree (data) {
 // 把data数据转化成树结构数据格式
 console.log(toTree(data));
 */
-
-  /**
-    拖拽元素支持的事件
-    ondrag 应用于拖拽元素，整个拖拽过程都会调用
-    ondragstart 应用于拖拽元素，当拖拽开始时调用
-    ondragleave 应用于拖拽元素，当鼠标离开拖拽元素是调用
-    ondragend 应用于拖拽元素，当拖拽结束时调用
-
-    目标元素支持的事件
-    ondragenter 应用于目标元素，当拖拽元素进入时调用
-    ondragover 应用于目标元素，当停留在目标元素上时调用
-    ondrop 应用于目标元素，当在目标元素上松开鼠标时调用
-    ondragleave 应用于目标元素，当鼠标离开目标元素时调用
-  */
-// 存放拖动的元素
-let dragEle = null;
 const treeUtil = {
   /**
    * 根据菜单主键id获取下级菜单
@@ -119,7 +103,6 @@ const treeUtil = {
       rootUl.style.paddingLeft = id === 0 ? '0px' : '16px';
       rootUl.style.display = id === 0 ? 'block' : 'none';
 
-      // 鼠标按下, 设置目标元素 draggable: true 可以拖动
       rootUl.onmousedown = function (ev) {
         ev.stopPropagation();
         if (ev.target.nodeName.toLowerCase() === 'p') {
@@ -134,17 +117,15 @@ const treeUtil = {
         }
       };
 
-      // 节点点击事件
       rootUl.onclick = function (ev) {
         ev.stopPropagation();
         // 这里点击时候要判断点记的是那个元素
         if (ev.target.nodeName.toLowerCase() !== 'p') return;
 
-        const isShowUl = ev.target.nextElementSibling;
-        if (isShowUl) {
-          let display = isShowUl.style.display;
+        if (ev.target.nextElementSibling) {
+          let display = ev.target.nextElementSibling.style.display;
           display = display === 'none' ? 'block' : 'none';
-          isShowUl.style.display = display;
+          ev.target.nextElementSibling.style.display = display;
         }
 
         callback && callback({
@@ -152,78 +133,15 @@ const treeUtil = {
           massage: arry[ev.target.parentElement.dataset.key.split('-').pop() * 1 - 1]
         });
       };
-
-      // 移动的元素
-      rootUl.ondragstart = function (ev) {
-        // 拖拽开始
-        ev.stopPropagation();
-        debugger;
-        dragEle = ev.target;
-        const msg = arry[ev.target.dataset.key.split('-').pop() * 1];
-        console.log(msg)
-        ev.dataTransfer.setData('msg', JSON.stringify(msg));
-        console.log('start', ev.dataTransfer.getData('msg'));
-      };
-      rootUl.ondragend = function (ev) {
-        //拖拽结束,把拖拽元素从父节点中删除
-        ev.preventDefault();
-        ev.stopPropagation();
-      }
-
-      // 递归遍历子节点
       for (const i in childArry) {
-        let li = this.childLiEle(childArry[i]);
-        this.addEleEvent(li);
+        const li = document.createElement('li');
+        li.setAttribute('data-key', childArry[i].pid + '-' + childArry[i].id);
+        li.innerHTML = `<p class="tree-title" style="margin-bottom: 6px;cursor: pointer;">${childArry[i].name}</p>`;
         const childUl = this.GetData(childArry[i].id, arry, callback);
-        if (childUl) {
-          li.appendChild(childUl);
-
-          // 拖拽的元素悬停在目标元素上,阻止默认事件, 必须在 ondrapover中阻止. 使得 ondrop 可以触发,并获取到 ev.dataTransfer 中的数据.
-          childUl.ondragover = function (ev) {
-            ev.preventDefault();
-          };
-
-          // 拖拽结束,把推拽的元素从原来的节点中删除,添加到目标元素中
-          childUl.ondrop = function (ev) {
-            ev.preventDefault();
-            // ev.stopPropagation();
-            console.log('drop', ev.dataTransfer.getData('msg')); // ev.dataTransfer 中的数据只能在 ondrop 中获取
-
-            if (false) { // 插入到同一级
-              ev.target.parentElement.parentElement.appendChild(dragEle);
-            } else { // 插入到当前级的中
-              if (ev.target.nextElementSibling) { // 如果不存在 ul 元素
-                // 注意这里要判断一下是否插入到同一个元素中(这里有问题需要再解决)
-                if (ev.target.parentElement !== dragEle) {
-                  ev.target.nextElementSibling.appendChild(dragEle);
-                } else {
-                  console.log('不能拖动到同一个元素中');
-                }
-              } else {
-                // 存在 ul 元素
-                const dropUl = document.createElement('ul');
-                dropUl.style.paddingLeft = '20px';
-                dropUl.append(dragEle);
-                ev.target.parentElement.appendChild(dropUl);
-              }
-            }
-            dragEle = null;
-            li = null;
-          };
-        }
+        childUl && li.appendChild(childUl);
         rootUl.appendChild(li);
       }
     }
     return rootUl;
-  },
-
-  childLiEle (childArry) {
-    const li = document.createElement('li');
-    li.setAttribute('data-key', childArry.pid + '-' + childArry.id);
-    li.innerHTML = `<p class="tree-title" style="cursor: pointer;">${childArry.name}</p>`;
-    return li;
-  },
-  addEleEvent (el) {
-    console.log(el)
   }
 }
