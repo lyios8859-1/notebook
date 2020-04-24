@@ -100,21 +100,54 @@
       });
       return val;
     };
-    function toTreeHtml (treeData) {
-      console.log(treeData);;
-      const rootUl = document.createElement('ul');
-      rootUl.style.paddingLeft = treeData[0].pid === 0 ? '0px' : '20px';
+    function toTreeHtml (treeData, callback) {
+      console.log(treeData)
+      const ul =  createUl(treeData);
       for (let i = 0, len = treeData.length; i < len; i++ ) {
-        const li = document.createElement('li');
-        li.innerHTML = treeData[i].name;
-        rootUl.append(li);
+        const li = createLi(treeData[i]);
+        addClikEvent(li, treeData[i], callback);
+        ul.append(li);
         if (treeData[i].children && treeData[i].children.length) {
-          const childUl = toTreeHtml(treeData[i].children);
+          const childUl = toTreeHtml(treeData[i].children, callback);
           li.append(childUl);
         }
       }
-      return rootUl;
+      return ul;
     }
+
+    function addClikEvent (el, treeData, callback) {
+      el.onclick = function (ev) {
+        ev.stopPropagation();
+        // 这里点击时候要判断点击的是那个元素
+        if (ev.target.nodeName.toLowerCase() !== 'p') return;
+
+        const isShowUl = ev.target.nextElementSibling;
+        if (isShowUl) {
+          let display = isShowUl.style.display;
+          display = display === 'none' ? 'block' : 'none';
+          isShowUl.style.display = display;
+        }
+        callback && callback({
+          el: ev.target.parentElement,
+          massage: treeData
+        });
+      };
+    }
+
+    function createUl (treeData) {
+      const ul = document.createElement('ul');
+      ul.style.paddingLeft = treeData[0].pid === 0 ? '0px' : '20px';
+      return ul;
+    }
+
+    function createLi (treeData) {
+      const li = document.createElement('li');
+      const p = document.createElement('p');
+      p.innerText = treeData.name;
+      li.append(p);
+      return li;
+    }
+
     const data = [
       { id: 1, name: '办公管理', pid: 0 },
       { id: 2, name: '请假申请', pid: 1 },
@@ -126,7 +159,9 @@
       { id: 8, name: '菜单设置', pid: 6 }
     ];
     const treeData = toTree(data);
-    const treeHtml = toTreeHtml(treeData);
+    const treeHtml = toTreeHtml(treeData, function (value) {
+      console.log(value);
+    });
     document.getElementById("ly_tree_container").append(treeHtml);
   </script>
 </body>
