@@ -20,7 +20,16 @@ ul {
   color: #000;
 }
 
-
 .isActive {
   color: red;
+}
+
+.cur-title__hover:hover {
+  background: #ccc;
+  color: #fff;
+}
+
+.node-title__warper {
+  display: grid;
+  grid-template-areas: 'a a';
 }
