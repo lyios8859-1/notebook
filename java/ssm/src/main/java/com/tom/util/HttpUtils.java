@@ -144,5 +144,5 @@ public class HttpUtils {
     parameters.put("name", "Tom");  
     String result = sendGet("http://127.0.0.1:8080/mavenssm/", parameters);
     System.out.println(result); 
-}  
+  }
 }

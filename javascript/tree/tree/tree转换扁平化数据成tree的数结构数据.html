@@ -100,12 +100,13 @@
       });
       return val;
     };
+
+    const clickHandle = addClikEvent();
     function toTreeHtml (treeData, callback) {
-      console.log(treeData)
       const ul =  createUl(treeData);
       for (let i = 0, len = treeData.length; i < len; i++ ) {
         const li = createLi(treeData[i]);
-        addClikEvent(li, treeData[i], callback);
+        clickHandle(li, treeData[i], callback);
         ul.append(li);
         if (treeData[i].children && treeData[i].children.length) {
           const childUl = toTreeHtml(treeData[i].children, callback);
@@ -115,23 +116,36 @@
       return ul;
     }
 
-    function addClikEvent (el, treeData, callback) {
-      el.onclick = function (ev) {
-        ev.stopPropagation();
-        // 这里点击时候要判断点击的是那个元素
-        if (ev.target.nodeName.toLowerCase() !== 'p') return;
-
-        const isShowUl = ev.target.nextElementSibling;
-        if (isShowUl) {
-          let display = isShowUl.style.display;
-          display = display === 'none' ? 'block' : 'none';
-          isShowUl.style.display = display;
-        }
-        callback && callback({
-          el: ev.target.parentElement,
-          massage: treeData
-        });
-      };
+    function addClikEvent () {
+      let curDom = null;
+      return function (el, treeData, callback) {
+        el.onclick = function (ev) {
+          ev.stopPropagation();
+          // 这里点击时候要判断点击的是那个元素
+          if (ev.target.nodeName.toLowerCase() !== 'p') return;
+          const isShowUl = ev.target.nextElementSibling;
+          if (isShowUl) {
+            let display = isShowUl.style.display;
+            display = display === 'none' ? 'block' : 'none';
+            isShowUl.style.display = display;
+          }
+          const targetEL = ev.target.classList;
+          if (targetEL.contains('isActive')) {
+            // targetEL.remove('isActive');
+            return;
+          } else {
+            targetEL.add('isActive');
+          }
+          {
+            curDom && (curDom !== ev.target) && (curDom.classList.remove('isActive'));
+            curDom = ev.target;
+          }
+          callback && callback({
+            el: ev.target.parentElement,
+            massage: treeData
+          });
+        };
+      }
     }
 
     function createUl (treeData) {
