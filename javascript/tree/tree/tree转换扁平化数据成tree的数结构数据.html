@@ -349,11 +349,9 @@
     function createUl(treeData) {
       const ul = createEl('ul');
       ul.classList.add(treeData[0].pid === 0 ? 'left0' : 'left20');
-      // ul.style.display = treeData[0].pid === 0 ? 'block' : 'none';
-
+      ul.style.display = treeData[0].pid === 0 ? 'block' : 'none';
       ul.style.height = treeData[0].pid === 0 ? 'auto' : '0px';
       ul.style.overflow = 'hidden';
-
       return ul;
     }
     function createEl(el) {
