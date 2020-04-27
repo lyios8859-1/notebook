@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <link rel="stylesheet" href="./tree.css">
+</head>
+<body>
+  <div class="ly_tree_container" id="ly_tree_container"></div>
+  <script src="./jquery.3.5.0.js"></script>
+  <script>
+    function toTree (data) {
+      // 删除 所有 children,以防止多次调用
+      data.forEach(function (item) {
+        delete item.children;
+      });
+
+      // 将数据存储为 以 id 为 KEY 的 map 索引数据列
+      const map = {};
+      data.forEach(function (item) {
+        map[item.id] = item;
+      });
+      const val = [];
+      data.forEach(function (item) {
+        // 以当前遍历项，的pid,去map对象中找到索引的id
+        const parent = map[item.pid];
+        // 好绕啊，如果找到索引，那么说明此项不在顶级当中,那么需要把此项添加到，他对应的父级中
+        if (parent) {
+          (parent.children || (parent.children = [])).push(item);
+        } else {
+          // 如果没有在map中找到对应的索引ID,那么直接把 当前的item添加到 val结果集中，作为顶级
+          val.push(item);
+        }
+      });
+      return val;
+    };
+
+    const clickHandle = addClikEvent();
+    function toTreeHtml (treeData, callback) {
+      const ul =  createUl(treeData);
+      ul.classList.add('ul-child');
+      for (let i = 0, len = treeData.length; i < len; i++ ) {
+        const li = createLi(treeData[i]);
+        clickHandle(li, treeData[i], callback);
+        ul.append(li);
+        if (treeData[i].children && treeData[i].children.length) {
+          const childUl = toTreeHtml(treeData[i].children, callback);
+          li.append(childUl);
+        }
+      }
+      return ul;
+    }
+
+    function addClikEvent () {
+      let curDom = null;
+      return function (el, treeData, callback) {
+        el.onclick = function (ev) {
+          ev.stopPropagation();
+          // 这里点击时候要判断点击的是那个元素
+          if (ev.target.nodeName.toLowerCase() !== 'p') return;
+          const isShowUl = ev.target.nextElementSibling;
+          if (isShowUl) {
+            debugger;
+            if (ev.target.nextElementSibling.style.display === 'none') {
+              if (window.$) {
+                $(this).children('ul').slideDown(); // 展开这个菜单
+              } else {
+                ev.target.nextElementSibling.style.display = 'block';
+              }
+            } else {
+              if (window.$) {
+                $(this).children('ul').slideUp(); // 收起这个菜单
+              } else {
+                ev.target.nextElementSibling.style.display = 'none';
+              }
+            }
+          }
+          const targetEL = ev.target.classList;
+          if (targetEL.contains('isActive')) {
+            // targetEL.remove('isActive');
+            return;
+          } else {
+            targetEL.add('isActive');
+          }
+          {
+            curDom && (curDom !== ev.target) && (curDom.classList.remove('isActive'));
+            curDom = ev.target;
+          }
+          callback && callback({
+            el: ev.target.parentElement,
+            message: treeData
+          });
+        };
+      }
+    }
+
+    function createUl (treeData) {
+      const ul = createEl('ul');
+      ul.style.paddingLeft = treeData[0].pid === 0 ? '0px' : '20px';
+      ul.style.display = treeData[0].pid === 0 ? 'block' : 'none';
+      return ul;
+    }
+    function createEl (el) {
+      return document.createElement(el);
+    }
+    
+    const EDIT = 'edit';
+    const DELETE = 'delete';
+    function addEvent (type, el, data) {
+      const editClickHadler = function (ev) {
+        console.log(ev.target, data);
+      };
+      const delClickHadler = function (ev) {
+        console.log(ev.target, data);
+      };
+      switch (type) {
+        case EDIT: 
+          el.onclick = (ev) => {
+            editClickHadler(ev);
+          };
+          break;
+        case DELETE: 
+          el.onclick = (ev) => {
+            delClickHadler(ev);
+          };
+          break;
+      }
+    };
+
+    function createLi (treeData) {
+      const li = createEl('li');
+      const p = createEl('p');
+      const editBtn = createEl('button');
+      const delBtn = createEl('button');
+      addEvent('edit', editBtn, treeData);
+      addEvent('delete', delBtn, treeData);
+
+      delBtn.innerText = '删除';
+      editBtn.innerText = '编辑';
+      p.innerText = treeData.name;
+      p.append(editBtn);
+      p.append(delBtn);
+      li.append(p);
+      return li;
+    }
+
+    const data = [
+      { id: 1, name: '办公管理', pid: 0 },
+      { id: 2, name: '请假申请', pid: 1 },
+      { id: 3, name: '出差申请', pid: 1 },
+      { id: 4, name: '请假记录', pid: 2 },
+      { id: 5, name: '系统设置', pid: 0 },
+      { id: 6, name: '权限管理', pid: 5 },
+      { id: 7, name: '用户角色', pid: 6 },
+      { id: 8, name: '菜单设置', pid: 6 }
+    ];
+    const treeData = toTree(data);
+    const treeHtml = toTreeHtml(treeData, function (data) {
+      console.log(data.message);
+    });
+    document.getElementById('ly_tree_container').append(treeHtml);
+  </script>
+</body>
+</html>

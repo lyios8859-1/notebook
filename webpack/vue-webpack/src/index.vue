@@ -1,12 +1,13 @@
 <template>
   <div class="parentBox">
-    <h1>index</h1>
     <!-- <parent></parent> -->
     <!-- <testSmartInput></testSmartInput> -->
     <!-- <Notification content="test notifiy"></Notification> -->
-    <div class="notify"></div>
-    <button @click="addNotify">addNotify</button>
 
+    <!-- <div class="notify"></div>
+    <button @click="addNotify">addNotify</button> -->
+
+<!-- 
     <div>
       <input type="text"
              v-check="{type:'phone',val:currentPhone}"
@@ -28,10 +29,13 @@
              v-check="{type:'zip_code',val:currentZipCode}"
              placeholder="请输入邮编"
              v-model="currentZipCode" />
-    </div>
+    </div> -->
     <!-- <div v-time="timeNow" />
     <div v-time="timeBefore" /> -->
-    <ItemList></ItemList>
+    <!-- <ItemList></ItemList> -->
+
+    <SlideDownUp></SlideDownUp>
+
   </div>
 </template>
 
@@ -39,6 +43,7 @@
 import parent from "./parent.vue";
 import testSmartInput from "./SmartInput/testSmartInput.vue";
 import ItemList from './elementui-infinity-load/ItemList.vue';
+import SlideDownUp from './SlideDownUp/up-down-slide.vue';
 export default {
   name: "App",
   data() {
@@ -70,7 +75,8 @@ export default {
   components: {
     parent,
     testSmartInput,
-    ItemList
+    ItemList,
+    SlideDownUp
   }
 };
 </script>

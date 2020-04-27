@@ -33,3 +33,11 @@ ul {
   display: grid;
   grid-template-areas: 'a a';
 }
+
+.left0 {
+  padding-left: 0px!important;
+}
+
+.left20 {
+  padding-left: 20px!important;
+}
