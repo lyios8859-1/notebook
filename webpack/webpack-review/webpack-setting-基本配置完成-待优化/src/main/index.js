@@ -14,7 +14,7 @@ class App extends Component {
     const {
       default: _,
     } = await import(
-    /* webpackChunkName: "lodash" */
+      /* webpackChunkName: "lodash" */
       'lodash'
     );
     const element = document.createElement('h1');

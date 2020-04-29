@@ -9,7 +9,7 @@ module.exports = {
     // vendors: ['react', 'react-dom', 'react-router-dom', 'lodash']
 
     // 方案二：拆分一下
-    vendors: ['lodash'],
+    lodash: ['lodash'],
     react: ['react', 'react-dom', 'react-router-dom']
   },
   output: {

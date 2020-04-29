@@ -166,6 +166,18 @@ module.exports = {
 }
 ```
 
+虽然添加了 `autoprefixer` 但是有些前缀还是没有, 比如: `display: flex;`; 需要在 package.json 中配置:
+
+```json
+"browserslist": [
+  "> 1%",
+  "last 2 versions",
+  "Android >= 3.2", 
+  "Firefox >= 20", 
+  "iOS 7"
+]
+```
+
 **webpack 配置内容**:
 
 ```js
