@@ -73,6 +73,7 @@ const config = {
               name: '[name].[hash:8].[ext]',
               outputPath: 'images/', //打包后文件文件输出目录
               limit: 102400, //小于102400kb时，打包为base64格式;大于时打包为文件,引用的地方使用路径
+              // publicPath: '/' 最好指定服务器的所在目录
             }
           }
         ]
