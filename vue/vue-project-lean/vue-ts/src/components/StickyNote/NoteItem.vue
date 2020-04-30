@@ -33,7 +33,9 @@ export default class NoteList extends Vue {
 
   editNote (): void {
     console.log('editNote');
-    this.$store.state.isShowConfirm = true;
+    // 创建原始数据的副本,为了修改时,不影响原有数据.
+    const tempEditData = JSON.parse(JSON.stringify(this.item));
+    this.$store.commit('showEditItemData', tempEditData);
   }
 
   deleteNote (): void {
@@ -48,6 +50,9 @@ export default class NoteList extends Vue {
 section {
   height: 370px;
   border: 1px solid forestgreen;
+}
+section:hover {
+  box-shadow: 2px 3px 5px #333;
 }
 .header {
   border: 1px solid blanchedalmond;

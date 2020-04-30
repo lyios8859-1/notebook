@@ -3,14 +3,14 @@
     <header>
       <div class="sticky-note__img"><img src="./logo.jpeg" width="50" height="50"/></div>
       <div class="sticky-note__options">
-        <div class="sticky-note__new" @click="newNote">新建</div>
-        <div class="sticky-note__category">
-          全部 <span>3</span>
-          <ul class="options" @click="setCategory">
-            <li data-index="-1">全部 <span>9</span></li>
-            <li data-index="0">工作 <span>3</span></li>
-            <li data-index="1">学习 <span>3</span></li>
-            <li data-index="2">生活 <span>3</span></li>
+        <div class="sticky-note__new" @click="addNote">新建</div>
+        <div class="sticky-note__category" @click.stop="doFilterCategoryId">
+          全部 <span>{{getCategoryNoteNum(-1)}}</span>
+          <ul class="options">
+            <li data-cid="-1">全部 <span>{{getCategoryNoteNum(-1)}}</span></li>
+            <li data-cid="0">工作 <span>{{getCategoryNoteNum(0)}}</span></li>
+            <li data-cid="1">学习 <span>{{getCategoryNoteNum(1)}}</span></li>
+            <li data-cid="2">生活 <span>{{getCategoryNoteNum(2)}}</span></li>
           </ul>
         </div>
       </div>
@@ -28,6 +28,7 @@ import { Component, Vue } from 'vue-property-decorator';
 
 import NoteList from './NoteList.vue';
 import NoteEdit from './NoteEdit.vue';
+import ItemData from '../../model/ItemData';
 
 @Component({
   name: 'StickyNote',
@@ -39,13 +40,25 @@ import NoteEdit from './NoteEdit.vue';
 export default class StickyNote extends Vue {
   msg = 'StickyNote';
 
-  newNote () {
-    console.log('newNote');
+  addNote () {
+    console.log('addNote');
+    this.$store.state.editData = new ItemData(-1, 0); // 为了判断是编辑还是新增
     this.$store.state.isShowConfirm = true;
   }
 
-  setCategory (ev: any) {
-    console.dir(ev.target.dataset.index);
+  getCategoryNoteNum (cid: any): number {
+    const dataList = this.$store.state.actionHelper.dataList;
+    if (cid === -1) {
+      return dataList.length;
+    } else {
+      return dataList.filter((ele: any) => {
+        return ele.categoryId === cid;
+      }).length;
+    }
+  }
+
+  doFilterCategoryId (ev: any): void {
+    this.$store.state.filterCategoryId = ev.target.dataset.cid * 1;
   }
 }
 </script>
@@ -57,8 +70,7 @@ export default class StickyNote extends Vue {
 }
 .sticky-note__wraper {
   width: 100%;
-  height: 100vh;
-  border: 1px solid red;
+  height: 100%;
 }
 header {
   display: flex;
@@ -92,6 +104,9 @@ ul.options {
 ul.options li {
   height: 32px;
   line-height: 32px;
+}
+ul.options li:hover {
+  color: red;
 }
 .sticky-note__category:hover ul.options{
   display: block;

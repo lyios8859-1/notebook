@@ -1,6 +1,6 @@
 <template>
   <main>
-    <NoteItem v-for="(item, index) in dataList" :key="index" :item="item"/>
+    <NoteItem v-for="(item, index) in filterDataList()" :key="index" :item="item"/>
   </main>
 </template>
 
@@ -17,6 +17,17 @@ import ItemData from '../../model/ItemData';
 })
 export default class NoteList extends Vue {
   dataList: ItemData[] = this.$store.state.actionHelper.dataList;
+
+  filterDataList () {
+    const cid = this.$store.state.filterCategoryId;
+    if (cid === -1) {
+      return this.dataList;
+    } else {
+      return this.dataList.filter((item: any) => {
+        return item.categoryId === cid;
+      });
+    }
+  }
 };
 </script>
 
