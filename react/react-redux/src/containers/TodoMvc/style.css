@@ -1,0 +1,132 @@
+.todo-mvc {
+  width: 100%;
+  height: auto;
+  user-select: none;
+}
+
+header {
+  width: 700px;
+  margin: 0 auto;
+}
+header input {
+  width: 700px;
+  height: 32px;
+  line-height: 32px;
+  border-radius: 4px;
+  outline: none;
+  text-indent: 10px;
+  border: 1px solid #ccc;
+}
+
+main {
+  height: auto;
+  width: 700px;
+  margin: 0 auto;
+}
+ol {
+  list-style: none;
+  height: auto;
+  width: 100%;
+  margin-top: 20px;
+}
+
+ol li {
+  height: 32px;
+  line-height: 32px;
+  border-bottom: 1px solid #ccc;
+  text-align: left;
+  text-indent: 4px;
+}
+
+.todo-list {
+  position: relative;
+}
+.todo-list:hover {
+  background: #ddd;
+}
+.todo-list:hover .todo-del-btn {
+  display: block;
+  color: red;
+  cursor: pointer;
+}
+
+.todo-check-btn {
+  width: 40px;
+  text-align: center;
+  position: absolute;
+}
+
+.todo-item-warp {
+  position: relative;
+  width: 100%;
+  left: 40px;
+}
+
+.todo-item-timer {
+  color: red;
+}
+
+.todo-item-content {
+  margin-left: 20px;
+  color: blue;
+}
+
+.todo-del-btn {
+  position: absolute;
+  right: 0;
+  z-index: 1;
+  width: 50px;
+  text-align: center;
+  display: none;
+}
+
+
+footer {
+  height: auto;
+  width: 700px;
+  margin: 20px auto;
+  display: flex;
+  justify-content: space-around;
+}
+#todo-list-select {
+  margin-right: 10px;
+}
+
+aside {
+  height: auto;
+  width: 700px;
+  margin: 20px auto;
+  display: flex;
+  justify-content: space-around;
+}
+aside p {
+  cursor: pointer;
+}
+.todo-item-edit {
+  position: absolute;
+  top: 0;
+  outline: none;
+  height: 29px;
+  line-height: 32px;
+  display: none;
+  width: 100%;
+  z-index: 10;
+  text-indent: 10px;
+}
+
+.isShow {
+  display: block!important;
+}
+
+.isComponlate {
+  text-decoration: line-through;
+  opacity: 0.3;
+}
+
+#todo-list-select {
+  cursor: pointer;
+}
+
+.todo-list-reverse-select {
+  cursor: pointer;
+}
