@@ -1,0 +1,211 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.music_container {
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  width: 610px;
+  height: 500px;
+  display: inline-block;
+  border-radius: 6px;
+  background: red;
+}
+
+/* m_lrc start*/
+.music_container .m_lrc_container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 300px;
+  height: 100%;
+  display: inline-block;
+  border-radius: 6px;
+  background-image: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    color-stop(0, #f2f3f3),
+    color-stop(1, #dddfe1)
+  );
+}
+.m_lrc_container .m_lrc_header {
+  width: 100%;
+  height: 65px;
+  display: -webkit-flex; /* Safari */
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+.m_lrc_header .m_lrc {
+  flex-grow: 3;
+  height: 100%;
+  line-height: 65px;
+  text-align: center;
+}
+.m_lrc_header .m_dir {
+  background: yellow;
+}
+
+.m_lrc_header .m_title {
+  background: red;
+  min-width: 200px;
+  /*文字过长，需要无限滚动显示*/
+}
+.m_lrc_header .m_share {
+  background: blue;
+}
+
+.m_lrc_container .m_lrc_content {
+  width: 100%;
+  height: 330px;
+  background: yellowgreen;
+}
+.m_lrc_content .lrcline {
+  width: 100%;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  color: red;
+}
+
+.m_lrc_container .m_play_tools {
+  width: 100%;
+  height: 105px;
+  background: #928e8e;
+}
+.m_play_tools .m_play {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  height: 36px;
+  line-height: 36px;
+}
+.m_play .m_btn {
+  flex-grow: 5;
+  font-size: 12px;
+}
+.m_play .m_btn:hover {
+  color: #fff;
+  background: red;
+}
+/* m_lrc end*/
+
+/* m_list start*/
+.music_container .m_list {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 300px;
+  height: 100%;
+  display: inline-block;
+  border-radius: 6px;
+  background: rgb(134, 111, 111);
+}
+.m_list .m_list_header {
+  width: 100%;
+  height: 65px;
+  line-height: 65px;
+  text-align: center;
+  background: #928e8e;
+}
+.m_list .m_list_content {
+  width: 100%;
+  height: 435px;
+  background: #849090;
+}
+.m_list_content .m_item {
+  height: 32px;
+  line-height: 32px;
+  border-bottom: 1px solid #ffd;
+  box-sizing: border-box;
+}
+.m_list_content .m_item:hover {
+  background: #106b6b;
+  color: #fff;
+}
+/* m_list end*/
+
+/*文字滚动 satrt*/
+.rotaryContainer {
+  position: relative;
+  overflow: hidden;
+}
+
+.rotaryContainer .rotaryBlockFirst {
+  animation: rotaryBlockFirst 20s linear infinite;
+  white-space: nowrap;
+  position: absolute;
+  width: 100%;
+}
+
+.rotaryContainer .rotaryBlockSecond {
+  animation: rotaryBlockSecond 20s linear infinite;
+  position: absolute;
+  white-space: nowrap;
+  width: 100%;
+}
+@keyframes rotaryBlockFirst {
+  0% {
+    left: 0;
+  }
+  100% {
+    left: -110%;
+  }
+}
+
+@keyframes rotaryBlockSecond {
+  0% {
+    left: 110%;
+  }
+  100% {
+    left: 0;
+  }
+}
+@media screen and (max-width: 1250px) {
+  @keyframes rotaryBlockFirst {
+    0% {
+      left: 0;
+    }
+    100% {
+      left: -1200px;
+    } /*1200px为文本的长度，利用多媒体查询，当屏幕宽度太小时，就设置滚动距离为文本的长度*/
+  }
+
+  @keyframes rotaryBlockSecond {
+    0% {
+      left: 1200px;
+    }
+    100% {
+      left: 0;
+    }
+  }
+}
+/*文字滚动 end*/
+
+/*滚动条 satrt*/
+.scrollbar {
+  overflow-y: auto;
+}
+.scrollbar::-webkit-scrollbar {
+  /*滚动条整体样式*/
+  width: 8px; /*高宽分别对应横竖滚动条的尺寸*/
+}
+.scrollbar::-webkit-scrollbar-thumb {
+  /*滚动条里面小方块*/
+  border-radius: 2px;
+  -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+  background: #928e8e;
+}
+.scrollbar::-webkit-scrollbar-track {
+  /*滚动条里面轨道*/
+  -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+  border-radius: 2px;
+  background: #ededed;
+}
+/*滚动条 end*/
