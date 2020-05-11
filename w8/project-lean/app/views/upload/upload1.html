@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{uploadFileName}}</title>
+    <link rel="stylesheet" href="/js/upload/jquery.fileupload.css">
+    <script src="/js/jquery-1.11.2.min.js"></script>
+    <script src="/js/upload/jquery.ui.widget.js"></script>
+    <script src="/js/upload/jquery.iframe-transport.js"></script>
+    <script src="/js/upload/jquery.fileupload.js"></script>
+    <script src="/js/upload/jquery.iframe-transport.js"></script>
+    <script src="/js/upload/jquery.fileupload-process.js"></script>
+    <script src="/js/upload/jquery.fileupload-validate.js"></script>
+    <style>
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif
+        }
+
+        .btn-success {
+            color: #fff;
+            background-color: #5cb85c;
+            border-color: #4cae4c;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 6px 12px;
+            margin-bottom: 0;
+            font-size: 14px;
+            font-weight: 400;
+            line-height: 1.42857143;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            cursor: pointer;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            background-image: none;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<input type="text" id="username" value="请输入提交到后台的参数值" />
+<span class="btn btn-success fileinput-button">
+        <i class="glyphicon glyphicon-plus">+</i>
+        <span>选择文件</span>
+        <input id="fileupload" type="file" multiple name="files[]">
+    </span>
+<input type="button" value="上传" id="uplodbtn"/>
+<br>
+<br>
+<!-- The global progress bar -->
+<div id="progress" class="progress">
+    <div class="progress-bar progress-bar-success"></div>
+</div>
+<!-- The container for the uploaded files -->
+<div id="files" class="files"></div>
+<div id="warning_file"></div>
+
+<script>
+  //文件的上传
+  $(function () {
+    /*  //1:上传过程中可能会进行参数的传递
+      //2:手动提交上传，如何解决
+      //3:关于错误提示
+      //4:其他回调函数的应用和理解
+      $('#fileupload').fileupload({
+         url: '/upload',
+         autoUpload: false, //指定是否自动上传
+         singleFileUploads: true, //一次上传多个文件, 没有效果
+         limitMultiFileUploads: 3, //每个请求最多上传3个文件
+
+         formData:function(){
+             var username = $("#username").val();
+             return {tname:username,age:30};
+         },
+         //手动提交
+         add: function (e, data) {
+             if (e.isDefaultPrevented()) {
+                 return false;
+             };
+
+             var flag =  $(this).fileupload('option', 'autoUpload');
+             if(!flag){
+                 $("#uplodbtn").on("click",function(){
+                     //文件上传过程中禁止掉按钮的事件
+                     $(this).prop("disabled",true).val("上传中...");
+                     data.process().done(function () {
+                         data.submit();//submit提交上传的业务
+                     });
+                 });
+             }
+         } ,
+         submit:function(e, data){//触发submit进行回调函数
+             data.files.forEach(function(file,index){
+                 console.log("正在上传===>文件名:"+file.name+"===文件大小:"+file.size+"===文件类型:"+file.type);
+             });
+         },
+
+         send:function(e,data){
+             console.log("服务器开始接受上传了....");
+         },
+
+         fail:function(e,data,message){
+             alert("上传失败..."+message);
+         },
+         done: function (e, data) {
+             //上传完毕执行的回调函数
+             //data.result返回图片的信息
+             var json = JSON.parse(data.result);
+             $.each(json.files, function (index, file) {
+                if(!file.error){
+                     console.log("==="+file.name);
+                  $('<p/>').html("<img src='"+file.url+"' width='120' height='120'/>"+file.name).appendTo('#files');
+                }else{
+                    data.fail(e,data,file.error);
+                }
+             });
+             $("#uplodbtn").prop("disabled",false).val("提交");
+         },
+
+         progressall: function (e, data) {//进度条显示
+             var progress = parseInt(data.loaded / data.total * 100, 10);
+             $('#progress .progress-bar').css(
+                 'width',
+                 progress + '%'
+             ).html(progress + '%');
+         }
+
+     });*/
+    var upload = $('#fileupload');
+    upload.fileupload({
+      url: '/upload/uploadfile',
+      autoUpload: false,
+      singleFileUploads: false, // 一次上传多个文件
+      limitMultiFileUploads: 3, // 每个请求最多上传3个文件
+      formData: function () {
+        var username = $("#username").val();
+        return {tname: username, age: 30};
+      }
+    });
+
+    upload.on("fileuploadadd", function (e, data) {
+      if (e.isDefaultPrevented()) {
+        return false;
+      }
+      var flag = $(this).fileupload('option', 'autoUpload');
+      if (!flag) {
+        $("#uplodbtn").on("click", function () {
+          $(this).prop("disabled", true).val("disabled");
+          data.process().done(function () {
+            data.submit();// submit提交上传
+          });
+        });
+      }
+    });
+
+    upload.on("fileuploadsubmit", function (e, data) {
+      data.files.forEach(function (file, index) {
+        console.log("正在上传===>文件名:" + file.name + "===文件大小:" + file.size + "===文件类型:" + file.type);
+      });
+    });
+
+    upload.on("fileuploaddone", function (e, data) {
+      var json = JSON.parse(data.result);
+      $.each(json.files, function (index, file) {
+        if (!file.error) {
+          $('<p/>').html("<img src='" + file.url + "' width='120' height='120'/>" + file.name).appendTo('#files');
+        } else {
+          data.fail(e, data, file.error);
+        }
+      });
+      $("#uplodbtn").prop("disabled", false).val("提交");
+    });
+
+    upload.on("fileuploaddone", function (e, data) {
+      var progress = parseInt(data.loaded / data.total * 100, 10);
+      $('#progress .progress-bar').css('width', progress + '%').html(progress + '%');
+    });
+
+    upload.on('fileuploadchange', function (e, data) {
+      console.log("上传文件发生了变化...");
+    });
+  });
+</script>
+</body>
+</html>

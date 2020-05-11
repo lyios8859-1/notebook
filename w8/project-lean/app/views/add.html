@@ -1,0 +1,75 @@
+<!--底部-->
+{{> header}}
+<div class="w720 mt64" style="padding-bottom:320px">
+  <p>
+	  标题：<input type="text" name="title" autofocus style="width:640px;height:40px;" />
+  </p>
+  <p class="mt20">
+	  标签：<input type="text" name="tags" style="width:640px;height:40px;" />
+  </p>
+  <p class="mt20">
+	  分类：<input type="text" name="cid" style="width:640px;height:40px;" />
+  </p>
+  <p class="mt20">
+	  链接：<input type="text" name="link" style="width:640px;height:40px;" />
+  </p>
+  <p class="mt20">
+	  内容：<textarea id="editor" style="height:260px;"></textarea>
+  </p>
+  <p class="mt20">
+	<input type="button" id="saveBlog" id="saveBlog" value="保存文章" onclick="lyBlog.save(this);"/>
+  </p>
+</div>
+<script src="/js/editor/ueditor.config.js"></script>
+<script src="/js/editor/ueditor.all.min.js"></script>
+<script>
+  $(function() {
+	  let ue = UE.getEditor("editor");
+  });
+  let lyBlog = {
+    save: function(obj) {
+      let title = $("input[name='title']").val();
+      let link = $("input[name='link']").val();
+      let tags = $("input[name='tags']").val();
+      let cid = $("input[name='cid']").val();
+      let ctext = getEditorText("editor");
+      let content = getEditorHTML("editor");
+      if (title == "") {
+        alert("请输入标题....");
+        $("input[name='title']").focus();
+        return;
+      }
+      if (ctext == "") {
+        alert("请输入内容....");
+        return;
+      }
+      if (isNaN(Number.parseInt(cid))) {
+        alert("请输入数字，这里会优化成下拉菜单");
+        return;
+      }
+
+      let params = {
+        title: title,
+        link: link,
+        tags: tags,
+        cid: cid,
+        content: content
+      };
+
+      $.ajax({
+        type: "post",
+        url: "/save",
+        data: params,
+        success: function(data) {
+          if (data != "fail") {
+            alert("保存成功!");
+            window.location.href = "/";
+          }
+        }
+      });
+    }
+  };
+</script>
+
+<!--底部-->
+{{> footer}}

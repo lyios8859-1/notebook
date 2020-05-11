@@ -2,7 +2,6 @@
 node_modules
 dist
 lib
-projects
 java/**/target
 java/**/.settings/
 # local env files

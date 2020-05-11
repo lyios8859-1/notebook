@@ -1,0 +1,231 @@
+{{> header}}
+<div class="clearfix"></div>
+<div style="margin:10px auto;width:500px;">
+    <input type="text" id="keyword">
+    <input type="button" id="search" onclick="lyContent.search(this)" value="搜索"/>
+    <!-- 搜索的文章总数:<span class="itemcount">{{totalCount}}</span> -->
+    &nbsp;&nbsp;&nbsp;<a href="/add">添加文章</a>
+</div>
+<!--内容区域-->
+<div class="wrapbox">
+    <div class="w700 mauto">
+            <div class="itembox" id="contentbox">
+                {{#each result}}     
+				    <div class="item" id="{{_id}}">
+				        <h3><a href="/pages/{{_id}}">{{title}}</a></h3>
+				        &nbsp;&nbsp;&nbsp;
+				            <a href="/edit/{{_id}}">编辑文章</a>&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;
+				            <a href="javascript:void(0);" id="del" onclick="lyContent.del()" data-opid="{{_id}}" data-title="{{title}}">删除文章</a>
+				        <p class="mt10 fz12">发表于 {{format ctime 'yyyy-MM-dd'}}/点击数：{{hits}}  |   分类于 <a href="#">{{cid}}</a>   |  <a href="#">{{tags}}</a> </p>
+				        <div class="post-body mt30">
+				                {{{substring content 200}}}
+				                <div class="post-more-link text-center">
+				                    <a class="btn" href="/pages/{{_id}}" rel="contents">
+				                    阅读全文 »
+				                    </a>
+				            </div>
+				        </div>
+				    </div> 
+				{{/each}}
+            </div>
+            <div class="loadmore" onclick="lyContent.load()"><span class="text">加载更多</span>【总共<span class="itemcount">{{totalCount}}</span>条】</div>
+    </div>
+</div>
+
+<script>
+    var lyContent = {
+        pageNo:1,
+        pageSize:3,
+        search:function(callback){
+            //要搜索的关键词   
+            var keyword = $("#keyword").val();
+            if(!keyword){
+                alert("请输入关键词");
+                $("#keyword").focus();
+                return;
+            }
+            //this是指：lyContent
+            this.cmark = true;    
+            //清零
+            this.pageNo = 0;
+            //记得清空
+            $("#contentbox").empty();    
+            $(".loadmore").show().attr("onclick","lyContent.load()");
+            this.load(function(itemcount){
+                $(".itemcount").html(itemcount);
+            });
+        },
+        load:function(callback){
+            var that = this;
+             //要搜索的关键词   
+            var keyword = $("#keyword").val();
+            //分页信息
+            var cpageNo = that.pageNo *  that.pageSize; 
+            var cpageSize = that.pageSize;
+            $.ajax({
+                type:"post",
+                url:"/search",
+                data:{keyword:keyword,pageNo:cpageNo,pageSize:cpageSize},
+                success:function(data){
+                	//alert(data.result);
+                	if(data.result &&data.result.length>0){
+                		var dataArr = data.result;
+                		var len = dataArr.length;
+                		var html = "";
+                		for(var i=0;i<len;i++){
+                			html+="<div class='item' id='"+dataArr[i]._id+"'>"+
+				"				        <h3><a href='/pages/"+dataArr[i]._id+"'>"+dataArr[i].title+"</a></h3>"+
+				"				        &nbsp;&nbsp;&nbsp;"+
+				"				            <a href='/edit/"+dataArr[i]._id+"'>编辑文章</a>&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;"+
+				"				            <a href='javascript:void(0);' id='del' onclick='lyContent.del()' data-opid='"+dataArr[i]._id+"' data-title='"+dataArr[i].title+"'>删除文章</a>"+
+				"				        <p class='mt10 fz12'>发表于 "+dataArr[i].ctime+"/点击数：{{hits}}  |   分类于 <a href='#'>"+dataArr[i].cid+"</a>   |  <a href='#'>"+dataArr[i].tags+"</a> </p>"+
+				"				        <div class='post-body mt30'>"+
+				"				                "+dataArr[i].content+""+
+				"				                <div class='post-more-link text-center'>"+
+				"				                    <a class='btn' href='/pages/"+dataArr[i]._id+"' rel='contents'>"+
+				"				                    阅读全文 »"+
+				"				                    </a>"+
+				"				            </div>"+
+				"				        </div>"+
+				"				    </div>";
+                		}
+                		$("#contentbox").append(html);
+                		if(keyword){ //搜索关键字高亮
+                          	keyLight("contentbox", keyword);
+                     	}
+                		that.pageNo++;
+                	}
+                }
+            });   
+        },
+
+       /*load:function(callback){
+            var that = this;
+            console.log(that.cmark);
+            if(!that.cmark)return;
+             //要搜索的关键词   
+            var keyword = $("#keyword").val();
+            //分页信息
+            var cpageNo = that.pageNo *  that.pageSize; 
+            var cpageSize = that.pageSize;
+            //防止重复点击
+            $(".loadmore").removeAttr("onclick");
+            //执行数据请求
+            that.cmark = false;
+            console.log("===="+that.cmark);
+            $.ajax({
+                type:"post",
+                url:"/search",
+                data:{keyword:keyword,pageNo:cpageNo,pageSize:cpageSize},
+                success:function(data){
+                   
+                    if(data){
+                       //把数据渲染后的模板页添加到当前页面
+                        var dats = $("#contentbox").append(data);
+                        if(keyword){ //搜索关键字高亮
+                           keyLight("contentbox", keyword,"red");    
+                        } 
+                        var itemcount = $("#contentbox").children().eq(0).data("itemcount");
+                        //拿到当前加载的条数
+                        var len = $("#contentbox").children().length;
+                        if(len==0){
+                            that.cmark = false;
+                            $(".loadmore").removeAttr("onclick").hide();
+                            $(".itemcount").html(0);
+                            $("#contentbox").html("<h1 style='text-align:center;'>【"+keyword+"】的数据跑到火星去了!!!!@_@</h1>");
+                        }
+
+                        if(len < that.pageSize){
+                            that.cmark = false;
+                            $(".loadmore").hide();
+                        }
+
+                        if(cpageNo>=itemcount){
+                             that.cmark = false;
+                            $(".loadmore").removeAttr("onclick").find("span.text").html("数据加载完毕").end().fadeOut("slow");
+                        }else{
+                            that.cmark = true;
+                        }
+
+                        //加载完毕以后，重新绑定事件   
+                        $(".loadmore").attr("onclick","lyContent.load()");
+                        if(callback)callback(itemcount);
+                        that.pageNo++;
+                    } 
+                }
+            })
+        },*/
+        del:function(){
+            var opid = $("#del").data("opid");
+            $.ajax({
+                type:"post",
+                url:"/del",
+                data:{opid:opid},
+                success:function(data){
+                    if(data=="success"){
+                        if($(".itemcount")){
+                           var count = parseInt($(".itemcount").text());
+                            --count;
+                            $(".itemcount").html(count); 
+                        }
+                        if(confirm("确定删除吗?")){
+                            $("#"+opid).fadeOut(1000,function(){
+                               // $(".itemcount").html=count;
+                                $("#"+opid).remove();
+                            });
+                            
+                        }
+                    }
+                }
+            });
+        },
+
+        cmark:true,
+        init:function(){
+            var  that  = this;
+            window.onscroll = function(){
+                if(that.cmark){
+                    var cheight = window.innerHeight;
+                    var stop = document.body.scrollTop || document.documentElement.scrollTop;
+                    var dheight = document.body.clientHeight;
+                    if(cheight + stop + 3 >=dheight){
+                            lyContent.load();
+                    }
+                }
+            } ; 
+        }
+
+    };
+
+    lyContent.init();
+
+ 
+/*var key1 = keyLight('contentbox', '和尚')
+var key2 = keyLight('contentbox', '一', 'red')
+//搜索的关键字高亮   
+*/        
+function keyLight(id, key, bgColor){
+    var oDiv = document.getElementById(id);
+    var sText = oDiv.innerHTML;
+    var bgColor = bgColor || "orange";    
+    var sKey = "<span style='background-color: "+bgColor+";'>"+key+"</span>";
+    var num = -1;
+    var rStr = new RegExp(key, "g");
+    var rHtml = new RegExp("\<.*?\>","ig"); //匹配html元素
+    var aHtml = sText.match(rHtml); //存放html元素的数组
+
+    sText = sText.replace(rHtml, '{~}');  //替换html标签
+    sText = sText.replace(rStr,sKey); //替换key
+    sText = sText.replace(/{~}/g,function(){  //恢复html标签
+        num++;
+        return aHtml[num];
+    });
+ 
+   oDiv.innerHTML = sText;
+}
+
+</script>
+
+<!--end 内容区域-->
+<!--底部-->
+{{> footer}}

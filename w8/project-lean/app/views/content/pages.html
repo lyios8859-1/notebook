@@ -1,0 +1,38 @@
+<link rel="stylesheet" href="/css/content.css" />
+<!--头部-->
+{{> header}}
+<!--end 头部-->
+<div class="clearfix mt64 w720">
+    <div id="posts" class="posts-expand">
+        <header class="post-header ">
+            <h1 class="post-title tc" itemprop="name headline">
+                {{ title }}
+            </h1>
+            <div class="post-meta tc">
+                <span class="post-time">发表于
+                    <time itemprop="dateCreated" datetime="2016-12-12T21:17:59+08:00" content="2016-12-12">
+                        {{format ctime 'yyyy年/MM月/dd日'}}
+                    </time>
+                </span>
+                <span class="post-category">
+                    &nbsp; | &nbsp; 分类于
+                    <span itemprop="about">
+                        <a href="#" itemprop="url" rel="index">
+                            <span itemprop="name">{{ cid }}</span>
+                        </a>
+                    </span>
+                </span>
+                <span class="post-comments-count">
+                    &nbsp; | &nbsp;
+                    <a href="#" itemprop="discussionUrl">
+                        <span class="post-comments-count ds-thread-count">{{ tags }}</span>
+                    </a>
+                </span>
+            </div>
+        </header>
+        <div class="post-body mt45">{{{content}}}</div>
+    </div>
+</div>
+
+<!--end 底部-->
+{{> footer}}

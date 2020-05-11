@@ -1,0 +1,17 @@
+{{#each result}}     
+	<div class="item" id="{{_id}}" data-itemcount="{{../totalCount}}">
+		<h3><a href="/pages/{{_id}}">{{title}}</a></h3>
+		&nbsp;&nbsp;&nbsp;
+			<a href="/edit/{{_id}}">编辑文章</a>&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;
+			<a href="javascript:void(0);" id="del" onclick="lyContent.del()" data-opid="{{_id}}" data-title="{{title}}">删除文章</a>
+		<p class="mt10 fz12">发表于 {{format ctime 'yyyy-MM-dd'}}/点击数：{{hits}}  |   分类于 <a href="#">{{cid}}</a>   |  <a href="#">{{tags}}</a> </p>
+		<div class="post-body mt30">
+				{{{substring content 100}}}
+				<div class="post-more-link text-center">
+					<a class="btn" href="/pages/{{_id}}" rel="contents">
+					阅读全文 »
+					</a>
+			</div>
+		</div>
+	</div> 
+{{/each}}

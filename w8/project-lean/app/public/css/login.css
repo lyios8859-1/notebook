@@ -1,0 +1,46 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+.login {
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, 100%);
+  display: inline-block;
+  width: 400px;
+  height: 157px;
+  box-shadow: 0 0 8px #ccc;
+  border-radius: 2px;
+  
+}
+.login h2 {
+  margin: 10px auto;
+  text-align: center;
+
+}
+.login .logininfo {
+  margin: auto;
+}
+.login .logininfo label {
+  display: block;
+  margin: 10px auto;
+  width: 300px;
+}
+.login .logininfo .inputStyle {
+  width: 77%;
+  outline: none;
+}
+.login .logininfo label span {
+  display: inline-block;
+  margin-right: 6px;
+  width: 13%;
+}
+.login .loginbtn {
+  margin: 10px auto;
+}
+.login .loginbtn .btn {
+  text-align: center;
+  width: 140px;
+  margin: 0 auto;
+}

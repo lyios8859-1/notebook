@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,user-scalable=no">
+    <title>Title</title>
+</head>
+<body>
+<style>
+    #to_top{
+        position:fixed;
+        right:10px;
+        bottom: 10px;
+        height:30px;
+        width: 50px;
+        text-align:center;
+        padding-top:20px;
+        background-color: lightblue;
+        border-radius: 20%;
+        overflow: hidden;
+        display: none;
+    }
+    .top:hover:before{
+        top:50%
+    }
+    .top:hover .top-in{
+        visibility: hidden;
+    }
+    .top:before{
+        position: absolute;
+        top: -50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        content:'回到顶部';
+        width: 40px;
+        color:peru;
+        font-weight:bold;
+    }
+    .top-in{
+        visibility: visible;
+        display:inline-block;
+        height:20px;
+        width: 20px;
+        border: 3px solid black;
+        border-color: white transparent transparent white;
+        transform:rotate(45deg);
+    }
+</style>
+<body style="height:2000px;">
+<div id="to_top" class="top">
+    <div class="top-in"></div>
+</div>
+</body>
+<script>
+ /* var timer = null;
+  var toTop = document.getElementById('to_top');
+  toTop.onclick = function(){
+    cancelAnimationFrame(timer);
+    timer = requestAnimationFrame(function fn(){
+      var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+      if(oTop > 0){
+        document.body.scrollTop = document.documentElement.scrollTop = oTop - 50;
+        timer = requestAnimationFrame(fn);
+      }else{
+        cancelAnimationFrame(timer);
+      }
+    });
+  }*/
+
+
+ window.onload = function(){
+   var toTop = document.getElementById("to_top");
+   var clientHeight = document.documentElement.clientHeight;
+   var timer = null;
+
+   window.onscroll = function(){
+     var osTop = document.documentElement.scrollTop || document.body.scrollTop;
+     if(osTop > clientHeight){
+       toTop.style.display = "block";
+     }
+     else{
+       toTop.style.display = "none";
+     }
+   };
+   toTop.onclick = function(){
+     cancelAnimationFrame(timer);
+     timer = requestAnimationFrame(function fn(){
+       var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+       if(oTop > 0){
+         document.body.scrollTop = document.documentElement.scrollTop = oTop - 50;
+         timer = requestAnimationFrame(fn);
+       }else{
+         cancelAnimationFrame(timer);
+       }
+     });
+   }
+ }
+ /*window.onload = function(){
+   var toTop = document.getElementById("to_top");
+   var clientHeight = document.documentElement.clientHeight;
+   var timer = null;
+
+   window.onscroll = function(){
+     var osTop = document.documentElement.scrollTop || document.body.scrollTop;
+     if(osTop > clientHeight){
+       toTop.style.display = "block";
+     }
+     else{
+       toTop.style.display = "none";
+     }
+   };
+   toTop.onclick = function(){
+     clearInterval(timer);
+     timer = setInterval(function(){
+       var osTop = document.documentElement.scrollTop || document.body.scrollTop;
+       var spd = Math.floor((-osTop) / 1000) - 50; // 负号控制方向
+       document.documentElement.scrollTop = osTop + spd;
+       document.body.scrollTop = osTop + spd;
+
+       if(osTop == 0){
+         clearInterval(timer);
+       }
+     },30);
+   }
+ }*/
+</script>
+</body>
+</html>

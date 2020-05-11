@@ -1,0 +1,20 @@
+{
+  "name": "express4-02",
+  "description": "",
+  "main": "",
+  "authors": [
+    "ly <94962218@qq.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/lyios8859-1/nodejs",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "blueimp-file-upload": "jquery-file-upload#^9.19.0"
+  }
+}
