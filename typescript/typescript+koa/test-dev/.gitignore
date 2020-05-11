@@ -2,9 +2,6 @@
 node_modules
 dist
 lib
-projects
-java/**/target
-java/**/.settings/
 # local env files
 .env.local
 .env.*.local

@@ -1,20 +1,36 @@
 {
   "name": "test-dev",
   "version": "1.0.0",
-  "description": "",
+  "description": "typescript koa tslint nodemon",
   "main": "index.js",
   "scripts": {
-    "start": "webpack"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npm run serve",
+    "serve": "tsc && node dist/server.js",
+    "watch-server": "nodemon --watch './src/**/*' -e ts,tsx,html --exec ts-node ./src/server.ts",
+    "build": "npm run tslint && npm run build-ts",
+    "build-ts": "tsc",
+    "watch": "npm run tslint && npm run watch-ts",
+    "watch-ts": "tsc -w",
+    "tslint": "tslint -c tslint.json -p tsconfig.json",
+    "precommit": "npm run tslint"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {
-    "ts-loader": "^6.2.1",
-    "typescript": "^3.7.5"
-  },
   "dependencies": {
-    "@types/lodash": "^4.14.149",
-    "lodash": "^4.17.15"
+    "koa": "^2.11.0",
+    "koa-hbs": "^1.0.0",
+    "koa-router": "^7.4.0"
+  },
+  "devDependencies": {
+    "@types/koa": "^2.0.52",
+    "@types/koa-hbs": "^1.0.5",
+    "@types/koa-router": "^7.0.42",
+    "husky": "^3.1.0",
+    "nodemon": "^1.19.4",
+    "ts-node": "^8.5.2",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.2"
   }
 }

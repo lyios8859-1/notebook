@@ -20,5 +20,7 @@
   },
   "homepage": "https://github.com/lyios8859-1/notebook#readme",
   "devDependencies": {},
-  "dependencies": {}
+  "dependencies": {
+    "create-react-app": "^3.4.1"
+  }
 }
