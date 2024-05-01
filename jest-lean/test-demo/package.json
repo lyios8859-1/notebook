@@ -10,6 +10,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@vue/cli": "^3.8.4"
+    "@vue/cli": "^5.0.8"
   }
 }
